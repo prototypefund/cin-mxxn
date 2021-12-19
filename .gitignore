@@ -1,0 +1,11 @@
+# Vim files
+.session.vim
+.undodir
+.tasks
+.vimspector.json
+
+# Python files
+*.egg
+*.egg-info
+*cache
+**/__pycache__/

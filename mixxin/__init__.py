@@ -7,3 +7,6 @@ The package offers an easy-to-use plugin interface based
 on Python packages in virtual Python environments. Plugins
 are called mixxins and they are normal Python packages.
 """
+from mixxin.app import App
+
+app = App()

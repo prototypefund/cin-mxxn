@@ -7,7 +7,7 @@ from mxxn.exceptions import settings as settings_ex
 from mxxn.exceptions import filesys as filesys_ex
 
 
-class TestFile(object):
+class TestFile():
     """Test for the static _file() method of the Settings class."""
 
     def test_no_environment_variable(self):
@@ -53,7 +53,7 @@ class TestFile(object):
             assert Settings._file() == settings_file
 
 
-class TestLoad(object):
+class TestLoad():
     """Test for the static _load() method of the Settings class."""
 
     def test_validation_error(self, tmp_path):
@@ -156,3 +156,53 @@ class TestLoad(object):
                 settings._load(settings_file)
 
                 assert 'literal structure' in str(excinfo.value)
+
+
+class TestSettingsEnabledMixxins():
+    """Test for the enabled_mixins porperty of the Settings class."""
+
+    def test_enabled_mixxins_in_settings_file(self, tmp_path):
+        """The enabled_mixxins key is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            enabled_mixxins = ['mixxin_1', 'mixxin_2']
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.enabled_mixxins == ['mixxin_1', 'mixxin_2']
+
+    def test_enabled_mixxins_not_in_settings_file(self, tmp_path):
+        """No enabled_mixxins key is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert not settings.enabled_mixxins
+            assert not isinstance(settings.enabled_mixxins, list)
+
+    def test_empty_list_in_settings_file(self, tmp_path):
+        """An empty list is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            enabled_mixxins = []
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert not settings.enabled_mixxins
+            assert isinstance(settings.enabled_mixxins, list)

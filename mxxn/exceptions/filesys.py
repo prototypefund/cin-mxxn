@@ -4,7 +4,7 @@ The filesystem exceptions module.
 This module contains exceptions that can be
 thrown when accessing files or directories.
 """
-from mixxin import exceptions
+from mxxn import exceptions
 
 
 class FileSysError(exceptions.Base):

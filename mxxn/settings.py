@@ -22,7 +22,7 @@ applied, the default settings of the Mixxin framework are used.
 from pathlib import Path
 from os import environ
 from jsonschema import exceptions as jsonschema_ex
-from typing import Optional
+from typing import Optional, List
 from jsonschema import validate
 import configparser
 import ast
@@ -69,41 +69,24 @@ _settings_schema: dict = {
 class Settings(object):
     """The Setting class."""
 
-    @staticmethod
-    def _file() -> Optional[Path]:
+    __slots__ = [
+        '_data'
+    ]
+
+    def __init__(self) -> None:
         """
-        Get the path of the settings file.
+        Initialize the Settings class.
 
-        The function checks if the environment variable `MIXXIN_SETTINGS` has
-        been set and whether the file exists in the file system. If the
-        environment variable has not been set, the current working directory
-        is searched for a file with the name `settings.ini`. If this file does
-        not exist as well, None is returned.
-
-        Raises:
-            mixxin.exceptions.filesys.FileNotExistError: If the file in the
-                environment variable MIXXIN_SETTINGS does not exist.
-
-        Returns:
-            The absolute path to the settings file or None if it does
-            not exist.
+        If a settings file exists, it is read in and the default settings are
+        set for variables that are not in the file.
         """
-        if 'MIXXIN_SETTINGS' in environ:
-            if Path(environ['MIXXIN_SETTINGS']).is_file():
-                return Path(environ['MIXXIN_SETTINGS']).resolve()
-            else:
-                raise filesys_ex.FileNotExistError(
-                        'The settings file in the environment variable '
-                        'MIXXIN_SETTINGS does not exist.'
-                )
-        else:
-            if (Path.cwd()/'settings.ini').is_file():
-                return Path.cwd()/'settings.ini'
+        self._data = {'mixxin': {}, 'alembic': {}}
+        settings_file = self._file()
 
-            return
+        if settings_file:
+            self._load(settings_file)
 
-    @staticmethod
-    def _load(data: dict, settings_file: Path) -> None:
+    def _load(self, settings_file: Path) -> None:
         """
         Load the settings from the settings file.
 
@@ -115,7 +98,6 @@ class Settings(object):
         for this.
 
         Args:
-            data: The dictionary into which the read-in data is to be written.
             settings_file: The settings file.
 
         Raises:
@@ -129,14 +111,14 @@ class Settings(object):
 
             if 'mixxin' in sections:
                 for option, value in config.items('mixxin'):
-                    data['mixxin'][option] = ast.literal_eval(value)
+                    self._data['mixxin'][option] = ast.literal_eval(value)
 
             if 'alembic' in sections:
                 if 'sqlalchemy.url' in config['alembic']:
-                    data['alembic']['sqlalchemy.url'] =\
+                    self._data['alembic']['sqlalchemy.url'] =\
                             config['alembic']['sqlalchemy.url']
 
-            validate(instance=data, schema=_settings_schema)
+            validate(instance=self._data, schema=_settings_schema)
 
         except ValueError:
             raise settings_ex.SettingsFormatError(
@@ -169,3 +151,36 @@ class Settings(object):
                 message = "The settings file is not in the required format."
 
             raise settings_ex.SettingsFormatError(message)
+
+    @staticmethod
+    def _file() -> Optional[Path]:
+        """
+        Get the path of the settings file.
+
+        The function checks if the environment variable `MIXXIN_SETTINGS` has
+        been set and whether the file exists in the file system. If the
+        environment variable has not been set, the current working directory
+        is searched for a file with the name `settings.ini`. If this file does
+        not exist as well, None is returned.
+
+        Raises:
+            mixxin.exceptions.filesys.FileNotExistError: If the file in the
+                environment variable MIXXIN_SETTINGS does not exist.
+
+        Returns:
+            The absolute path to the settings file or None if it does
+            not exist.
+        """
+        if 'MIXXIN_SETTINGS' in environ:
+            if Path(environ['MIXXIN_SETTINGS']).is_file():
+                return Path(environ['MIXXIN_SETTINGS']).resolve()
+            else:
+                raise filesys_ex.FileNotExistError(
+                        'The settings file in the environment variable '
+                        'MIXXIN_SETTINGS does not exist.'
+                )
+        else:
+            if (Path.cwd()/'settings.ini').is_file():
+                return Path.cwd()/'settings.ini'
+
+            return

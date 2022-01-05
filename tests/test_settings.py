@@ -58,7 +58,6 @@ class TestLoad(object):
 
     def test_validation_error(self, tmp_path):
         """The settings file does not match the JSON Scheme."""
-        data = {'mixxin': {}, 'alembic': {}}
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -72,11 +71,10 @@ class TestLoad(object):
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError):
-                Settings._load(data, settings_file)
+                Settings()._load(settings_file)
 
     def test_no_mixxin_section(self, tmp_path):
         """The mixxin section does not exist in the INI file."""
-        data = {'mixxin': {}, 'alembic': {}}
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -86,9 +84,10 @@ class TestLoad(object):
         )
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
-            Settings._load(data, settings_file)
+            settings = Settings()
+            settings._load(settings_file)
 
-            assert data == {
+            assert settings._data == {
                 'mixxin': {},
                 'alembic': {
                     'sqlalchemy.url': 'driver://user:pass@localhost/dbname'
@@ -97,7 +96,6 @@ class TestLoad(object):
 
     def test_no_alembic_section(self, tmp_path):
         """The alembic section does not exist in the INI file."""
-        data = {'mixxin': {}, 'alembic': {}}
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -106,13 +104,13 @@ class TestLoad(object):
         )
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
-            Settings._load(data, settings_file)
+            settings = Settings()
+            settings._load(settings_file)
 
-            assert data == {'mixxin': {}, 'alembic': {}}
+            assert settings._data == {'mixxin': {}, 'alembic': {}}
 
     def test_no_sections_in_settings_file(self, tmp_path):
         """It is no section in the settings file."""
-        data = {'mixxin': {}, 'alembic': {}}
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -122,11 +120,11 @@ class TestLoad(object):
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError):
-                Settings._load(data, settings_file)
+                settings = Settings()
+                settings._load(settings_file)
 
     def test_additional_property(self, tmp_path):
         """An addional property in the mixxin section."""
-        data = {'mixxin': {}, 'alembic': {}}
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -137,13 +135,13 @@ class TestLoad(object):
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError) as excinfo:
-                Settings._load(data, settings_file)
+                settings = Settings()
+                settings._load(settings_file)
 
                 assert 'additional' in str(excinfo.value)
 
     def test_not_regular_python_code(self, tmp_path):
         """A value in the mixxin section is not regular Python code."""
-        data = {'mixxin': {}, 'alembic': {}}
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -154,6 +152,7 @@ class TestLoad(object):
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError) as excinfo:
-                Settings._load(data, settings_file)
+                settings = Settings()
+                settings._load(settings_file)
 
                 assert 'literal structure' in str(excinfo.value)

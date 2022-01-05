@@ -3,6 +3,7 @@ import pytest
 from os import chdir, environ
 from unittest.mock import patch
 from mxxn.settings import Settings
+from mxxn.exceptions import settings as settings_ex
 from mxxn.exceptions import filesys as filesys_ex
 
 
@@ -50,3 +51,109 @@ class TestFile(object):
         with patch.dict(
                 environ, {'MIXXIN_SETTINGS': '../path_1/settings.ini'}):
             assert Settings._file() == settings_file
+
+
+class TestLoad(object):
+    """Test for the static _load() method of the Settings class."""
+
+    def test_validation_error(self, tmp_path):
+        """The settings file does not match the JSON Scheme."""
+        data = {'mixxin': {}, 'alembic': {}}
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            enabled_mixxins = 1
+
+            [alembic]
+            sqlalchemy.url = driver://user:pass@localhost/dbname
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            with pytest.raises(settings_ex.SettingsFormatError):
+                Settings._load(data, settings_file)
+
+    def test_no_mixxin_section(self, tmp_path):
+        """The mixxin section does not exist in the INI file."""
+        data = {'mixxin': {}, 'alembic': {}}
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [alembic]
+            sqlalchemy.url = driver://user:pass@localhost/dbname
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            Settings._load(data, settings_file)
+
+            assert data == {
+                'mixxin': {},
+                'alembic': {
+                    'sqlalchemy.url': 'driver://user:pass@localhost/dbname'
+                }
+            }
+
+    def test_no_alembic_section(self, tmp_path):
+        """The alembic section does not exist in the INI file."""
+        data = {'mixxin': {}, 'alembic': {}}
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            Settings._load(data, settings_file)
+
+            assert data == {'mixxin': {}, 'alembic': {}}
+
+    def test_no_sections_in_settings_file(self, tmp_path):
+        """It is no section in the settings file."""
+        data = {'mixxin': {}, 'alembic': {}}
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            ggg
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            with pytest.raises(settings_ex.SettingsFormatError):
+                Settings._load(data, settings_file)
+
+    def test_additional_property(self, tmp_path):
+        """An addional property in the mixxin section."""
+        data = {'mixxin': {}, 'alembic': {}}
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            additional = 123
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            with pytest.raises(settings_ex.SettingsFormatError) as excinfo:
+                Settings._load(data, settings_file)
+
+                assert 'additional' in str(excinfo.value)
+
+    def test_not_regular_python_code(self, tmp_path):
+        """A value in the mixxin section is not regular Python code."""
+        data = {'mixxin': {}, 'alembic': {}}
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            app_path = not_a_type
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            with pytest.raises(settings_ex.SettingsFormatError) as excinfo:
+                Settings._load(data, settings_file)
+
+                assert 'literal structure' in str(excinfo.value)

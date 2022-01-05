@@ -21,8 +21,49 @@ applied, the default settings of the Mixxin framework are used.
 """
 from pathlib import Path
 from os import environ
+from jsonschema import exceptions as jsonschema_ex
 from typing import Optional
+from jsonschema import validate
+import configparser
+import ast
 from mxxn.exceptions import filesys as filesys_ex
+from mxxn.exceptions import settings as settings_ex
+
+
+_settings_schema: dict = {
+    'type': 'object',
+    'properties': {
+        'mixxin': {
+            'type': 'object',
+            'properties': {
+                'enabled_mixins': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'string'
+                    }
+                },
+                'app_path': {
+                    'type': 'string',
+                },
+                'data_path': {
+                    'type': 'string',
+                }
+            },
+            'additionalProperties': False
+        },
+        'alembic': {
+            'type': 'object',
+            'properties': {
+                'sqlalchemy.url': {
+                    'type': 'string'
+                }
+            },
+            'additionalProperties': False
+        }
+    },
+    'additionalProperties': False
+}
+"""Schema dictionary for settings file validation."""
 
 
 class Settings(object):
@@ -60,3 +101,71 @@ class Settings(object):
                 return Path.cwd()/'settings.ini'
 
             return
+
+    @staticmethod
+    def _load(data: dict, settings_file: Path) -> None:
+        """
+        Load the settings from the settings file.
+
+        The function reads the `mixxin` and the `alembic` section of the
+        settings file and extends the passed data dictionary with the
+        respective variables. Only the `sqlalchemy_url` variable is read
+        from the `alembic` section, all others are ignored. After reading,
+        the data-dictinary is validated. The `_settings_schema` is used
+        for this.
+
+        Args:
+            data: The dictionary into which the read-in data is to be written.
+            settings_file: The settings file.
+
+        Raises:
+            mixxin.exceptions.settings.SettingsFormatError: If the settings
+                file has an invalid format.
+        """
+        try:
+            config = configparser.ConfigParser()
+            config.read(settings_file)
+            sections = config.sections()
+
+            if 'mixxin' in sections:
+                for option, value in config.items('mixxin'):
+                    data['mixxin'][option] = ast.literal_eval(value)
+
+            if 'alembic' in sections:
+                if 'sqlalchemy.url' in config['alembic']:
+                    data['alembic']['sqlalchemy.url'] =\
+                            config['alembic']['sqlalchemy.url']
+
+            validate(instance=data, schema=_settings_schema)
+
+        except ValueError:
+            raise settings_ex.SettingsFormatError(
+                    'One of the values in the mixxin section is not regular '
+                    'Python code. It must be a Python literal structure: '
+                    'strings, numbers, tuples, lists, dicts, booleans, '
+                    'and None.'
+            )
+
+        except configparser.Error:
+            raise settings_ex.SettingsFormatError(
+                    'The settings file is not in the required format. For '
+                    'example, the file must have at least one section.'
+            )
+
+        except jsonschema_ex.ValidationError as e:
+            if e.validator == 'additionalProperties':
+                message = 'Additional variable "{}" is not allowed in the '\
+                    'section of the settings file.'\
+                    .format(next(iter(e.instance)))
+
+            elif e.validator == 'type':
+                message = 'The format of variable "{}" in the "{}" section '\
+                    'must be "{}".'.format(
+                        e.absolute_path[1],
+                        e.absolute_path[0],
+                        e.validator_value
+                    )
+            else:
+                message = "The settings file is not in the required format."
+
+            raise settings_ex.SettingsFormatError(message)

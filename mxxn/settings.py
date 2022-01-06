@@ -103,6 +103,33 @@ class Settings(object):
         if 'enabled_mixxins' in self._data['mixxin']:
             return self._data['mixxin']['enabled_mixxins']
 
+    @property
+    def app_path(self) -> Path:
+        """
+        Get the application path.
+
+        The application path is the location where the runtime data of the
+        application are stored. This is usually where the settings.ini and
+        the data folder are located, which contains, for example, the SQLite
+        database, if used. If the app_path variable of the settings file is
+        not set, the current working directory at the time of the application
+        start is returned.
+
+        Returns:
+            The absolute path to the application directory.
+        """
+        if 'app_path' in self._data['mixxin']:
+            app_path = Path(self._data['mixxin']['app_path'])
+
+            if app_path.is_dir():
+                return app_path.resolve()
+            else:
+                raise filesys_ex.PathNotExistError(
+                    'The app_path from the settings file does not exist.'
+                )
+        else:
+            return Path.cwd()
+
     def _load(self, settings_file: Path) -> None:
         """
         Load the settings from the settings file.

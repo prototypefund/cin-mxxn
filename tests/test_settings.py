@@ -206,3 +206,50 @@ class TestSettingsEnabledMixxins():
 
             assert not settings.enabled_mixxins
             assert isinstance(settings.enabled_mixxins, list)
+
+
+class TestSettingsAppPath():
+    """Test for the app_path porperty of the Settings class."""
+
+    def test_app_path_in_settings_file(self, tmp_path):
+        """The app_path key is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            app_path = '{}'
+            """.format(tmp_path)
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.app_path == tmp_path
+
+    def test_app_path_not_exist(self, tmp_path):
+        """The app_path does not exist."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            app_path = '{}'
+            """.format(tmp_path/'test')
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            with pytest.raises(filesys_ex.PathNotExistError):
+                Settings().app_path
+
+    def test_app_path_not_in_settings_file(self, tmp_path):
+        """The app_path is not in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            """
+        )
+        chdir(tmp_path)
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.app_path == tmp_path

@@ -6,8 +6,8 @@ Like most Python packages, the Mixxin framework uses a settings file in INI
 format. This has the advantage that there is the possibility of using only
 one settings file for Mixxin, Alembic, Supervisor, Uvicorn etc.
 
-Mixxin itself reads the `mixxin` section and the `sqlalchemy_url` variable of
-the `alembic` section of the settings file.
+Mixxin itself reads the *mixxin* section and the *sqlalchemy_url* variable of
+the *alembic* section of the settings file.
 
 .. note::
     If an extra settings file is used for alembic, then the alembic section
@@ -15,9 +15,23 @@ the `alembic` section of the settings file.
     settings file.
 
 The Mixxin settings file can be passed to the framework via the environment
-variable `MIXXIN_SETTINGS`. If the variable is not used, the settings.ini file
-is searched for in the current working environment. If no settings file is
+variable *MIXXIN_SETTINGS*. If the variable is not used, the settings.ini file
+is searched for in the current working directory. If no settings file is
 applied, the default settings of the Mixxin framework are used.
+
+List of variables:
+
++-------------+------------------+-------+--------------------------+
+| Section     | Variable         | Type  | Description              |
++=============+==================+=======+==========================+
+| mixxin      | enabled_mixxins  | list  | List of enabled mixxins  |
++-------------+------------------+-------+--------------------------+
+| mixxin      | app_path         | str   | Application directory    |
++-------------+------------------+-------+--------------------------+
+| mixxin      | data_path        | str   | Data directory           |
++-------------+------------------+-------+--------------------------+
+| alembic     | sqlalchemy_url   | str   | SQLAlchemy database url  |
++-------------+------------------+-------+--------------------------+
 """
 from pathlib import Path
 from os import environ
@@ -67,7 +81,14 @@ _settings_schema: dict = {
 
 
 class Settings(object):
-    """The Setting class."""
+    """
+    The settings class of the framework.
+
+    This class can be used to access the settings in the
+    settings file. For application settings that were not
+    set in the settings file, a default value is set so that
+    the application can also be started without a settings file.
+    """
 
     __slots__ = [
         '_data'
@@ -91,14 +112,10 @@ class Settings(object):
         """
         Get a list of enabled mixxins.
 
-        It is possible to activate only specific mixxins set in the
+        It is possible to activate only specific mixxins in the
         settings file. If the `enabled_mixxins` variable of the settings
         file is not set, None is returned. To deactivate all installed mixxins,
-        an empty list can be set.
-
-        Returns:
-            List of mixxin names or None, if enabled_mixxins is not in
-            settings file.
+        an empty list can be set in the settings file.
         """
         if 'enabled_mixxins' in self._data['mixxin']:
             return self._data['mixxin']['enabled_mixxins']
@@ -114,9 +131,6 @@ class Settings(object):
         database, if used. If the app_path variable of the settings file is
         not set, the current working directory at the time of the application
         start is returned.
-
-        Returns:
-            The absolute path to the application directory.
         """
         if 'app_path' in self._data['mixxin']:
             app_path = Path(self._data['mixxin']['app_path'])
@@ -139,10 +153,7 @@ class Settings(object):
         contains, for example, the SQLite database, if one is used. The files
         folder, in which the uploaded files are stored, is also located there.
         If the data_path variable of the settings file is not set, the
-        ´app_path/data´ is returned.
-
-        Returns:
-            The absolute path to the data directory.
+        *app_path/data* is returned.
         """
         if 'data_path' in self._data['mixxin']:
             data_path = Path(self._data['mixxin']['data_path'])
@@ -163,7 +174,7 @@ class Settings(object):
 
         The database URL is taken from the *sqlalchemy_url* variable of the
         *alembic* section of the settings file. If this was not set, the
-        default URL `'sqlite:///<data_path>/mixxin.db'` is returned.
+        default URL *'sqlite:///<data_path>/mixxin.db'* is returned.
 
         Returns:
             The default database URL.
@@ -177,12 +188,11 @@ class Settings(object):
         """
         Load the settings from the settings file.
 
-        The function reads the `mixxin` and the `alembic` section of the
-        settings file and extends the passed data dictionary with the
-        respective variables. Only the `sqlalchemy_url` variable is read
+        The function reads the *mixxin* and the *alembic* section of the
+        settings file into the self._data dictionary with the
+        respective variables. Only the *sqlalchemy_url* variable is read
         from the `alembic` section, all others are ignored. After reading,
-        the data-dictinary is validated. The `_settings_schema` is used
-        for this.
+        the self._data dictinary is validated.
 
         Args:
             settings_file: The settings file.
@@ -244,10 +254,10 @@ class Settings(object):
         """
         Get the path of the settings file.
 
-        The function checks if the environment variable `MIXXIN_SETTINGS` has
+        The function checks if the environment variable *MIXXIN_SETTINGS* has
         been set and whether the file exists in the file system. If the
         environment variable has not been set, the current working directory
-        is searched for a file with the name `settings.ini`. If this file does
+        is searched for a file with the name *settings.ini*. If this file does
         not exist as well, None is returned.
 
         Raises:

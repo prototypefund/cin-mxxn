@@ -156,6 +156,23 @@ class Settings(object):
         else:
             return self.app_path/'data'
 
+    @property
+    def sqlalchemy_url(self) -> str:
+        """
+        Get the SQLAlchemy database URL.
+
+        The database URL is taken from the *sqlalchemy_url* variable of the
+        *alembic* section of the settings file. If this was not set, the
+        default URL `'sqlite:///<data_path>/mixxin.db'` is returned.
+
+        Returns:
+            The default database URL.
+        """
+        if 'sqlalchemy.url' in self._data['alembic']:
+            return self._data['alembic']['sqlalchemy.url']
+        else:
+            return 'sqlite:///' + str(self.data_path/'mixxin.db')
+
     def _load(self, settings_file: Path) -> None:
         """
         Load the settings from the settings file.

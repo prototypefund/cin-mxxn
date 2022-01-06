@@ -255,7 +255,7 @@ class TestSettingsAppPath():
             assert settings.app_path == tmp_path
 
 
-class TestSettingsdataPath(object):
+class TestSettingsdataPath():
     """Test for the data_path porperty of the Settings class."""
 
     def test_data_path_in_settings_file(self, tmp_path):
@@ -300,3 +300,38 @@ class TestSettingsdataPath(object):
             settings = Settings()
 
             assert settings.data_path == tmp_path/'data'
+
+
+class TestSettingsSqlalchemyUrl():
+    """Test for the sqlalchemy_url porperty of the Settings class."""
+
+    def test_sqlalchemy_url_in_settings_file(self, monkeypatch, tmp_path):
+        """The sqlalchemy_url key is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [alembic]
+            sqlalchemy.url = driver://user:pass@localhost/dbname
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.sqlalchemy_url ==\
+                'driver://user:pass@localhost/dbname'
+
+    def test_sqlalchemy_url_not_in_settings_file(self, monkeypatch, tmp_path):
+        """No sqlalchemy_url key is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            """
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.sqlalchemy_url ==\
+                'sqlite:///' + str(settings.data_path/'mixxin.db')

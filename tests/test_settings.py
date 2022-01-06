@@ -62,7 +62,7 @@ class TestLoad():
         settings_file.write_text(
             """
             [mixxin]
-            enabled_mixxins = 1
+            enabled_mixins = 1
 
             [alembic]
             sqlalchemy.url = driver://user:pass@localhost/dbname
@@ -161,23 +161,23 @@ class TestLoad():
 class TestSettingsEnabledMixxins():
     """Test for the enabled_mixins porperty of the Settings class."""
 
-    def test_enabled_mixxins_in_settings_file(self, tmp_path):
-        """The enabled_mixxins key is in settings file."""
+    def test_enabled_mixins_in_settings_file(self, tmp_path):
+        """The enabled_mixins key is in settings file."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
             [mixxin]
-            enabled_mixxins = ['mixxin_1', 'mixxin_2']
+            enabled_mixins = ['mxnone', 'mxntwo']
             """
         )
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
-            assert settings.enabled_mixxins == ['mixxin_1', 'mixxin_2']
+            assert settings.enabled_mixins == ['mxnone', 'mxntwo']
 
-    def test_enabled_mixxins_not_in_settings_file(self, tmp_path):
-        """No enabled_mixxins key is in settings file."""
+    def test_enabled_mixins_not_in_settings_file(self, tmp_path):
+        """No enabled_mixins key is in settings file."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -188,8 +188,8 @@ class TestSettingsEnabledMixxins():
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
-            assert not settings.enabled_mixxins
-            assert not isinstance(settings.enabled_mixxins, list)
+            assert not settings.enabled_mixins
+            assert not isinstance(settings.enabled_mixins, list)
 
     def test_empty_list_in_settings_file(self, tmp_path):
         """An empty list is in settings file."""
@@ -197,15 +197,15 @@ class TestSettingsEnabledMixxins():
         settings_file.write_text(
             """
             [mixxin]
-            enabled_mixxins = []
+            enabled_mixins = []
             """
         )
 
         with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
-            assert not settings.enabled_mixxins
-            assert isinstance(settings.enabled_mixxins, list)
+            assert not settings.enabled_mixins
+            assert isinstance(settings.enabled_mixins, list)
 
 
 class TestSettingsAppPath():

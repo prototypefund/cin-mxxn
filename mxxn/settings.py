@@ -24,7 +24,7 @@ List of variables:
 +-------------+------------------+-------+--------------------------+
 | Section     | Variable         | Type  | Description              |
 +=============+==================+=======+==========================+
-| mixxin      | enabled_mixxins  | list  | List of enabled mixxins  |
+| mixxin      | enabled_mixins   | list  | List of enabled mixxins  |
 +-------------+------------------+-------+--------------------------+
 | mixxin      | app_path         | str   | Application directory    |
 +-------------+------------------+-------+--------------------------+
@@ -50,7 +50,7 @@ _settings_schema: dict = {
         'mixxin': {
             'type': 'object',
             'properties': {
-                'enabled_mixxins': {
+                'enabled_mixins': {
                     'type': 'array',
                     'items': {
                         'type': 'string'
@@ -108,17 +108,17 @@ class Settings(object):
             self._load(settings_file)
 
     @property
-    def enabled_mixxins(self) -> Optional[List[str]]:
+    def enabled_mixins(self) -> Optional[List[str]]:
         """
-        Get a list of enabled mixxins.
+        Get a list of enabled mixins.
 
-        It is possible to activate only specific mixxins in the
-        settings file. If the `enabled_mixxins` variable of the settings
-        file is not set, None is returned. To deactivate all installed mixxins,
+        It is possible to activate only specific mixins in the
+        settings file. If the `enabled_mixins` variable of the settings
+        file is not set, None is returned. To deactivate all installed mixins,
         an empty list can be set in the settings file.
         """
-        if 'enabled_mixxins' in self._data['mixxin']:
-            return self._data['mixxin']['enabled_mixxins']
+        if 'enabled_mixins' in self._data['mixxin']:
+            return self._data['mixxin']['enabled_mixins']
 
     @property
     def app_path(self) -> Path:

@@ -39,7 +39,6 @@ autodoc_member_order = 'bysource'
 autodoc_typehints = 'description'
 autodoc_default_options = {
     'show-inheritance': True,
-    'private-members': True,
     'special-members': '__call__',
     'undoc-members': True
 }

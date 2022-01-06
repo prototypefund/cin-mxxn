@@ -253,3 +253,50 @@ class TestSettingsAppPath():
             settings = Settings()
 
             assert settings.app_path == tmp_path
+
+
+class TestSettingsdataPath(object):
+    """Test for the data_path porperty of the Settings class."""
+
+    def test_data_path_in_settings_file(self, tmp_path):
+        """The data_path key is in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            data_path = '{}'
+            """.format(tmp_path)
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.data_path == tmp_path
+
+    def test_data_path_not_exist(self, tmp_path):
+        """The data_path does not exist."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            data_path = '{}'
+            """.format(tmp_path/'test')
+        )
+
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            with pytest.raises(filesys_ex.PathNotExistError):
+                Settings().data_path
+
+    def test_data_path_not_in_settings_file(self, tmp_path):
+        """The data_path is not in settings file."""
+        settings_file = tmp_path/'settings.ini'
+        settings_file.write_text(
+            """
+            [mixxin]
+            """
+        )
+        chdir(tmp_path)
+        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+            settings = Settings()
+
+            assert settings.data_path == tmp_path/'data'

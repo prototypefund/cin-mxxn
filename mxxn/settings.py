@@ -130,6 +130,32 @@ class Settings(object):
         else:
             return Path.cwd()
 
+    @property
+    def data_path(self) -> Path:
+        """
+        Get the data path.
+
+        The Data folder is normally located in the application path and
+        contains, for example, the SQLite database, if one is used. The files
+        folder, in which the uploaded files are stored, is also located there.
+        If the data_path variable of the settings file is not set, the
+        ´app_path/data´ is returned.
+
+        Returns:
+            The absolute path to the data directory.
+        """
+        if 'data_path' in self._data['mixxin']:
+            data_path = Path(self._data['mixxin']['data_path'])
+
+            if data_path.is_dir():
+                return data_path.resolve()
+            else:
+                raise filesys_ex.PathNotExistError(
+                    'The data_path from the settings file does not exist.'
+                )
+        else:
+            return self.app_path/'data'
+
     def _load(self, settings_file: Path) -> None:
         """
         Load the settings from the settings file.

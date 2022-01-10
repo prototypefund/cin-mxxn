@@ -1,4 +1,5 @@
 """This module contains tests for the env module."""
+import inspect
 import pytest
 from unittest.mock import MagicMock
 from mxxn import env
@@ -36,3 +37,18 @@ class TestMixins(object):
         settings.enabled_mixins = []
 
         assert env.mixins(settings) == []
+
+
+class TestPackageInit(object):
+    """Tests for the initialisation of the Package class."""
+
+    def test_package_not_exist(self):
+        """The Package does not exist."""
+
+        with pytest.raises(env_ex.PackageNotExistError):
+            env.Package('xyz')
+
+    def test_package_exists(self, mixxin_env):
+        """The Package exist."""
+
+        env.Package('mxnone')

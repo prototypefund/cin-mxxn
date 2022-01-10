@@ -8,8 +8,13 @@ application starts, elements are automatically loaded from
 the packages and registered in the framework.
 """
 from pkg_resources import iter_entry_points
-from typing import List
+from typing import List, TypedDict, Type, Dict
+import inspect
+from importlib.util import find_spec
+from importlib import import_module
+import re
 from mxxn.exceptions import env as env_ex
+from mxxn.utils import modules
 from mxxn.settings import Settings
 
 
@@ -41,3 +46,39 @@ def mixins(settings: Settings) -> List[str]:
         )
 
     return installed_mixins
+
+
+class TypeResourceDict(TypedDict):
+    """The type definition of resource dict."""
+
+    resource: Type
+    routes: List[List[str]]
+
+
+TypeListOfResourceDicts = List[TypeResourceDict]
+
+
+class Package(object):
+    """
+    The base class of all framework packages.
+
+    This class offers methods with which elements of the framework
+    packages can be accessed.
+    """
+
+    __slots__ = ['_package']
+
+    def __init__(self, name: str) -> None:
+        """
+        Initialize an object of the Package class.
+
+        Args:
+            name (string): The name of the package.
+
+        """
+        try:
+            self._package = import_module(name)
+        except ModuleNotFoundError:
+            raise env_ex.PackageNotExistError(
+                    'The environment Package {} does not exist'
+                    .format(name))

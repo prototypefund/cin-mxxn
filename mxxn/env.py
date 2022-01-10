@@ -82,3 +82,7 @@ class Package(object):
             raise env_ex.PackageNotExistError(
                     'The environment Package {} does not exist'
                     .format(name))
+
+    @property
+    def name(self):
+        return self._package.__name__

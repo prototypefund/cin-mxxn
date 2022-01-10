@@ -6,7 +6,7 @@ from mxxn import env
 from mxxn.exceptions import env as env_ex
 
 
-class TestMixins(object):
+class TestMixins():
     """Tests for the mixins function."""
 
     def test_all_enabled_mixins_exist(self, iter_entry_points_mixins):
@@ -39,7 +39,7 @@ class TestMixins(object):
         assert env.mixins(settings) == []
 
 
-class TestPackageInit(object):
+class TestPackageInit():
     """Tests for the initialisation of the Package class."""
 
     def test_package_not_exist(self):
@@ -52,3 +52,13 @@ class TestPackageInit(object):
         """The Package exist."""
 
         env.Package('mxnone')
+
+
+class TestPackageName():
+    """Tests for the initialisation of the Package class."""
+
+    def test_name_is_retrned(self, mixxin_env):
+        """The name is returned."""
+
+        pkg = env.Package('mxnone')
+        assert pkg.name == 'mxnone'

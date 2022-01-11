@@ -178,3 +178,9 @@ class Mixxin(Package):
     def __init__(self) -> None:
         """Initialize the Mixxin object."""
         super().__init__('mxxn')
+
+
+class Mixin(Package):
+    """With this class elements of a mixin can be accessed."""
+
+    pass

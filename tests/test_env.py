@@ -105,3 +105,116 @@ class TestPackageResources():
         assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
         assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
         assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
+
+    def test_has_responder_and_suffix(self, mixxin_env):
+        """Test if the module has resources with responder ans suffix."""
+        content = """
+            class ResourceOne(object):
+                def on_get(self, req, resp):
+                    pass
+
+            class ResourceTwo(object):
+                def on_post(self, req, resp):
+                    pass
+
+                def on_post_list(self, req, resp):
+                    pass
+        """
+
+        (mixxin_env/'mxnone/__init__.py').touch()
+        (mixxin_env/'mxnone/resources.py').write_text(inspect.cleandoc(content))
+
+        pkg = env.Package('mxnone')
+        resources_list = pkg.resources
+
+        assert len(resources_list) == 2
+        assert resources_list[0]['routes'] == [['/.resourceone']]
+        assert resources_list[1]['routes'] == [
+            ['/.resourcetwo'], ['/.resourcetwo.list', 'list']
+        ]
+        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
+        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
+        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
+        assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
+
+    def test_resource_only_has_suffixed_responder(self, mixxin_env):
+        """Test if one resources has only suffixed responder."""
+        content = """
+            class ResourceOne(object):
+                def on_get(self, req, resp):
+                    pass
+
+            class ResourceTwo(object):
+                def on_post_list(self, req, resp):
+                    pass
+        """
+
+        (mixxin_env/'mxnone/__init__.py').touch()
+        (mixxin_env/'mxnone/resources.py').write_text(inspect.cleandoc(content))
+
+        pkg = env.Package('mxnone')
+        resources_list = pkg.resources
+
+        assert len(resources_list) == 2
+        assert resources_list[0]['routes'] == [['/.resourceone']]
+        assert resources_list[1]['routes'] == [['/.resourcetwo.list', 'list']]
+        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
+        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
+        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
+        assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
+
+    def test_resource_with_subpackage(self, mixxin_env):
+        """Test if one resources module has a subpackge."""
+        content = """
+            class ResourceOne(object):
+                def on_get(self, req, resp):
+                    pass
+
+            class ResourceTwo(object):
+                def on_get(self, req, resp):
+                    pass
+
+                def on_post_suffix_one(self, req, resp):
+                    pass
+
+                def on_post_suffix_two(self, req, resp):
+                    pass
+        """
+
+        (mixxin_env/'mxnone/__init__.py').touch()
+        (mixxin_env/'mxnone/resources/pkg').mkdir(parents=True)
+        (mixxin_env/'mxnone/resources/__init__.py').write_text(
+            inspect.cleandoc(content)
+        )
+        (mixxin_env/'mxnone/resources/pkg/__init__.py').touch()
+        (mixxin_env/'mxnone/resources/pkg/resources.py').write_text(
+            inspect.cleandoc(content)
+        )
+
+        pkg = env.Package('mxnone')
+        resources_list = pkg.resources
+
+        assert len(resources_list) == 4
+        assert resources_list[0]['routes'] == [['/.resourceone']]
+        assert resources_list[1]['routes'] == [
+            ['/.resourcetwo'],
+            ['/.resourcetwo.suffix_one', 'suffix_one'],
+            ['/.resourcetwo.suffix_two', 'suffix_two']
+        ]
+        assert resources_list[2]['routes'] == [['/pkg/resources/.resourceone']]
+        assert resources_list[3]['routes'] == [
+            ['/pkg/resources/.resourcetwo'],
+            ['/pkg/resources/.resourcetwo.suffix_one', 'suffix_one'],
+            ['/pkg/resources/.resourcetwo.suffix_two', 'suffix_two']
+        ]
+        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
+        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
+        assert resources_list[2]['resource'].__name__ == 'ResourceOne'
+        assert resources_list[3]['resource'].__name__ == 'ResourceTwo'
+        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
+        assert resources_list[1]['resource'].__module__ \
+            == 'mxnone.resources'
+        assert resources_list[2]['resource'].__module__ \
+            == 'mxnone.resources.pkg.resources'
+        assert resources_list[3]['resource'].__module__ \
+            == 'mxnone.resources.pkg.resources'

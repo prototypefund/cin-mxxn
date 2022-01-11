@@ -38,11 +38,8 @@ class TestSubmodules(object):
         modules = []
 
         submodules(mxnone, modules)
-        # print(modules[0].__name__)
 
         module_names = [i.__name__ for i in modules]
-
-        print(module_names)
 
         expected_names = [
             'mxnone.module_1',
@@ -76,7 +73,7 @@ class TestCassesRecursively(object):
     """Test for classes_recursively function."""
 
     def test_if_all_classen_found_recursively(self, modules_tree):
-        """Test if all classes were found recursively."""
+        """All classes were found recursively."""
         import mxnone
         classes_list = classes_recursively(mxnone)
 

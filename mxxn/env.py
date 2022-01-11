@@ -86,3 +86,57 @@ class Package(object):
     @property
     def name(self):
         return self._package.__name__
+
+    @property
+    def resources(self) -> TypeListOfResourceDicts:
+        resources_list = []
+
+        try:
+            resources_module = import_module(
+                    self._package.__name__ + '.resources')
+
+            classes = modules.classes_recursively(resources_module)
+
+            for resource in classes:
+                members = inspect.getmembers(
+                    resource, predicate=inspect.isfunction
+                )
+                member_names = [member[0] for member in members]
+                r = 'on_(get|post|put|delete|patch|websocket)'
+
+                has_responder = any(
+                    i for i in member_names if re.match(r+'$', i)
+                )
+
+                suffixes: List[str] = []
+
+                for i in member_names:
+                    if re.match(r + '_[a-z0-9_]+', i):
+                        suffixes.append(re.sub(r+'_', '', i))
+
+                import_name = resource.__module__+'.'+resource.__name__
+
+                if has_responder or suffixes:
+                    route = re.sub('^'+resources_module.__name__, '', import_name)\
+                        .replace('.', '/').lower()
+                    route = route[::-1].replace('/', './', 1)[::-1]
+
+                    resource_dict: TypeResourceDict = {
+                        'resource': resource,
+                        'routes': []
+                    }
+
+                    if has_responder:
+                        resource_dict['routes'].append([route])
+
+                    if suffixes:
+                        for suffix in suffixes:
+                            resource_dict['routes'].append(
+                                [route+'.'+suffix, suffix]
+                            )
+                    resources_list.append(resource_dict)
+
+        except ModuleNotFoundError:
+            pass
+
+        return resources_list

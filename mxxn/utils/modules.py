@@ -17,9 +17,13 @@ def submodules(module, modules: List[str]) -> None:
         modules: The list in which the found modules are stored.
 
     """
-    submodules_list = list(
-        pkgutil.iter_modules(module.__path__)  # type: ignore
-    )
+    try:
+        submodules_list = list(
+            pkgutil.iter_modules(module.__path__)
+        )
+
+    except AttributeError:
+        return
 
     for submodule in submodules_list:
         name = module.__name__ + '.' + submodule.name
@@ -63,8 +67,6 @@ def classes_recursively(module) -> List[Type]:
     Return:
         A List of classes.
 
-    Raises:
-        ModuleNotFoundError: If the passed module does not exist.
     """
     submodules_list: List[str] = []
     classes_list = classes(module)

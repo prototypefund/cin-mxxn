@@ -31,13 +31,20 @@ def modules_tree(mixxin_env):
 class TestSubmodules(object):
     """Test for submodule function."""
 
-    def test_if_all_module_found(self, modules_tree):
-        """Test if all modules were found."""
+    def test_all_module_found(self, modules_tree):
+        """All modules were found."""
+        import mxnone
+
         modules = []
 
-        submodules('mxnone', modules)
+        submodules(mxnone, modules)
+        # print(modules[0].__name__)
 
-        assert modules == [
+        module_names = [i.__name__ for i in modules]
+
+        print(module_names)
+
+        expected_names = [
             'mxnone.module_1',
             'mxnone.module_2',
             'mxnone.subpackage.module_3',
@@ -45,12 +52,10 @@ class TestSubmodules(object):
             'mxnone.subpackage'
         ]
 
-    def test_raise_module_not_found_error(self):
-        """Test if ModuleNotFoundError raised."""
-        modules = []
+        result = all(
+                module_name in expected_names for module_name in module_names)
 
-        with pytest.raises(ModuleNotFoundError):
-            submodules('xxxyyyzzz', modules)
+        assert result
 
 
 class TestClasses(object):
@@ -72,7 +77,8 @@ class TestCassesRecursively(object):
 
     def test_if_all_classen_found_recursively(self, modules_tree):
         """Test if all classes were found recursively."""
-        classes_list = classes_recursively('mxnone')
+        import mxnone
+        classes_list = classes_recursively(mxnone)
 
         assert len(classes_list) == 6
         assert classes_list[0].__module__ == 'mxnone'

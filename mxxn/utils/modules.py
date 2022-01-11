@@ -1,11 +1,11 @@
 """This module provides tools for working with modules."""
 import pkgutil
-import importlib
+from importlib import import_module
 import inspect
 from typing import List, Type
 
 
-def submodules(module_name: str, modules: List[str]) -> None:
+def submodules(module, modules: List[str]) -> None:
     """
     Get all submodules of a module.
 
@@ -13,34 +13,23 @@ def submodules(module_name: str, modules: List[str]) -> None:
     including subpackages.
 
     Args:
-        module_name: The name of the module.
+        module_name: The module.
         modules: The list in which the found modules are stored.
 
-    Raises:
-        ModuleNotFoundError: If the given module does not exist.
     """
-    try:
-        module = importlib.import_module(module_name)
-        submodules_list = list(
-            pkgutil.iter_modules(module.__path__)  # type: ignore
-        )
-
-    except ModuleNotFoundError as e:
-        raise ModuleNotFoundError(
-            'The module {} for which the submodules are searched does '
-            'not exist.'.format(module_name)
-        ) from e
-
-    except AttributeError:
-        return
+    submodules_list = list(
+        pkgutil.iter_modules(module.__path__)  # type: ignore
+    )
 
     for submodule in submodules_list:
-        name = module_name + '.' + submodule.name
+        name = module.__name__ + '.' + submodule.name
+        imported_module = import_module(name)
+
         if submodule.ispkg:
-            submodules(name, modules)
-            modules.append(name)
+            submodules(imported_module, modules)
+            modules.append(imported_module)
         else:
-            modules.append(name)
+            modules.append(imported_module)
 
 
 def classes(module) -> List[Type]:
@@ -48,7 +37,7 @@ def classes(module) -> List[Type]:
     Get all classes of a module.
 
     Args:
-        module_name: The name of the module.
+        module: The name of the module.
 
     Return:
         A list of classes.
@@ -64,12 +53,12 @@ def classes(module) -> List[Type]:
     return classes_list
 
 
-def classes_recursively(module_name: str) -> List[Type]:
+def classes_recursively(module) -> List[Type]:
     """
     Get all classes of the module and submodules recursively.
 
     Args:
-        module_name: The name of the module.
+        module: The name of the module.
 
     Return:
         A List of classes.
@@ -78,8 +67,8 @@ def classes_recursively(module_name: str) -> List[Type]:
         ModuleNotFoundError: If the passed module does not exist.
     """
     submodules_list: List[str] = []
-    classes_list = classes(module_name)
-    submodules(module_name, submodules_list)
+    classes_list = classes(module)
+    submodules(module, submodules_list)
 
     for submodule in submodules_list:
         classes_list.extend(classes(submodule))

@@ -122,7 +122,8 @@ class TestPackageResources():
         """
 
         (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources.py').write_text(inspect.cleandoc(content))
+        (mixxin_env/'mxnone/resources.py').write_text(
+                inspect.cleandoc(content))
 
         pkg = env.Package('mxnone')
         resources_list = pkg.resources
@@ -150,7 +151,8 @@ class TestPackageResources():
         """
 
         (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources.py').write_text(inspect.cleandoc(content))
+        (mixxin_env/'mxnone/resources.py').write_text(
+                inspect.cleandoc(content))
 
         pkg = env.Package('mxnone')
         resources_list = pkg.resources

@@ -8,9 +8,8 @@ application starts, elements are automatically loaded from
 the packages and registered in the framework.
 """
 from pkg_resources import iter_entry_points
-from typing import List, TypedDict, Type, Dict
+from typing import List, TypedDict, Type
 import inspect
-from importlib.util import find_spec
 from importlib import import_module
 import re
 from mxxn.exceptions import env as env_ex
@@ -85,10 +84,40 @@ class Package(object):
 
     @property
     def name(self):
+        """Get the package name."""
         return self._package.__name__
 
     @property
     def resources(self) -> TypeListOfResourceDicts:
+        """
+        Get the resources of the package.
+
+        This method searches the `resources` module or package of the mixxin
+        package or a mixin package for resources and returns a
+        list of the resources found. If no resource exists or there is no
+        resources module or package, then an empty list is returned. A
+        resource is a class that implements at least one responder method of
+        the form `on_*()`, where * is any one of the standard HTTP methods
+        (get, post, put, delete, patch). Classes that exclusively or
+        additionally implement methods with a suffix in the form
+        `on_*_<suffix>` are also identified as a resource and the
+        suffixes are returned with it. The returned list contains resource
+        dictionaries. A dictionary has the following format:
+
+        ```python
+        {
+            'resource': <resource class>,
+            'routes': [
+                [<route 1>, <optional suffix>],
+                [<route n>, <optional suffix>],
+            ],
+        }
+        ```
+
+        !!! note
+            Only resources with get, post, put, patch or/and delete
+            responder are considered.
+        """
         resources_list = []
 
         try:
@@ -117,8 +146,9 @@ class Package(object):
                 import_name = resource.__module__+'.'+resource.__name__
 
                 if has_responder or suffixes:
-                    route = re.sub('^'+resources_module.__name__, '', import_name)\
-                        .replace('.', '/').lower()
+                    route = re.sub(
+                            '^'+resources_module.__name__, '', import_name)\
+                            .replace('.', '/').lower()
                     route = route[::-1].replace('/', './', 1)[::-1]
 
                     resource_dict: TypeResourceDict = {

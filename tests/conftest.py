@@ -2,7 +2,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import sys
-from mxxn import env
 
 
 @pytest.fixture()

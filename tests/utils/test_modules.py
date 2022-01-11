@@ -1,6 +1,5 @@
 """Test for the utils.modules module."""
 import pytest
-import importlib
 import inspect
 from mxxn.utils.modules import submodules, classes, classes_recursively
 

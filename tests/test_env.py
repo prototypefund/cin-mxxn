@@ -44,13 +44,11 @@ class TestPackageInit():
 
     def test_package_not_exist(self):
         """The Package does not exist."""
-
         with pytest.raises(env_ex.PackageNotExistError):
             env.Package('xyz')
 
     def test_package_exists(self, mixxin_env):
         """The Package exist."""
-
         env.Package('mxnone')
 
 
@@ -59,7 +57,6 @@ class TestPackageName():
 
     def test_name_is_returned(self, mixxin_env):
         """The name is returned."""
-
         pkg = env.Package('mxnone')
         assert pkg.name == 'mxnone'
 
@@ -78,7 +75,6 @@ class TestPackageResources():
 
     def test_package_has_not_resource_module(self, mixxin_env):
         """Module has a resources module."""
-
         pkg = env.Package('mxnone')
 
         assert pkg.resources == []

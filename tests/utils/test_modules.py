@@ -53,12 +53,14 @@ class TestSubmodules(object):
             submodules('xxxyyyzzz', modules)
 
 
-class TestCasses(object):
+class TestClasses(object):
     """Test for classes function."""
 
     def test_if_all_classes_found(self, modules_tree):
-        """Test if all classes were found."""
-        classes_list = classes('mxnone')
+        """All classes were found."""
+        import mxnone
+
+        classes_list = classes(mxnone)
 
         assert len(classes_list) == 2
         assert classes_list[0].__name__ == 'Test1'

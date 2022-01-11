@@ -43,7 +43,7 @@ def submodules(module_name: str, modules: List[str]) -> None:
             modules.append(name)
 
 
-def classes(module_name: str) -> List[Type]:
+def classes(module) -> List[Type]:
     """
     Get all classes of a module.
 
@@ -57,11 +57,9 @@ def classes(module_name: str) -> List[Type]:
         ModuleNotFoundError: If the passed module does not exist.
     """
     classes_list = []
-    module = importlib.import_module(module_name)
 
-    for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj):
-            classes_list.append(obj)
+    for name, obj in inspect.getmembers(module, inspect.isclass):
+        classes_list.append(obj)
 
     return classes_list
 

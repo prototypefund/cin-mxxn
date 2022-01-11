@@ -220,3 +220,13 @@ class TestPackageResources():
             == 'mxnone.resources.pkg.resources'
         assert resources_list[3]['resource'].__module__ \
             == 'mxnone.resources.pkg.resources'
+
+
+class TestMixxinInit(object):
+    """Tests for the creation of the Mixxin class."""
+
+    def test_init(self):
+        """Test if Mixxin instance has a name "mixxin"."""
+        mixxin = env.Mixxin()
+
+        assert mixxin.name == 'mxxn'

@@ -170,3 +170,11 @@ class Package(object):
             pass
 
         return resources_list
+
+
+class Mixxin(Package):
+    """With this class elements of the framework mixxin can be accessed."""
+
+    def __init__(self) -> None:
+        """Initialize the Mixxin object."""
+        super().__init__('mxxn')

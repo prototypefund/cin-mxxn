@@ -251,7 +251,7 @@ class TestMixxinAppInit():
 
             assert app.name == 'mxxnapp'
 
-    def test_temp(self, mixxin_env):
+    def test_multiple_app(self, mixxin_env):
         """The app exists."""
         mxxnapp_one = MagicMock()
         mxxnapp_two = MagicMock()

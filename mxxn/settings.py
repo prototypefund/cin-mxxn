@@ -80,7 +80,7 @@ _settings_schema: dict = {
 """Schema dictionary for settings file validation."""
 
 
-class Settings(object):
+class Settings():
     """
     The settings class of the framework.
 
@@ -101,7 +101,7 @@ class Settings(object):
         If a settings file exists, it is read in and the default settings are
         set for variables that are not in the file.
         """
-        self._data = {'mixxin': {}, 'alembic': {}}
+        self._data: dict = {'mixxin': {}, 'alembic': {}}
         settings_file = self._file()
 
         if settings_file:
@@ -119,6 +119,8 @@ class Settings(object):
         """
         if 'enabled_mixins' in self._data['mixxin']:
             return self._data['mixxin']['enabled_mixins']
+
+        return None
 
     @property
     def app_path(self) -> Path:
@@ -280,4 +282,4 @@ class Settings(object):
             if (Path.cwd()/'settings.ini').is_file():
                 return Path.cwd()/'settings.ini'
 
-            return
+            return None

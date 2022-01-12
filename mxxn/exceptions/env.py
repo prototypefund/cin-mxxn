@@ -18,3 +18,9 @@ class MixinNotExistError(PackageError):
     """Raised if an mixxin does not exist."""
 
     pass
+
+
+class MixxinAppNotExistError(PackageError):
+    """Raised if the mixxin app does not exist."""
+
+    pass

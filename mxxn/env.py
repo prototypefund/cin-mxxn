@@ -1,11 +1,27 @@
 """
 Module for using components of the mixxin environment.
 
+Mixxin applications are always based on a Python virtual environment.
+A separate environment must be used for each application, because
+only one MixxinApp package is accepted per environment.
+
 The mixxin environment has the three basic package types
-mixxin, mixins and app. These packages have essentially
-the same structure. On the basis of this structure, when the
-application starts, elements are automatically loaded from
-the packages and registered in the framework.
+Mixxin, Mixin and MixxinApp. The Mixxin package it self is the
+framework package containing the framework functionality.
+Mixins are plugins that can be installed in the environment and
+automatically detected by the framework. These plugins extend
+the functionality of the application. The MixxinApp brings together
+all the required Mixins and the Mixxin framework and packages it.
+In addition, overloads for components of the Mixins and for the
+framework can be defined in the MixxinApp.
+For package management the setuptools are used. Each Mixxin package
+is standalone Python package and can be installed into the environment
+using pip. However, it is recommended to manage the dependence on
+other Mixxin packages in the setup file of the MixxinApp package.
+
+All three package types have essentially the same structure. On the
+basis of this structure, when the application starts, elements are
+automatically loaded from the packages and registered in the framework.
 """
 from pkg_resources import iter_entry_points
 from typing import List, TypedDict, Type

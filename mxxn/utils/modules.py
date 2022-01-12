@@ -3,18 +3,19 @@ import pkgutil
 from importlib import import_module
 import inspect
 from typing import List, Type
+from types import ModuleType
 
 
-def submodules(module, modules: List[str]) -> None:
+def submodules(module: ModuleType, modules: List[ModuleType]) -> None:
     """
     Get all submodules of a module.
 
-    The function searches the given module recursively,
-    including subpackages.
+    The function searches the given module recursively for
+    submodules and adds them to the given modules list.
 
     Args:
-        module_name: The module.
-        modules: The list in which the found modules are stored.
+        module: The modules to be searched.
+        modules: The list into the found modules should be inserted.
 
     """
     try:
@@ -36,18 +37,16 @@ def submodules(module, modules: List[str]) -> None:
             modules.append(imported_module)
 
 
-def classes(module) -> List[Type]:
+def classes(module: ModuleType) -> List[Type]:
     """
-    Get all classes of a module.
+    Get all classes of a given module.
 
     Args:
-        module: The name of the module.
+        module: The modules to be searched for classes.
 
     Return:
-        A list of classes.
+        A list of found classes.
 
-    Raises:
-        ModuleNotFoundError: If the passed module does not exist.
     """
     classes_list = []
 
@@ -57,18 +56,18 @@ def classes(module) -> List[Type]:
     return classes_list
 
 
-def classes_recursively(module) -> List[Type]:
+def classes_recursively(module: ModuleType) -> List[Type]:
     """
     Get all classes of the module and submodules recursively.
 
     Args:
-        module: The name of the module.
+        module: The modules to be searched for classes.
 
     Return:
-        A List of classes.
+        A List of found classes.
 
     """
-    submodules_list: List[str] = []
+    submodules_list: List[ModuleType] = []
     classes_list = classes(module)
     submodules(module, submodules_list)
 

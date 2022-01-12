@@ -1,7 +1,7 @@
 """This module contains tests for the env module."""
 import inspect
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
 
@@ -93,7 +93,7 @@ class TestPackageResources():
 
         (mixxin_env/'mxnone/__init__.py').touch()
         (mixxin_env/'mxnone/resources.py').write_text(
-                inspect.cleandoc(content))
+            inspect.cleandoc(content))
 
         pkg = env.Package('mxnone')
         resources_list = pkg.resources
@@ -123,7 +123,7 @@ class TestPackageResources():
 
         (mixxin_env/'mxnone/__init__.py').touch()
         (mixxin_env/'mxnone/resources.py').write_text(
-                inspect.cleandoc(content))
+            inspect.cleandoc(content))
 
         pkg = env.Package('mxnone')
         resources_list = pkg.resources
@@ -152,7 +152,7 @@ class TestPackageResources():
 
         (mixxin_env/'mxnone/__init__.py').touch()
         (mixxin_env/'mxnone/resources.py').write_text(
-                inspect.cleandoc(content))
+            inspect.cleandoc(content))
 
         pkg = env.Package('mxnone')
         resources_list = pkg.resources
@@ -222,7 +222,7 @@ class TestPackageResources():
             == 'mxnone.resources.pkg.resources'
 
 
-class TestMixxinInit(object):
+class TestMixxinInit():
     """Tests for the creation of the Mixxin class."""
 
     def test_init(self):
@@ -230,3 +230,36 @@ class TestMixxinInit(object):
         mixxin = env.Mixxin()
 
         assert mixxin.name == 'mxxn'
+
+
+class TestMixxinAppInit():
+    """Tests for the MixxinApp initialisation."""
+
+    def test_app_not_exist(self):
+        """The app does not exist."""
+        with pytest.raises(env_ex.MixxinAppNotExistError):
+            env.MixxinApp()
+
+    def test_app_exists(self, mixxin_env):
+        """The app exists."""
+        mxxnapp = MagicMock()
+        mxxnapp.name = 'mxxnapp'
+
+        with patch('mxxn.env.iter_entry_points') as mock:
+            mock.return_value = [mxxnapp]
+            app = env.MixxinApp()
+
+            assert app.name == 'mxxnapp'
+
+    def test_temp(self, mixxin_env):
+        """The app exists."""
+        mxxnapp_one = MagicMock()
+        mxxnapp_two = MagicMock()
+        mxxnapp_one.name = 'mxxnappone'
+        mxxnapp_two.name = 'mxxnapptwo'
+
+        with patch('mxxn.env.iter_entry_points') as mock:
+            mock.return_value = [mxxnapp_one, mxxnapp_two]
+
+            with pytest.raises(env_ex.MultipleMixxinAppsError):
+                env.MixxinApp()

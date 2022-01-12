@@ -183,4 +183,24 @@ class Mixxin(Package):
 class Mixin(Package):
     """With this class elements of a mixin can be accessed."""
 
-    pass
+    def __init__(self) -> None:
+        """Initialize the MixxinApp class."""
+        super().__init__('mxxnapp')
+
+
+class MixxinApp(Package):
+    def __init__(self) -> None:
+        """Initialize the MixxinApp class."""
+        installed_apps = [
+            item.name for item in iter_entry_points(group='mixxin_app')]
+
+        if installed_apps:
+            if len(installed_apps) > 1:
+                raise env_ex.MultipleMixxinAppsError(
+                        'Multiple application packages installed.')
+
+            super().__init__(installed_apps[0])
+
+            return
+
+        raise env_ex.MixxinAppNotExistError('No application package installed')

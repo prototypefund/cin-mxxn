@@ -47,7 +47,7 @@ class TestPackageBaseInit():
         with pytest.raises(env_ex.PackageNotExistError):
             env.PackageBase('xyz')
 
-    def test_package_exists(self, mixxin_env):
+    def test_package_exists(self, mxxn_env):
         """The Package exist."""
         env.PackageBase('mxnone')
 
@@ -55,7 +55,7 @@ class TestPackageBaseInit():
 class TestPackageBaseName():
     """Tests for the name property of the PackageBase class."""
 
-    def test_name_is_returned(self, mixxin_env):
+    def test_name_is_returned(self, mxxn_env):
         """The name is returned."""
         pkg = env.PackageBase('mxnone')
         assert pkg.name == 'mxnone'
@@ -64,22 +64,22 @@ class TestPackageBaseName():
 class TestPackageBaseResources():
     """Tests for the resources property of the PackageBase class."""
 
-    def test_package_has_a_resources_module(self, mixxin_env):
+    def test_package_has_a_resources_module(self, mxxn_env):
         """Test if the module has a resources module."""
-        (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources.py').touch()
+        (mxxn_env/'mxnone/__init__.py').touch()
+        (mxxn_env/'mxnone/resources.py').touch()
 
         pkg = env.PackageBase('mxnone')
 
         assert pkg.resources == []
 
-    def test_package_has_not_resource_module(self, mixxin_env):
+    def test_package_has_not_resource_module(self, mxxn_env):
         """Module has a resources module."""
         pkg = env.PackageBase('mxnone')
 
         assert pkg.resources == []
 
-    def test_has_resources_with_responder(self, mixxin_env):
+    def test_has_resources_with_responder(self, mxxn_env):
         """Module has resources with responders."""
         content = """
             class ResourceOne(object):
@@ -91,8 +91,8 @@ class TestPackageBaseResources():
                     pass
         """
 
-        (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources.py').write_text(
+        (mxxn_env/'mxnone/__init__.py').touch()
+        (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
         pkg = env.PackageBase('mxnone')
@@ -106,7 +106,7 @@ class TestPackageBaseResources():
         assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
         assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
 
-    def test_has_responder_and_suffix(self, mixxin_env):
+    def test_has_responder_and_suffix(self, mxxn_env):
         """Test if the module has resources with responder ans suffix."""
         content = """
             class ResourceOne(object):
@@ -121,8 +121,8 @@ class TestPackageBaseResources():
                     pass
         """
 
-        (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources.py').write_text(
+        (mxxn_env/'mxnone/__init__.py').touch()
+        (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
         pkg = env.PackageBase('mxnone')
@@ -137,7 +137,7 @@ class TestPackageBaseResources():
         assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
         assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
 
-    def test_resource_only_has_suffixed_responder(self, mixxin_env):
+    def test_resource_only_has_suffixed_responder(self, mxxn_env):
         """Test if one resources has only suffixed responder."""
         content = """
             class ResourceOne(object):
@@ -149,8 +149,8 @@ class TestPackageBaseResources():
                     pass
         """
 
-        (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources.py').write_text(
+        (mxxn_env/'mxnone/__init__.py').touch()
+        (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
         pkg = env.PackageBase('mxnone')
@@ -165,7 +165,7 @@ class TestPackageBaseResources():
         assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
         assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
 
-    def test_resource_with_subpackage(self, mixxin_env):
+    def test_resource_with_subpackage(self, mxxn_env):
         """Test if one resources module has a subpackge."""
         content = """
             class ResourceOne(object):
@@ -183,13 +183,13 @@ class TestPackageBaseResources():
                     pass
         """
 
-        (mixxin_env/'mxnone/__init__.py').touch()
-        (mixxin_env/'mxnone/resources/pkg').mkdir(parents=True)
-        (mixxin_env/'mxnone/resources/__init__.py').write_text(
+        (mxxn_env/'mxnone/__init__.py').touch()
+        (mxxn_env/'mxnone/resources/pkg').mkdir(parents=True)
+        (mxxn_env/'mxnone/resources/__init__.py').write_text(
             inspect.cleandoc(content)
         )
-        (mixxin_env/'mxnone/resources/pkg/__init__.py').touch()
-        (mixxin_env/'mxnone/resources/pkg/resources.py').write_text(
+        (mxxn_env/'mxnone/resources/pkg/__init__.py').touch()
+        (mxxn_env/'mxnone/resources/pkg/resources.py').write_text(
             inspect.cleandoc(content)
         )
 
@@ -234,7 +234,7 @@ class TestMixxinAppInit():
         with pytest.raises(env_ex.MixxinAppNotExistError):
             env.MixxinApp()
 
-    def test_app_exists(self, mixxin_env):
+    def test_app_exists(self, mxxn_env):
         """The app exists."""
         mxxnapp = MagicMock()
         mxxnapp.name = 'mxxnapp'
@@ -245,7 +245,7 @@ class TestMixxinAppInit():
 
             assert app.name == 'mxxnapp'
 
-    def test_multiple_app(self, mixxin_env):
+    def test_multiple_app(self, mxxn_env):
         """The app exists."""
         mxxnapp_one = MagicMock()
         mxxnapp_two = MagicMock()

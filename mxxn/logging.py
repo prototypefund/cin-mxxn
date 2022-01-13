@@ -1,13 +1,14 @@
 """Logging module of the application."""
 from typing import Optional
 from logging import Logger, getLogger
+from mxxn.utils.packages import caller_package_name
 
 
 def logger(context: Optional[str] = None) -> Logger:
     """
     Get a logger for the application.
 
-    The logger name is in format *mixxin.<context>*.
+    The logger name is in format *mixxin.<package>.<context>*.
     In mixxin each log entry should be assigned to a context.
     The respective context should be one of the following:
 
@@ -45,7 +46,9 @@ def logger(context: Optional[str] = None) -> Logger:
     Return:
         A mixxin application logger.
     """
-    if context:
-        return getLogger('mixxin.{}'.format(context))
+    caller_package = caller_package_name()
 
-    return getLogger('mixxin')
+    if context:
+        return getLogger('mixxin.{}.{}'.format(caller_package, context))
+
+    return getLogger('mixxin.{}'.format(caller_package))

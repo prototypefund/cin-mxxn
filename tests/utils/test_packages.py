@@ -1,12 +1,11 @@
 """Tests for the packages module."""
 import inspect
-from importlib import import_module
 
 
 class TestCallerPackageName():
     """Tests for the caller_package_name function."""
 
-    def test_direct_call(self, mixxin_env):
+    def test_direct_call(self, mxxn_env):
         """Test for direct call."""
         code = inspect.cleandoc(
             '''
@@ -17,13 +16,13 @@ class TestCallerPackageName():
             '''
         )
 
-        (mixxin_env/'mxnone/__init__.py').write_text(code)
+        (mxxn_env/'mxnone/__init__.py').write_text(code)
 
         import mxnone
 
         assert mxnone.test() == 'mxnone'
 
-    def test_call_with_depth(self, mixxin_env):
+    def test_call_with_depth(self, mxxn_env):
         """Test for call with depth argument."""
         code = inspect.cleandoc(
             '''
@@ -34,7 +33,7 @@ class TestCallerPackageName():
             '''
         )
 
-        (mixxin_env/'mxnone/__init__.py').write_text(code)
+        (mxxn_env/'mxnone/__init__.py').write_text(code)
 
         import mxnone
 

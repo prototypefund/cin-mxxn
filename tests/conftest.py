@@ -21,7 +21,7 @@ def iter_entry_points_mixins():
 
 
 @pytest.fixture()
-def mixxin_env(tmp_path):
+def mxxn_env(tmp_path):
     """
     Get mixxin environment.
 

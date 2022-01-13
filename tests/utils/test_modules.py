@@ -5,7 +5,7 @@ from mxxn.utils.modules import submodules, classes, classes_recursively
 
 
 @pytest.fixture()
-def modules_tree(mixxin_env):
+def modules_tree(mxxn_env):
     """Create a test directory with some Python modules."""
     content = """
         class Test1(object):
@@ -14,17 +14,17 @@ def modules_tree(mixxin_env):
         class Test2(object):
             pass
     """
-    (mixxin_env/'mxnone/__init__.py').write_text(inspect.cleandoc(content))
-    (mixxin_env/'mxnone/module_1.py').write_text(inspect.cleandoc(content))
-    (mixxin_env/'mxnone/module_2.py').touch()
-    (mixxin_env/'mxnone/subpackage').mkdir()
-    (mixxin_env/'mxnone/subpackage/__init__.py').touch()
-    (mixxin_env/'mxnone/subpackage/module_3.py').write_text(
+    (mxxn_env/'mxnone/__init__.py').write_text(inspect.cleandoc(content))
+    (mxxn_env/'mxnone/module_1.py').write_text(inspect.cleandoc(content))
+    (mxxn_env/'mxnone/module_2.py').touch()
+    (mxxn_env/'mxnone/subpackage').mkdir()
+    (mxxn_env/'mxnone/subpackage/__init__.py').touch()
+    (mxxn_env/'mxnone/subpackage/module_3.py').write_text(
         inspect.cleandoc(content)
     )
-    (mixxin_env/'mxnone/subpackage/module_4.py').touch()
+    (mxxn_env/'mxnone/subpackage/module_4.py').touch()
 
-    return mixxin_env
+    return mxxn_env
 
 
 class TestSubmodules(object):

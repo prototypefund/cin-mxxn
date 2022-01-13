@@ -11,5 +11,5 @@ class TestLogger(object):
         log.error('test error')
 
         assert caplog.records[-1].msg == 'test error'
-        assert caplog.records[-1].name == 'mixxin.some_context'
+        assert caplog.records[-1].name == 'mixxin.mxxn.some_context'
         assert caplog.records[-1].levelname == 'ERROR'

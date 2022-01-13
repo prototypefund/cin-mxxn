@@ -22,6 +22,17 @@ other Mixxin packages in the setup file of the MixxinApp package.
 All three package types have essentially the same structure. On the
 basis of this structure, when the application starts, elements are
 automatically loaded from the packages and registered in the framework.
+
+.. warning::
+    To avoid conflicts with other Python packages installed in the virtual
+    environment, the following naming should be used.
+
+    * The name of the Mixin packages should always start with *mxn*. For
+      example, *mxntodo* or *mxnchat*.
+
+    * The name of the Mixxin framework package is *mxxn*.
+
+    * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
 """
 from pkg_resources import iter_entry_points
 from typing import List, TypedDict, Type
@@ -42,9 +53,15 @@ def mixins(settings: Settings) -> List[str]:
     otherwise only the enabled mixins are given back. If the list
     in the settings file is empty, no installed mixin is returned.
 
+    Args:
+        settings: The application settings.
+
     Returns:
         list: A list of the names of the installed mixins.
 
+    Raises:
+        mxxn.exceptions.env.MixinNotExistError: If mixin from enabled_mixins
+            section of settings file does not exist.
     """
     installed_mixins = [
         item.name for item in iter_entry_points(group='mixxin_mixins')]
@@ -73,7 +90,7 @@ class TypeResourceDict(TypedDict):
 TypeListOfResourceDicts = List[TypeResourceDict]
 
 
-class Package(object):
+class PackageBase():
     """
     The base class of all framework packages.
 
@@ -188,7 +205,7 @@ class Package(object):
         return resources_list
 
 
-class Mixxin(Package):
+class Mixxin(PackageBase):
     """With this class elements of the framework mixxin can be accessed."""
 
     def __init__(self) -> None:
@@ -196,7 +213,7 @@ class Mixxin(Package):
         super().__init__('mxxn')
 
 
-class Mixin(Package):
+class Mixin(PackageBase):
     """With this class elements of a mixin can be accessed."""
 
     def __init__(self) -> None:
@@ -204,7 +221,7 @@ class Mixin(Package):
         super().__init__('mxxnapp')
 
 
-class MixxinApp(Package):
+class MixxinApp(PackageBase):
     def __init__(self) -> None:
         """Initialize the MixxinApp class."""
         installed_apps = [

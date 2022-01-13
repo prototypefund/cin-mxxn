@@ -39,43 +39,43 @@ class TestMixins():
         assert env.mixins(settings) == []
 
 
-class TestPackageInit():
-    """Tests for the initialisation of the Package class."""
+class TestPackageBaseInit():
+    """Tests for the initialisation of the PackageBase class."""
 
     def test_package_not_exist(self):
         """The Package does not exist."""
         with pytest.raises(env_ex.PackageNotExistError):
-            env.Package('xyz')
+            env.PackageBase('xyz')
 
     def test_package_exists(self, mixxin_env):
         """The Package exist."""
-        env.Package('mxnone')
+        env.PackageBase('mxnone')
 
 
-class TestPackageName():
-    """Tests for the name property of the Package class."""
+class TestPackageBaseName():
+    """Tests for the name property of the PackageBase class."""
 
     def test_name_is_returned(self, mixxin_env):
         """The name is returned."""
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
         assert pkg.name == 'mxnone'
 
 
-class TestPackageResources():
-    """Tests for the resources property of the Package class."""
+class TestPackageBaseResources():
+    """Tests for the resources property of the PackageBase class."""
 
     def test_package_has_a_resources_module(self, mixxin_env):
         """Test if the module has a resources module."""
         (mixxin_env/'mxnone/__init__.py').touch()
         (mixxin_env/'mxnone/resources.py').touch()
 
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
 
         assert pkg.resources == []
 
     def test_package_has_not_resource_module(self, mixxin_env):
         """Module has a resources module."""
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
 
         assert pkg.resources == []
 
@@ -95,7 +95,7 @@ class TestPackageResources():
         (mixxin_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
@@ -125,7 +125,7 @@ class TestPackageResources():
         (mixxin_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
@@ -154,7 +154,7 @@ class TestPackageResources():
         (mixxin_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
@@ -193,7 +193,7 @@ class TestPackageResources():
             inspect.cleandoc(content)
         )
 
-        pkg = env.Package('mxnone')
+        pkg = env.PackageBase('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 4

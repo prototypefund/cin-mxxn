@@ -39,9 +39,10 @@ autodoc_member_order = 'bysource'
 autodoc_typehints = 'description'
 autodoc_default_options = {
     'show-inheritance': True,
-    'special-members': '__call__',
-    'undoc-members': True
+    'undoc-members': True,
 }
+autoclass_content = 'class'
+autodoc_class_signature = 'separated'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

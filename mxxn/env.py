@@ -84,10 +84,12 @@ class TypeResourceDict(TypedDict):
     """The type definition of resource dict."""
 
     resource: Type
-    routes: List[List[str]]
+    route: str
+    suffixes: List[str]
 
 
 TypeListOfResourceDicts = List[TypeResourceDict]
+"""The type definition of lsit on resource dicts."""
 
 
 class PackageBase():
@@ -102,10 +104,10 @@ class PackageBase():
 
     def __init__(self, name: str) -> None:
         """
-        Initialize an object of the Package class.
+        Initialize an object of the PackageBase class.
 
         Args:
-            name (string): The name of the package.
+            name: The name of the Python package.
 
         """
         try:
@@ -116,7 +118,7 @@ class PackageBase():
                     .format(name))
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Get the package name."""
         return self._package.__name__
 
@@ -125,35 +127,34 @@ class PackageBase():
         """
         Get the resources of the package.
 
-        This method searches the `resources` module or package of the mixxin
-        package or a mixin package for resources and returns a
-        list of the resources found. If no resource exists or there is no
+        This method searches the *resources* module or package of the Mixxin
+        package, Mixin package or a MixxinApp package for resources and returns
+        a list of the resources found. If no resource exists or there is no
         resources module or package, then an empty list is returned. A
         resource is a class that implements at least one responder method of
-        the form `on_*()`, where * is any one of the standard HTTP methods
-        (get, post, put, delete, patch). Classes that exclusively or
+        the form *on_*()*, where * is any one of the standard HTTP methods
+        (get, post, put, delete, patch, websocket). Classes that exclusively or
         additionally implement methods with a suffix in the form
-        `on_*_<suffix>` are also identified as a resource and the
+        *on_*_<suffix>* are also identified as a resource and the
         suffixes are returned with it. The returned list contains resource
         dictionaries. A dictionary has the following format:
 
-        ```python
-        {
-            'resource': <resource class>,
-            'routes': [
-                [<route 1>, <optional suffix>],
-                [<route n>, <optional suffix>],
-            ],
-        }
-        ```
+        .. code-block:: python
 
-        !!! note
-            Only resources with get, post, put, patch or/and delete
+            {
+                'resource': <resource class>,
+                'routes': <route>,
+                'suffixes': [<suffix_one>, <suffix_two>]
+            }
+
+        .. note::
+
+            Only resources with get, post, put, patch, delete or/and websocket
             responder are considered.
         """
-        resources_list = []
-
         try:
+            resources_list: TypeListOfResourceDicts = []
+
             resources_module = import_module(
                     self._package.__name__ + '.resources')
 
@@ -184,20 +185,11 @@ class PackageBase():
                             .replace('.', '/').lower()
                     route = route[::-1].replace('/', './', 1)[::-1]
 
-                    resource_dict: TypeResourceDict = {
-                        'resource': resource,
-                        'routes': []
-                    }
-
-                    if has_responder:
-                        resource_dict['routes'].append([route])
-
-                    if suffixes:
-                        for suffix in suffixes:
-                            resource_dict['routes'].append(
-                                [route+'.'+suffix, suffix]
-                            )
-                    resources_list.append(resource_dict)
+                    resources_list.append({
+                            'resource': resource,
+                            'route': route,
+                            'suffixes': suffixes
+                            })
 
         except ModuleNotFoundError:
             pass
@@ -206,7 +198,7 @@ class PackageBase():
 
 
 class Mixxin(PackageBase):
-    """With this class elements of the framework mixxin can be accessed."""
+    """With this class elements of the Mixxin framework can be accessed."""
 
     def __init__(self) -> None:
         """Initialize the Mixxin object."""
@@ -214,14 +206,16 @@ class Mixxin(PackageBase):
 
 
 class Mixin(PackageBase):
-    """With this class elements of a mixin can be accessed."""
+    """With this class elements of a Mixin package can be accessed."""
 
     def __init__(self) -> None:
-        """Initialize the MixxinApp class."""
+        """Initialize the Mixxin class."""
         super().__init__('mxxnapp')
 
 
 class MixxinApp(PackageBase):
+    """With this class elements of a MixinApp package can be accessed."""
+
     def __init__(self) -> None:
         """Initialize the MixxinApp class."""
         installed_apps = [

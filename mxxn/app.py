@@ -11,4 +11,5 @@ class App(object):
         self.settings = Settings()
         self.asgi = asgi.App()
 
-        self.asgi.add_route('/', resources.App())
+        self.asgi.add_route('/', resources.Root())
+        self.asgi.add_route('/.app', resources.App())

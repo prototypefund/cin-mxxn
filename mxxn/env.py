@@ -84,8 +84,7 @@ class TypeResourceDict(TypedDict):
     """The type definition of resource dict."""
 
     resource: Type
-    route: str
-    suffixes: List[str]
+    routes: List[List[str]]
 
 
 TypeListOfResourceDicts = List[TypeResourceDict]
@@ -143,8 +142,10 @@ class PackageBase():
 
             {
                 'resource': <resource class>,
-                'routes': <route>,
-                'suffixes': [<suffix_one>, <suffix_two>]
+                'routes': [
+                    [<route 1>, <optional suffix>],
+                    [<route n>, <optional suffix>],
+                ]
             }
 
         .. note::
@@ -185,11 +186,21 @@ class PackageBase():
                             .replace('.', '/').lower()
                     route = route[::-1].replace('/', './', 1)[::-1]
 
-                    resources_list.append({
-                            'resource': resource,
-                            'route': route,
-                            'suffixes': suffixes
-                            })
+                    resource_dict: TypeResourceDict = {
+                        'resource': resource,
+                        'routes': []
+                    }
+
+                    if has_responder:
+                        resource_dict['routes'].append([route])
+
+                    if suffixes:
+                        for suffix in suffixes:
+                            resource_dict['routes'].append(
+                                [route+'.'+suffix, suffix]
+                            )
+
+                    resources_list.append(resource_dict)
 
         except ModuleNotFoundError:
             pass

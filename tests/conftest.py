@@ -1,27 +1,36 @@
 """Pytest conftest.py file."""
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, Mock
+# from mxxn import env
 import sys
 
 
 @pytest.fixture()
-def iter_entry_points_mixins():
+def iter_entry_points():
     """Get mocks for the iter_entry_points function."""
-    mxnone = MagicMock
-    mxntwo = MagicMock()
-    mxnthree = MagicMock()
+    mxnone = Mock()
+    mxntwo = Mock()
+    mxnthree = Mock()
+    mxxnapp = Mock()
     mxnone.name = 'mxnone'
     mxntwo.name = 'mxntwo'
     mxnthree.name = 'mxnthree'
+    mxxnapp.name = 'mxxnapp'
 
-    with patch('mxxn.env.iter_entry_points') as mock:
-        mock.return_value = [mxnone, mxntwo, mxnthree]
+    def mock_iter_entry_points(group=''):
+        if group == 'mxxn_mixin':
+            return [mxnone, mxntwo, mxnthree]
+
+        if group == 'mxxn_app':
+            return [mxxnapp]
+
+    with patch('mxxn.env.iter_entry_points', new=mock_iter_entry_points):
 
         yield
 
 
 @pytest.fixture()
-def mxxn_env(tmp_path):
+def mxxn_env(tmp_path, iter_entry_points):
     """
     Get mixxin environment.
 
@@ -34,13 +43,7 @@ def mxxn_env(tmp_path):
         tmp_path: Pytest temp directory.
 
     """
-    # def mixins(*args, **kwargs):
-    #     return ['mxnone', 'mxntwo', 'mxnthree']
-    #
-    # monkeypatch.setattr(
-    #     env, 'mixins', mixins
-    # )
-    #
+
     for mod in list(sys.modules.keys()):
         if mod.startswith('mxxnapp'):
             del sys.modules[mod]
@@ -59,7 +62,10 @@ def mxxn_env(tmp_path):
     (mxxnapp/'__init__.py').touch()
     sys.path.insert(0, str(tmp_path))
 
-    yield tmp_path
+    with patch('mxxn.application.mixins') as mock:
+        mock.return_value = ['mxnone', 'mxntwo', 'mxnthree']
+
+        yield tmp_path
 
     sys.path.remove(str(tmp_path))
     for mod in list(sys.modules.keys()):

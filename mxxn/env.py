@@ -64,7 +64,7 @@ def mixins(settings: Settings) -> List[str]:
             section of settings file does not exist.
     """
     installed_mixins = [
-        item.name for item in iter_entry_points(group='mixxin_mixins')]
+        item.name for item in iter_entry_points(group='mxxn_mixin')]
 
     if isinstance(settings.enabled_mixins, list):
         if all(
@@ -220,9 +220,7 @@ class Mixxin(PackageBase):
 class Mixin(PackageBase):
     """With this class elements of a Mixin package can be accessed."""
 
-    def __init__(self) -> None:
-        """Initialize the Mixxin class."""
-        super().__init__('mxxnapp')
+    pass
 
 
 class MixxinApp(PackageBase):
@@ -231,7 +229,7 @@ class MixxinApp(PackageBase):
     def __init__(self) -> None:
         """Initialize the MixxinApp class."""
         installed_apps = [
-            item.name for item in iter_entry_points(group='mixxin_app')]
+            item.name for item in iter_entry_points(group='mxxn_app')]
 
         if installed_apps:
             if len(installed_apps) > 1:

@@ -9,21 +9,21 @@ from mxxn.exceptions import env as env_ex
 class TestMixins():
     """Tests for the mixins function."""
 
-    def test_all_enabled_mixins_exist(self, iter_entry_points_mixins):
+    def test_all_enabled_mixins_exist(self, mxxn_env):
         """Return the package names from settings if mixins are installed."""
         settings = MagicMock()
         settings.enabled_mixins = ['mxnone', 'mxnthree']
 
         assert env.mixins(settings) == ['mxnone', 'mxnthree']
 
-    def test_not_in_settings(self, iter_entry_points_mixins):
+    def test_not_in_settings(self, mxxn_env):
         """Return list of installed package names if no entry in settings."""
         settings = MagicMock()
         settings.enabled_mixins = None
 
         assert env.mixins(settings) == ['mxnone', 'mxntwo', 'mxnthree']
 
-    def test_mixin_not_exist(self, iter_entry_points_mixins):
+    def test_mixin_not_exist(self, mxxn_env):
         """Raise MixinNotExistError if mixin from settings not installed."""
         settings = MagicMock()
         settings.enabled_mixins = ['mxnone', 'xyz']
@@ -31,7 +31,7 @@ class TestMixins():
         with pytest.raises(env_ex.MixinNotExistError):
             env.mixins(settings)
 
-    def test_empty_list_in_settings(self, iter_entry_points_mixins):
+    def test_empty_list_in_settings(self, mxxn_env):
         """Return a empty list if it is a empty list in settings."""
         settings = MagicMock()
         settings.enabled_mixins = []
@@ -94,7 +94,6 @@ class TestPackageBaseResources():
         (mxxn_env/'mxnone/__init__.py').touch()
         (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
-
         pkg = env.PackageBase('mxnone')
         resources_list = pkg.resources
 
@@ -242,14 +241,9 @@ class TestMixxinAppInit():
 
     def test_app_exists(self, mxxn_env):
         """The app exists."""
-        mxxnapp = MagicMock()
-        mxxnapp.name = 'mxxnapp'
+        app = env.MixxinApp()
 
-        with patch('mxxn.env.iter_entry_points') as mock:
-            mock.return_value = [mxxnapp]
-            app = env.MixxinApp()
-
-            assert app.name == 'mxxnapp'
+        assert app.name == 'mxxnapp'
 
     def test_multiple_app(self, mxxn_env):
         """The app exists."""

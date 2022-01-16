@@ -185,7 +185,7 @@ class PackageBase():
                             '^'+resources_module.__name__, '', import_name)\
                             .replace('.', '/').lower()
 
-                    route = route[::-1].replace('/', '#/', 1)[::-1]
+                    route = route[::-1].replace('/', './', 1)[::-1]
 
                     resource_dict: TypeResourceDict = {
                         'resource': resource,

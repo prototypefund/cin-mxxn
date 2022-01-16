@@ -98,8 +98,8 @@ class TestPackageBaseResources():
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
-        assert resources_list[0]['routes'] == [['/#resourceone']]
-        assert resources_list[1]['routes'] == [['/#resourcetwo']]
+        assert resources_list[0]['routes'] == [['/.resourceone']]
+        assert resources_list[1]['routes'] == [['/.resourcetwo']]
         assert resources_list[0]['resource'].__name__ == 'ResourceOne'
         assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
         assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
@@ -128,9 +128,9 @@ class TestPackageBaseResources():
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
-        assert resources_list[0]['routes'] == [['/#resourceone']]
+        assert resources_list[0]['routes'] == [['/.resourceone']]
         assert resources_list[1]['routes'] == [
-            ['/#resourcetwo'], ['/#resourcetwo.list', 'list']
+            ['/.resourcetwo'], ['/.resourcetwo.list', 'list']
         ]
         assert resources_list[0]['resource'].__name__ == 'ResourceOne'
         assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
@@ -157,8 +157,8 @@ class TestPackageBaseResources():
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
-        assert resources_list[0]['routes'] == [['/#resourceone']]
-        assert resources_list[1]['routes'] == [['/#resourcetwo.list', 'list']]
+        assert resources_list[0]['routes'] == [['/.resourceone']]
+        assert resources_list[1]['routes'] == [['/.resourcetwo.list', 'list']]
         assert resources_list[0]['resource'].__name__ == 'ResourceOne'
         assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
         assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
@@ -196,17 +196,17 @@ class TestPackageBaseResources():
         resources_list = pkg.resources
 
         assert len(resources_list) == 4
-        assert resources_list[0]['routes'] == [['/#resourceone']]
+        assert resources_list[0]['routes'] == [['/.resourceone']]
         assert resources_list[1]['routes'] == [
-            ['/#resourcetwo'],
-            ['/#resourcetwo.suffix_one', 'suffix_one'],
-            ['/#resourcetwo.suffix_two', 'suffix_two']
+            ['/.resourcetwo'],
+            ['/.resourcetwo.suffix_one', 'suffix_one'],
+            ['/.resourcetwo.suffix_two', 'suffix_two']
         ]
-        assert resources_list[2]['routes'] == [['/pkg/resources/#resourceone']]
+        assert resources_list[2]['routes'] == [['/pkg/resources/.resourceone']]
         assert resources_list[3]['routes'] == [
-            ['/pkg/resources/#resourcetwo'],
-            ['/pkg/resources/#resourcetwo.suffix_one', 'suffix_one'],
-            ['/pkg/resources/#resourcetwo.suffix_two', 'suffix_two']
+            ['/pkg/resources/.resourcetwo'],
+            ['/pkg/resources/.resourcetwo.suffix_one', 'suffix_one'],
+            ['/pkg/resources/.resourcetwo.suffix_two', 'suffix_two']
         ]
         assert resources_list[0]['resource'].__name__ == 'ResourceOne'
         assert resources_list[1]['resource'].__name__ == 'ResourceTwo'

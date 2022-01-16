@@ -62,10 +62,7 @@ def mxxn_env(tmp_path, iter_entry_points):
     (mxxnapp/'__init__.py').touch()
     sys.path.insert(0, str(tmp_path))
 
-    with patch('mxxn.application.mixins') as mock:
-        mock.return_value = ['mxnone', 'mxntwo', 'mxnthree']
-
-        yield tmp_path
+    yield tmp_path
 
     sys.path.remove(str(tmp_path))
     for mod in list(sys.modules.keys()):

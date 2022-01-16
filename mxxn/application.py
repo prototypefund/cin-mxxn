@@ -62,7 +62,7 @@ class App(object):
                 routes = resource_dict['routes']
 
                 for route in routes:
-                    prefix = '/mixins/' + mixin_name
+                    prefix = '/mxn/' + mixin_name
                     if len(route) > 1:
                         self.asgi.add_route(
                             prefix + route[0], resource(),
@@ -81,9 +81,7 @@ class App(object):
         try:
             app = MixxinApp()
 
-            resource_list = app.resources()
-
-            for resource_dict in resource_list:
+            for resource_dict in app.resources:
                 resource = resource_dict['resource']
                 routes = resource_dict['routes']
 
@@ -100,7 +98,8 @@ class App(object):
                     self.asgi.add_route('/app'+route[0], resource())
 
             log.debug(
-                'The resources of the application package were registered.'
+                'The resources of the application package {} were registered.'
+                .format(app.name)
             )
 
         except env_ex.MixxinAppNotExistError:

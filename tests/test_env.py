@@ -1,9 +1,10 @@
 """This module contains tests for the env module."""
 import inspect
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import Mock, MagicMock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
+from mxxn.settings import Settings
 
 
 class TestMixins():
@@ -37,6 +38,13 @@ class TestMixins():
         settings.enabled_mixins = []
 
         assert env.mixins(settings) == []
+
+    def test_no_settings_file(self, mxxn_env):
+        """Return all installed mxns if no settings file given."""
+        settings = MagicMock()
+        settings.enabled_mixins = []
+
+        assert env.mixins() == ['mxnone', 'mxntwo', 'mxnthree']
 
 
 class TestPackageBaseInit():
@@ -246,6 +254,7 @@ class TestMixxinAppInit():
 
     def test_app_not_exist(self):
         """The app does not exist."""
+
         with pytest.raises(env_ex.MixxinAppNotExistError):
             env.MixxinApp()
 
@@ -267,3 +276,76 @@ class TestMixxinAppInit():
 
             with pytest.raises(env_ex.MultipleMixxinAppsError):
                 env.MixxinApp()
+
+
+class TestMixxinAppCoveringResources(object):
+    """Tests for the covering_resources method."""
+
+    def test_cover_for_a_mixxin_resource(self, mxxn_env):
+        """Cover for a mixxin resource."""
+        content = """
+            class Resource(object):
+                def on_get(self, req, resp):
+                    pass
+        """
+        covers_mixxin = mxxn_env/'mxxnapp/covers/mixxin'
+        covers_mixxin.mkdir(parents=True)
+        (mxxn_env/'mxxnapp/covers/mixxin/resources.py').write_text(
+            inspect.cleandoc(content)
+        )
+
+        settings = Settings()
+        app = env.MixxinApp()
+        resources = app.covering_resources(settings)
+
+        assert len(resources['mixxin']) == 1
+        assert resources['mixxin'][0]['routes'][0] == ['/.resource']
+
+    def test_cover_for_a_mixin_resource(self, mxxn_env):
+        """Cover for a mixin resource."""
+        content = """
+            class Resource(object):
+                def on_get(self, req, resp):
+                    pass
+        """
+        covers_mixxin = mxxn_env/'mxxnapp/covers/mixins/mxnone'
+        covers_mixxin.mkdir(parents=True)
+        (mxxn_env/'mxxnapp/covers/mixins/mxnone/resources.py').write_text(
+            inspect.cleandoc(content)
+        )
+
+        settings = Settings()
+        app = env.MixxinApp()
+        resources = app.covering_resources(settings)
+
+        assert len(resources['mixxin']) == 0
+        assert len(resources['mixins']['mxnone']) == 1
+        assert resources['mixins']['mxnone'][0]['routes'][0] == ['/.resource']
+
+    def test_respects_enabled_mixins(self, mxxn_env):
+        """Respects the enabled_mixins from settings file."""
+        content = """
+            class Resource(object):
+                def on_get(self, req, resp):
+                    pass
+        """
+        covers_mixxin_one = mxxn_env/'mxxnapp/covers/mixins/mxnone'
+        covers_mixxin_two = mxxn_env/'mxxnapp/covers/mixins/mxntwo'
+        covers_mixxin_one.mkdir(parents=True)
+        covers_mixxin_two.mkdir(parents=True)
+        (mxxn_env/'mxxnapp/covers/mixins/mxnone/resources.py').write_text(
+            inspect.cleandoc(content)
+        )
+        (mxxn_env/'mxxnapp/covers/mixins/mxntwo/resources.py').write_text(
+            inspect.cleandoc(content)
+        )
+
+        settings = Mock()
+        settings.enabled_mixins = ['mxnone', 'mxnthree']
+
+        app = env.MixxinApp()
+        resources = app.covering_resources(settings)
+
+        assert len(resources['mixxin']) == 0
+        assert len(resources['mixins']) == 1
+        assert resources['mixins']['mxnone'][0]['routes'][0] == ['/.resource']

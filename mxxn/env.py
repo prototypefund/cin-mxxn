@@ -35,10 +35,12 @@ automatically loaded from the packages and registered in the framework.
     * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
 """
 from pkg_resources import iter_entry_points
-from typing import List, TypedDict, Type
+from typing import List, TypedDict, Type, Dict,Optional
 import inspect
+import pkgutil
 from importlib import import_module
 import re
+from pathlib import Path
 from mxxn.exceptions import env as env_ex
 from mxxn.utils import modules
 from mxxn.settings import Settings
@@ -218,9 +220,14 @@ class PackageBase():
 class Mixxin(PackageBase):
     """With this class elements of the Mixxin framework can be accessed."""
 
-    def __init__(self) -> None:
-        """Initialize the Mixxin object."""
-        super().__init__('mxxn')
+    def __init__(self, name: str = 'mxxn') -> None:
+        """
+        Initialize the Package class.
+
+        Args:
+            name: A optional name of the Mixxin package.
+        """
+        super().__init__(name)
 
 
 class Mixin(PackageBase):
@@ -229,9 +236,43 @@ class Mixin(PackageBase):
     pass
 
 
-class MixxinApp(PackageBase):
-    """With this class elements of a MixinApp package can be accessed."""
+class TypeCoveringResources(TypedDict):
+    mixxin: TypeListOfResourceDicts
+    mixins: Dict[str, TypeListOfResourceDicts]
 
+
+class MixxinApp(PackageBase):
+    """
+    With this class elements of a mixxin app package can be accessed.
+
+    Application developers can overwrite almost all elements of the mixins or
+    the mixxin framework. This can include resources, static files, etc. For
+    this purpose, the covers package must be created in the application
+    package. All overloads of the mixxin framework are in the sub-package
+    mixxin, those of the mixins are in the sub-folder mixins. A sub-package
+    must exist for each mixin for which elements will be overloaded.
+    The folder structure of the overloads is exactly the same as in the
+    package that is to be overloaded.
+
+    Here is the folder structure of an exemplary application that overloads
+    the resources of the frameworks and a mixin:
+
+    . code-block:: bash
+        mxxnapp
+        |-- covers
+        |   |-- __init__.py
+        |   |-- mixins
+        |   |   |-- __init__.py
+        |   |   |-- mxntest
+        |   |       |-- __init__.py
+        |   |       |-- resources.py
+        |   |
+        |   |-- mixxin
+        |   |   |-- __init__.py
+        |   |   |-- resources.py
+        |-- __init__.py
+        setup.cfg
+    """
     def __init__(self) -> None:
         """Initialize the MixxinApp class."""
         installed_apps = [
@@ -247,3 +288,38 @@ class MixxinApp(PackageBase):
             return
 
         raise env_ex.MixxinAppNotExistError('No application package installed')
+
+    def covering_resources(self, settings: Settings) -> TypeCoveringResources:
+        """
+        Get the resource covers.
+
+        To overload a resource, the respective resource module must be created
+        in the package to be overloaded and the corresponding resource class
+        must be created in it. If only one or a few responders are to be
+        overloaded, then the resource class can be derived from the original
+        resource and the particular responder or responders can be overloaded.
+
+        Returns:
+            A dictionary containing the covering resources.
+
+        """
+        resource_covers: TypeCoveringResources = {
+            'mixxin': [],
+            'mixins': {}
+        }
+        try:
+            mixxin_covers = Mixxin('mxxnapp.covers.mixxin')
+            resource_covers['mixxin'] = mixxin_covers.resources
+
+        except env_ex.PackageNotExistError:
+            pass
+
+        for mixin_name in mixins(settings):
+            try:
+                mixin = Mixin('mxxnapp.covers.mixins.' + mixin_name)
+                resource_covers['mixins'][mixin_name] = mixin.resources
+
+            except env_ex.PackageNotExistError:
+                pass
+
+        return resource_covers

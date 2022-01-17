@@ -1,7 +1,6 @@
 """Pytest conftest.py file."""
 import pytest
 from unittest.mock import patch, Mock
-# from mxxn import env
 import sys
 
 
@@ -39,8 +38,8 @@ def mxxn_env(tmp_path, iter_entry_points):
     be added to the sys.path and deleted after testing.
 
     Args:
-        iter_entry_points: The iter_entry_points fixture.
         tmp_path: Pytest temp directory.
+        iter_entry_points: The iter_entry_points fixture.
 
     """
 

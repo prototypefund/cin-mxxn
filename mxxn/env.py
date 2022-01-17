@@ -287,7 +287,7 @@ class MxnApp(Base):
 
             return
 
-        raise env_ex.MixxinAppNotExistError('No application package installed')
+        raise env_ex.MxnAppNotExistError('No application package installed')
 
     def covering_resources(self, settings: Settings) -> TypeCoveringResources:
         """

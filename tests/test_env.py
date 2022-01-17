@@ -255,7 +255,7 @@ class TestMixxinAppInit():
     def test_app_not_exist(self):
         """The app does not exist."""
 
-        with pytest.raises(env_ex.MixxinAppNotExistError):
+        with pytest.raises(env_ex.MxnAppNotExistError):
             env.MxnApp()
 
     def test_app_exists(self, mxxn_env):

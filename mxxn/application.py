@@ -102,5 +102,5 @@ class App(object):
                 .format(app.name)
             )
 
-        except env_ex.MixxinAppNotExistError:
+        except env_ex.MxnAppNotExistError:
             pass

@@ -56,13 +56,14 @@ async def render(
             template not exist, if some syntax error in the template.
     """
     try:
-        env = Environment(loader=PackageLoader(package, 'templates'))
+        env = Environment(loader=PackageLoader(
+            package, 'templates'), enable_async=True)
         jinja2_template = env.get_template(str(template))
 
         if hasattr(resp.context, 'render'):
-            resp.text = jinja2_template.render(resp.context.render)
+            resp.text = await jinja2_template.render_async(resp.context.render)
         else:
-            resp.text = jinja2_template.render()
+            resp.text = await jinja2_template.render_async()
 
         resp.content_type = media_type
         resp.status = falcon.HTTP_200

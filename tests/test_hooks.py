@@ -124,7 +124,8 @@ class TestRender(object):
 
         app = falcon.asgi.App()
 
-        resources = import_module('mxnone.resources')
+        from mxnone import resources
+
         app.add_route('/', resources.Resource())
         app.add_error_handler(Exception, capture_errors)
         client = testing.TestClient(app)
@@ -155,7 +156,8 @@ class TestRender(object):
 
         app = falcon.asgi.App()
 
-        resources = import_module('mxnone.resources')
+        from mxnone import resources
+
         app.add_route('/', resources.Resource())
         app.add_error_handler(Exception, capture_errors)
         client = testing.TestClient(app)
@@ -186,7 +188,8 @@ class TestRender(object):
 
         app = falcon.asgi.App()
 
-        resources = import_module('mxnone.resources')
+        from mxnone import resources
+
         app.add_route('/', resources.Resource())
         app.add_error_handler(Exception, capture_errors)
         client = testing.TestClient(app)
@@ -217,7 +220,8 @@ class TestRender(object):
 
         app = falcon.asgi.App()
 
-        resources = import_module('mxnone.resources')
+        from mxnone import resources
+
         app.add_route('/', resources.Resource())
         app.add_error_handler(Exception, capture_errors)
         client = testing.TestClient(app)

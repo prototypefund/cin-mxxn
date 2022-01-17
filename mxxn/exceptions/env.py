@@ -26,7 +26,7 @@ class MxnAppNotExistError(PackageError):
     pass
 
 
-class MultipleMixxinAppsError(PackageError):
+class MultipleMxnAppsError(PackageError):
     """Raised if the mixxin app does not exist."""
 
     pass

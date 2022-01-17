@@ -280,7 +280,7 @@ class MxnApp(Base):
 
         if installed_apps:
             if len(installed_apps) > 1:
-                raise env_ex.MultipleMixxinAppsError(
+                raise env_ex.MultipleMxnAppsError(
                         'Multiple application packages installed.')
 
             super().__init__(installed_apps[0])

@@ -274,7 +274,7 @@ class TestMixxinAppInit():
         with patch('mxxn.env.iter_entry_points') as mock:
             mock.return_value = [mxxnapp_one, mxxnapp_two]
 
-            with pytest.raises(env_ex.MultipleMixxinAppsError):
+            with pytest.raises(env_ex.MultipleMxnAppsError):
                 env.MxnApp()
 
 

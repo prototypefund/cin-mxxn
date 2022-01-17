@@ -306,6 +306,7 @@ class MxnApp(Base):
             'mxxn': [],
             'mxns': {}
         }
+
         try:
             mxxn_covers = Mxxn(self.name + '.covers.mxxn')
             resource_covers['mxxn'] = mxxn_covers.resources

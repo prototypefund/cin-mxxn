@@ -22,6 +22,7 @@ class App(object):
         in installed mxns.
 
         """
+        # TODO add covers!
         log = logger('registration')
         mixxin = Mxxn()
 

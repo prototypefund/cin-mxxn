@@ -66,16 +66,17 @@ def mixins(settings: Settings) -> List[str]:
     installed_mixins = [
         item.name for item in iter_entry_points(group='mxxn_mixin')]
 
-    if isinstance(settings.enabled_mixins, list):
-        if all(
-            item in installed_mixins for item in settings.enabled_mixins
-        ):
-            return settings.enabled_mixins
+    if settings:
+        if isinstance(settings.enabled_mixins, list):
+            if all(
+                item in installed_mixins for item in settings.enabled_mixins
+            ):
+                return settings.enabled_mixins
 
-        raise env_ex.MixinNotExistError(
-            'The key enabled_mixins in the settings file '
-            'contains mixins that are not installed.'
-        )
+            raise env_ex.MixinNotExistError(
+                'The key enabled_mixins in the settings file '
+                'contains mixins that are not installed.'
+            )
 
     return installed_mixins
 

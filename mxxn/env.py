@@ -75,7 +75,7 @@ def mxns(settings: Optional[Settings] = None) -> List[str]:
             ):
                 return settings.enabled_mixins
 
-            raise env_ex.MixinNotExistError(
+            raise env_ex.MxnNotExistError(
                 'The key enabled_mixins in the settings file '
                 'contains mixins that are not installed.'
             )

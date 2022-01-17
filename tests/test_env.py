@@ -29,7 +29,7 @@ class TestMixins():
         settings = MagicMock()
         settings.enabled_mixins = ['mxnone', 'xyz']
 
-        with pytest.raises(env_ex.MixinNotExistError):
+        with pytest.raises(env_ex.MxnNotExistError):
             env.mxns(settings)
 
     def test_empty_list_in_settings(self, mxxn_env):

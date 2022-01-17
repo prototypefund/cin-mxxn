@@ -14,7 +14,7 @@ class PackageNotExistError(PackageError):
     pass
 
 
-class MixinNotExistError(PackageError):
+class MxnNotExistError(PackageError):
     """Raised if an mixxin does not exist."""
 
     pass

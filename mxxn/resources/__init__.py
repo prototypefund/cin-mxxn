@@ -1,5 +1,6 @@
 """The Resource package of the Mixxin package."""
 import falcon
+from mxxn.hooks import render
 
 
 class Root(object):
@@ -12,8 +13,8 @@ class Root(object):
 
 class App(object):
     """The App resource of the Mixxin package."""
-
+    @falcon.after(render, package='mxxn', template='app.j2')
     async def on_get(self, req, resp):
         """Get the application front-end."""
-        resp.text = 'Mixxin'
-        resp.content_type = falcon.MEDIA_HTML
+
+        pass

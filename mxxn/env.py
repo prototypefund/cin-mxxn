@@ -94,7 +94,7 @@ TypeListOfResourceDicts = List[TypeResourceDict]
 """The type definition of lsit on resource dicts."""
 
 
-class PackageBase():
+class Base():
     """
     The base class of all framework packages.
 
@@ -217,7 +217,7 @@ class PackageBase():
         return resources_list
 
 
-class Mixxin(PackageBase):
+class Mixxin(Base):
     """With this class elements of the Mixxin framework can be accessed."""
 
     def __init__(self, name: str = 'mxxn') -> None:
@@ -230,7 +230,7 @@ class Mixxin(PackageBase):
         super().__init__(name)
 
 
-class Mixin(PackageBase):
+class Mixin(Base):
     """With this class elements of a Mixin package can be accessed."""
 
     pass
@@ -241,7 +241,7 @@ class TypeCoveringResources(TypedDict):
     mixins: Dict[str, TypeListOfResourceDicts]
 
 
-class MixxinApp(PackageBase):
+class MixxinApp(Base):
     """
     With this class elements of a mixxin app package can be accessed.
 

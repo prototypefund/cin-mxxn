@@ -53,11 +53,11 @@ class TestPackageBaseInit():
     def test_package_not_exist(self):
         """The Package does not exist."""
         with pytest.raises(env_ex.PackageNotExistError):
-            env.PackageBase('xyz')
+            env.Base('xyz')
 
     def test_package_exists(self, mxxn_env):
         """The Package exist."""
-        env.PackageBase('mxnone')
+        env.Base('mxnone')
 
 
 class TestPackageBaseName():
@@ -65,7 +65,7 @@ class TestPackageBaseName():
 
     def test_name_is_returned(self, mxxn_env):
         """The name is returned."""
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
         assert pkg.name == 'mxnone'
 
 
@@ -74,7 +74,7 @@ class TestPackageBasePath():
 
     def test_path_is_returned(self, mxxn_env):
         """The path is returned."""
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
 
         assert pkg.path == mxxn_env/'mxnone'
 
@@ -87,13 +87,13 @@ class TestPackageBaseResources():
         (mxxn_env/'mxnone/__init__.py').touch()
         (mxxn_env/'mxnone/resources.py').touch()
 
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
 
         assert pkg.resources == []
 
     def test_package_has_not_resource_module(self, mxxn_env):
         """Module has a resources module."""
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
 
         assert pkg.resources == []
 
@@ -112,7 +112,7 @@ class TestPackageBaseResources():
         (mxxn_env/'mxnone/__init__.py').touch()
         (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
@@ -142,7 +142,7 @@ class TestPackageBaseResources():
         (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
@@ -171,7 +171,7 @@ class TestPackageBaseResources():
         (mxxn_env/'mxnone/resources.py').write_text(
             inspect.cleandoc(content))
 
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 2
@@ -210,7 +210,7 @@ class TestPackageBaseResources():
             inspect.cleandoc(content)
         )
 
-        pkg = env.PackageBase('mxnone')
+        pkg = env.Base('mxnone')
         resources_list = pkg.resources
 
         assert len(resources_list) == 4

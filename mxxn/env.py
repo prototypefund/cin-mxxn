@@ -44,7 +44,7 @@ from mxxn.utils import modules
 from mxxn.settings import Settings
 
 
-def mixins(settings: Settings) -> List[str]:
+def mixins(settings: Optional[Settings] = None) -> List[str]:
     """
     Get a list of the installed mixins.
 

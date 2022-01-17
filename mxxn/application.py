@@ -2,7 +2,7 @@
 from falcon import asgi
 from mxxn.settings import Settings
 from mxxn.logging import logger
-from mxxn.env import Mixxin, mixins, Mixin, MixxinApp
+from mxxn.env import Mixxin, mxns, Mixin, MixxinApp
 from mxxn.exceptions import env as env_ex
 
 
@@ -46,7 +46,7 @@ class App(object):
             'The resources of the mixxin package were registered.'
         )
 
-        for mixin_name in mixins(self.settings):
+        for mixin_name in mxns(self.settings):
             mixin = Mixin(mixin_name)
 
             if not mixin.resources:

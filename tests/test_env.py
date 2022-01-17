@@ -15,14 +15,14 @@ class TestMixins():
         settings = MagicMock()
         settings.enabled_mixins = ['mxnone', 'mxnthree']
 
-        assert env.mixins(settings) == ['mxnone', 'mxnthree']
+        assert env.mxns(settings) == ['mxnone', 'mxnthree']
 
     def test_not_in_settings(self, mxxn_env):
         """Return list of installed package names if no entry in settings."""
         settings = MagicMock()
         settings.enabled_mixins = None
 
-        assert env.mixins(settings) == ['mxnone', 'mxntwo', 'mxnthree']
+        assert env.mxns(settings) == ['mxnone', 'mxntwo', 'mxnthree']
 
     def test_mixin_not_exist(self, mxxn_env):
         """Raise MixinNotExistError if mixin from settings not installed."""
@@ -30,21 +30,21 @@ class TestMixins():
         settings.enabled_mixins = ['mxnone', 'xyz']
 
         with pytest.raises(env_ex.MixinNotExistError):
-            env.mixins(settings)
+            env.mxns(settings)
 
     def test_empty_list_in_settings(self, mxxn_env):
         """Return a empty list if it is a empty list in settings."""
         settings = MagicMock()
         settings.enabled_mixins = []
 
-        assert env.mixins(settings) == []
+        assert env.mxns(settings) == []
 
     def test_no_settings_file(self, mxxn_env):
         """Return all installed mxns if no settings file given."""
         settings = MagicMock()
         settings.enabled_mixins = []
 
-        assert env.mixins() == ['mxnone', 'mxntwo', 'mxnthree']
+        assert env.mxns() == ['mxnone', 'mxntwo', 'mxnthree']
 
 
 class TestPackageBaseInit():

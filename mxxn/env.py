@@ -46,7 +46,7 @@ from mxxn.utils import modules
 from mxxn.settings import Settings
 
 
-def mixins(settings: Optional[Settings] = None) -> List[str]:
+def mxns(settings: Optional[Settings] = None) -> List[str]:
     """
     Get a list of the installed mixins.
 
@@ -314,7 +314,7 @@ class MixxinApp(Base):
         except env_ex.PackageNotExistError:
             pass
 
-        for mixin_name in mixins(settings):
+        for mixin_name in mxns(settings):
             try:
                 mixin = Mixin('mxxnapp.covers.mixins.' + mixin_name)
                 resource_covers['mixins'][mixin_name] = mixin.resources

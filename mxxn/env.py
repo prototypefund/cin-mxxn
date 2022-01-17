@@ -123,6 +123,11 @@ class PackageBase():
         return self._package.__name__
 
     @property
+    def path(self) -> str:
+        """Get the package path."""
+        return Path(self._package.__path__[0])
+
+    @property
     def resources(self) -> TypeListOfResourceDicts:
         """
         Get the resources of the package.

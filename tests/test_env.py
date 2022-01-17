@@ -61,6 +61,16 @@ class TestPackageBaseName():
         assert pkg.name == 'mxnone'
 
 
+class TestPackageBasePath():
+    """Tests for the path property of the PackageBase class."""
+
+    def test_path_is_returned(self, mxxn_env):
+        """The path is returned."""
+        pkg = env.PackageBase('mxnone')
+
+        assert pkg.path == mxxn_env/'mxnone'
+
+
 class TestPackageBaseResources():
     """Tests for the resources property of the PackageBase class."""
 

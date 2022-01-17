@@ -2,7 +2,7 @@
 from falcon import asgi
 from mxxn.settings import Settings
 from mxxn.logging import logger
-from mxxn.env import Mxxn, mxns, Mxn, MixxinApp
+from mxxn.env import Mxxn, mxns, Mxn, MxnApp
 from mxxn.exceptions import env as env_ex
 
 
@@ -79,7 +79,7 @@ class App(object):
             )
 
         try:
-            app = MixxinApp()
+            app = MxnApp()
 
             for resource_dict in app.resources:
                 resource = resource_dict['resource']

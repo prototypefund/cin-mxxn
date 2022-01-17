@@ -256,11 +256,11 @@ class TestMixxinAppInit():
         """The app does not exist."""
 
         with pytest.raises(env_ex.MixxinAppNotExistError):
-            env.MixxinApp()
+            env.MxnApp()
 
     def test_app_exists(self, mxxn_env):
         """The app exists."""
-        app = env.MixxinApp()
+        app = env.MxnApp()
 
         assert app.name == 'mxxnapp'
 
@@ -275,7 +275,7 @@ class TestMixxinAppInit():
             mock.return_value = [mxxnapp_one, mxxnapp_two]
 
             with pytest.raises(env_ex.MultipleMixxinAppsError):
-                env.MixxinApp()
+                env.MxnApp()
 
 
 class TestMixxinAppCoveringResources(object):
@@ -295,7 +295,7 @@ class TestMixxinAppCoveringResources(object):
         )
 
         settings = Settings()
-        app = env.MixxinApp()
+        app = env.MxnApp()
         resources = app.covering_resources(settings)
 
         assert len(resources['mixxin']) == 1
@@ -315,7 +315,7 @@ class TestMixxinAppCoveringResources(object):
         )
 
         settings = Settings()
-        app = env.MixxinApp()
+        app = env.MxnApp()
         resources = app.covering_resources(settings)
 
         assert len(resources['mixxin']) == 0
@@ -343,7 +343,7 @@ class TestMixxinAppCoveringResources(object):
         settings = Mock()
         settings.enabled_mixins = ['mxnone', 'mxnthree']
 
-        app = env.MixxinApp()
+        app = env.MxnApp()
         resources = app.covering_resources(settings)
 
         assert len(resources['mixxin']) == 0

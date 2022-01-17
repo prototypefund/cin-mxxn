@@ -241,7 +241,7 @@ class TypeCoveringResources(TypedDict):
     mixins: Dict[str, TypeListOfResourceDicts]
 
 
-class MixxinApp(Base):
+class MxnApp(Base):
     """
     With this class elements of a mixxin app package can be accessed.
 

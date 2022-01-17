@@ -217,21 +217,21 @@ class Base():
         return resources_list
 
 
-class Mixxin(Base):
-    """With this class elements of the Mixxin framework can be accessed."""
+class Mxxn(Base):
+    """With this class elements of the Mxxn framework can be accessed."""
 
     def __init__(self, name: str = 'mxxn') -> None:
         """
         Initialize the Package class.
 
         Args:
-            name: A optional name of the Mixxin package.
+            name: A optional name of the Mxxn package.
         """
         super().__init__(name)
 
 
-class Mixin(Base):
-    """With this class elements of a Mixin package can be accessed."""
+class Mxn(Base):
+    """With this class elements of a Mxn package can be accessed."""
 
     pass
 
@@ -308,7 +308,7 @@ class MixxinApp(Base):
             'mixins': {}
         }
         try:
-            mixxin_covers = Mixxin('mxxnapp.covers.mixxin')
+            mixxin_covers = Mxxn('mxxnapp.covers.mixxin')
             resource_covers['mixxin'] = mixxin_covers.resources
 
         except env_ex.PackageNotExistError:
@@ -316,7 +316,7 @@ class MixxinApp(Base):
 
         for mixin_name in mxns(settings):
             try:
-                mixin = Mixin('mxxnapp.covers.mixins.' + mixin_name)
+                mixin = Mxn('mxxnapp.covers.mixins.' + mixin_name)
                 resource_covers['mixins'][mixin_name] = mixin.resources
 
             except env_ex.PackageNotExistError:

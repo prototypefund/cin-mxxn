@@ -110,7 +110,7 @@ def resources(mxxn_env):
     (mxxn_env/'mxxnapp/__init__.py').touch()
     (mxxn_env/'mxxnapp/resources.py').write_text(cleandoc(content_app))
 
-    with patch('mxxn.env.Mixxin.resources', new_callable=PropertyMock) as mock:
+    with patch('mxxn.env.Mxxn.resources', new_callable=PropertyMock) as mock:
         mock.return_value = mock_mixxin_resources
 
         yield

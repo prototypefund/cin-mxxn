@@ -244,7 +244,7 @@ class TestMixxinInit():
 
     def test_init(self):
         """Test if Mixxin instance has a name "mixxin"."""
-        mixxin = env.Mixxin()
+        mixxin = env.Mxxn()
 
         assert mixxin.name == 'mxxn'
 

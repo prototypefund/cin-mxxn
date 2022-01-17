@@ -2,7 +2,7 @@
 from falcon import asgi
 from mxxn.settings import Settings
 from mxxn.logging import logger
-from mxxn.env import Mixxin, mxns, Mixin, MixxinApp
+from mxxn.env import Mxxn, mxns, Mxn, MixxinApp
 from mxxn.exceptions import env as env_ex
 
 
@@ -23,7 +23,7 @@ class App(object):
 
         """
         log = logger('registration')
-        mixxin = Mixxin()
+        mixxin = Mxxn()
 
         for resource_dict in mixxin.resources:
             resource = resource_dict['resource']
@@ -47,7 +47,7 @@ class App(object):
         )
 
         for mixin_name in mxns(self.settings):
-            mixin = Mixin(mixin_name)
+            mixin = Mxn(mixin_name)
 
             if not mixin.resources:
                 log.debug(

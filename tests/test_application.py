@@ -38,7 +38,7 @@ def resources(mxxn_env):
             resp.content_type = falcon.MEDIA_HTML
             resp.status = falcon.HTTP_200
 
-    mock_mixxin_resources = [
+    mock_mxxn_resources = [
         {
             'resource': Root,
             'routes': [
@@ -59,23 +59,23 @@ def resources(mxxn_env):
         }
     ]
 
-    content_mixins = """
+    content_mxns = """
             import falcon
 
-            class MixinResourceOne(object):
+            class MxnResourceOne(object):
                 async def on_get(self, req, resp):
-                    resp.body = 'MixinResourceOne'
+                    resp.body = 'MxnResourceOne'
                     resp.content_type = falcon.MEDIA_HTML
                     resp.status = falcon.HTTP_200
 
-            class MixinResourceTwo(object):
+            class MxnResourceTwo(object):
                 async def on_get(self, req, resp):
-                    resp.body = 'MixinResourceTwo'
+                    resp.body = 'MxnResourceTwo'
                     resp.content_type = falcon.MEDIA_HTML
                     resp.status = falcon.HTTP_200
 
                 async def on_get_list(self, req, resp):
-                    resp.body = 'MixinResourceTwo list'
+                    resp.body = 'MxnResourceTwo list'
                     resp.content_type = falcon.MEDIA_HTML
                     resp.status = falcon.HTTP_200
         """
@@ -102,25 +102,25 @@ def resources(mxxn_env):
         """
 
     (mxxn_env/'mxnone/__init__.py').touch()
-    (mxxn_env/'mxnone/resources.py').write_text(cleandoc(content_mixins))
+    (mxxn_env/'mxnone/resources.py').write_text(cleandoc(content_mxns))
 
     (mxxn_env/'mxntwo/__init__.py').touch()
-    (mxxn_env/'mxntwo/resources.py').write_text(cleandoc(content_mixins))
+    (mxxn_env/'mxntwo/resources.py').write_text(cleandoc(content_mxns))
 
     (mxxn_env/'mxxnapp/__init__.py').touch()
     (mxxn_env/'mxxnapp/resources.py').write_text(cleandoc(content_app))
 
     with patch('mxxn.env.Mxxn.resources', new_callable=PropertyMock) as mock:
-        mock.return_value = mock_mixxin_resources
+        mock.return_value = mock_mxxn_resources
 
         yield
 
 
-class TestAppRegisterResources(object):
+class TestAppRegisterResources():
     """Tests for the _register_resources method of the App class."""
 
-    def test_mixxin_routes_added(self, resources):
-        """All routes of the mixxin were added."""
+    def test_mxxn_routes_added(self, resources):
+        """All routes of the mxxn were added."""
         app = App()
         client = testing.TestClient(app.asgi)
 
@@ -135,26 +135,26 @@ class TestAppRegisterResources(object):
         assert response_two.status == falcon.HTTP_OK
         assert response_two.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mixin_routes_added(self, resources, tmp_path):
-        """All routes of the mixins were added."""
+    def test_mxn_routes_added(self, resources, tmp_path):
+        """All routes of the mxns were added."""
         app = App()
         client = testing.TestClient(app.asgi)
 
-        response_one = client.simulate_get('/mxn/mxnone/.mixinresourceone')
-        response_two = client.simulate_get('/mxn/mxnone/.mixinresourcetwo')
+        response_one = client.simulate_get('/mxns/mxnone/.mxnresourceone')
+        response_two = client.simulate_get('/mxns/mxnone/.mxnresourcetwo')
         response_three = client.simulate_get(
-            '/mxn/mxnone/.mixinresourcetwo.list'
+            '/mxns/mxnone/.mxnresourcetwo.list'
         )
 
-        assert response_one.text == 'MixinResourceOne'
+        assert response_one.text == 'MxnResourceOne'
         assert response_one.status == falcon.HTTP_OK
         assert response_one.headers['content-type'] == falcon.MEDIA_HTML
 
-        assert response_two.text == 'MixinResourceTwo'
+        assert response_two.text == 'MxnResourceTwo'
         assert response_two.status == falcon.HTTP_OK
         assert response_two.headers['content-type'] == falcon.MEDIA_HTML
 
-        assert response_three.text == 'MixinResourceTwo list'
+        assert response_three.text == 'MxnResourceTwo list'
         assert response_three.status == falcon.HTTP_OK
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
 

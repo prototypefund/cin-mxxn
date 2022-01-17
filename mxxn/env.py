@@ -307,15 +307,15 @@ class MxnApp(Base):
             'mxns': {}
         }
         try:
-            mixxin_covers = Mxxn('mxxnapp.covers.mxxn')
-            resource_covers['mxxn'] = mixxin_covers.resources
+            mxxn_covers = Mxxn(self.name + '.covers.mxxn')
+            resource_covers['mxxn'] = mxxn_covers.resources
 
         except env_ex.PackageNotExistError:
             pass
 
         for mxn_name in mxns(settings):
             try:
-                mxn = Mxn('mxxnapp.covers.mxns.' + mxn_name)
+                mxn = Mxn(self.name + '.covers.mxns.' + mxn_name)
                 resource_covers['mxns'][mxn_name] = mxn.resources
 
             except env_ex.PackageNotExistError:

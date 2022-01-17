@@ -5,7 +5,6 @@ import falcon.asgi
 from mxxn import hooks
 from mxxn.exceptions import capture_errors
 import inspect
-from importlib import import_module
 from pathlib import Path
 
 
@@ -15,7 +14,7 @@ class TestRender(object):
     def test_file_was_rendered(self):
         """Test if the file was rendered."""
         class Root(object):
-            @falcon.after(hooks.render, 'mxxn', Path('app.j2'))
+            @falcon.after(hooks.render, Path('app.j2'), 'mxxn')
             async def on_get(self, req, resp):
                 resp.context.render = {}
 
@@ -36,7 +35,7 @@ class TestRender(object):
     def test_package_not_exist(self, caplog):
         """The package does not exist."""
         class Root(object):
-            @falcon.after(hooks.render, 'mxnxxyyzz', Path('app.j2'))
+            @falcon.after(hooks.render, Path('app.j2'), 'mxnxxyyzz')
             async def on_get(self, req, resp):
                 resp.context.render = {}
 
@@ -54,7 +53,7 @@ class TestRender(object):
     def test_default_content_type(self):
         """Default content-type is HTML."""
         class Root(object):
-            @falcon.after(hooks.render, 'mxxn', Path('app.j2'))
+            @falcon.after(hooks.render, Path('app.j2'), 'mxxn')
             async def on_get(self, req, resp):
                 resp.context.render = {}
 
@@ -71,7 +70,7 @@ class TestRender(object):
         """The given media type was used."""
         class Root(object):
             @falcon.after(
-                hooks.render, 'mxxn', Path('app.j2'), falcon.MEDIA_TEXT
+                hooks.render, Path('app.j2'), 'mxxn', falcon.MEDIA_TEXT
             )
             async def on_get(self, req, resp):
                 resp.context.render = {}
@@ -88,7 +87,7 @@ class TestRender(object):
     def test_if_template_not_found(self, caplog):
         """The template was not found."""
         class Root(object):
-            @falcon.after(hooks.render, 'mxxn', Path('non-existing.j2'))
+            @falcon.after(hooks.render, Path('non-existing.j2'), 'mxxn')
             async def on_get(self, req, resp):
                 resp.context.render = {}
 
@@ -112,7 +111,7 @@ class TestRender(object):
 
         class Resource():
             @falcon.after(
-                hooks.render, 'mxnone', Path('template.j2'), falcon.MEDIA_TEXT
+                hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
             async def on_get(self, req, resp):
                 resp.context.render = {}
@@ -144,7 +143,7 @@ class TestRender(object):
 
         class Resource(object):
             @falcon.after(
-                hooks.render, 'mxnone', Path('template.j2'), falcon.MEDIA_TEXT
+                hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
             async def on_get(self, req, resp):
                 pass
@@ -176,7 +175,7 @@ class TestRender(object):
 
         class Resource(object):
             @falcon.after(
-                hooks.render, 'mxnone', Path('template.j2'), falcon.MEDIA_TEXT
+                hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
             async def on_get(self, req, resp):
                 resp.context.render = {'content': '123'}
@@ -208,7 +207,7 @@ class TestRender(object):
 
         class Resource(object):
             @falcon.after(
-                hooks.render, 'mxnone', Path('template.j2'), falcon.MEDIA_TEXT
+                hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
             async def on_get(self, req, resp):
                 resp.context.render = {'content': 123}
@@ -231,3 +230,24 @@ class TestRender(object):
         assert response.status_code == 500
         assert response.status == '500 Internal Server Error'
         assert 'TemplateSyntaxError' in str(caplog.records[-1])
+
+    def test_caller_package_used(self, caplog):
+        """Caller package is used."""
+        class Root(object):
+            @falcon.after(hooks.render, Path('app.j2'))
+            async def on_get(self, req, resp):
+                resp.context.render = {}
+
+        app = falcon.asgi.App()
+        app.add_route('/', Root())
+        app.add_error_handler(Exception, capture_errors)
+        client = testing.TestClient(app)
+
+        response = client.simulate_get('/')
+
+        assert response.text.find('<!DOCTYPE html>') != -1
+        assert response.text.find('</html>') != -1
+        assert response.text.find('<head>') != -1
+        assert response.text.find('</head>') != -1
+        assert response.text.find('<body>') != -1
+        assert response.text.find('</body>') != -1

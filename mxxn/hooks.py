@@ -1,19 +1,20 @@
 """This module contains some before and after hooks."""
 from jinja2 import Environment, PackageLoader
 from jinja2 import exceptions as jinja2_ex
+from pathlib import Path
+from typing import Type, Optional
+import falcon
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import filesys as filesys_ex
-from pathlib import Path
-import falcon
-from typing import Type
+from mxxn.utils.packages import caller_package_name
 
 
 async def render(
             req: falcon.Request,
             resp: falcon.Response,
             resource: Type,
-            package: str,
             template: Path,
+            package_name: Optional[str] = None,
             media_type: str = falcon.MEDIA_HTML
         ) -> None:
     """
@@ -35,7 +36,7 @@ async def render(
 
             class Resource(object):
                 @falcon.after(
-                    hooks.render, 'package_name', Path('path/to/template.j2')
+                    hooks.render, Path('path/to/template.j2', 'package_name')
                 )
                 def on_get(self, req, resp):
                     resp.context.render = {'variable': 123}
@@ -45,9 +46,10 @@ async def render(
         resp: The Falcon response object containing the variables in
             the media attribute.
         resource: The called Falcon resource.
-        package: The name of the package in which the template is located.
         template: The name of the template (relative to the template folder
             of the package).
+        package_name: The name of the package in which the template is located.
+            The default is the package in which the hook was called.
         media_type: The media type of the rendered data. Default type is
             falcon.MEDIA_HTML.
 
@@ -56,6 +58,11 @@ async def render(
             template not exist, if some syntax error in the template.
     """
     try:
+        if package_name:
+            package = package_name
+        else:
+            package = caller_package_name()
+
         env = Environment(loader=PackageLoader(
             package, 'templates'), enable_async=True)
         jinja2_template = env.get_template(str(template))

@@ -4,7 +4,7 @@ from mxxn.hooks import render
 
 
 class Root(object):
-    """The Root resource of the Mixxin package."""
+    """The Root resource of the Mxxn package."""
 
     async def on_get(self, req, resp):
         """Forward the get request to the app resource."""
@@ -12,8 +12,8 @@ class Root(object):
 
 
 class App(object):
-    """The App resource of the Mixxin package."""
-    @falcon.after(render, package='mxxn', template='app.j2')
+    """The App resource of the Mxxn package."""
+    @falcon.after(render, template='app.j2')
     async def on_get(self, req, resp):
         """Get the application front-end."""
 

@@ -24,7 +24,7 @@ List of variables:
 +-------------+------------------+-------+--------------------------+
 | Section     | Variable         | Type  | Description              |
 +=============+==================+=======+==========================+
-| mixxin      | enabled_mixins   | list  | List of enabled mixxins  |
+| mixxin      | enabled_mxns     | list  | List of enabled mixxins  |
 +-------------+------------------+-------+--------------------------+
 | mixxin      | app_path         | str   | Application directory    |
 +-------------+------------------+-------+--------------------------+
@@ -47,10 +47,10 @@ from mxxn.exceptions import settings as settings_ex
 _settings_schema: dict = {
     'type': 'object',
     'properties': {
-        'mixxin': {
+        'mxxn': {
             'type': 'object',
             'properties': {
-                'enabled_mixins': {
+                'enabled_mxns': {
                     'type': 'array',
                     'items': {
                         'type': 'string'
@@ -101,24 +101,24 @@ class Settings():
         If a settings file exists, it is read in and the default settings are
         set for variables that are not in the file.
         """
-        self._data: dict = {'mixxin': {}, 'alembic': {}}
+        self._data: dict = {'mxxn': {}, 'alembic': {}}
         settings_file = self._file()
 
         if settings_file:
             self._load(settings_file)
 
     @property
-    def enabled_mixins(self) -> Optional[List[str]]:
+    def enabled_mxns(self) -> Optional[List[str]]:
         """
         Get a list of enabled mixins.
 
         It is possible to activate only specific mixins in the
-        settings file. If the `enabled_mixins` variable of the settings
-        file is not set, None is returned. To deactivate all installed mixins,
+        settings file. If the `enabled_mxns` variable of the settings
+        file is not set, None is returned. To deactivate all installed mxns,
         an empty list can be set in the settings file.
         """
-        if 'enabled_mixins' in self._data['mixxin']:
-            return self._data['mixxin']['enabled_mixins']
+        if 'enabled_mxns' in self._data['mxxn']:
+            return self._data['mxxn']['enabled_mxns']
 
         return None
 
@@ -134,8 +134,8 @@ class Settings():
         not set, the current working directory at the time of the application
         start is returned.
         """
-        if 'app_path' in self._data['mixxin']:
-            app_path = Path(self._data['mixxin']['app_path'])
+        if 'app_path' in self._data['mxxn']:
+            app_path = Path(self._data['mxxn']['app_path'])
 
             if app_path.is_dir():
                 return app_path.resolve()
@@ -157,8 +157,8 @@ class Settings():
         If the data_path variable of the settings file is not set, the
         *app_path/data* is returned.
         """
-        if 'data_path' in self._data['mixxin']:
-            data_path = Path(self._data['mixxin']['data_path'])
+        if 'data_path' in self._data['mxxn']:
+            data_path = Path(self._data['mxxn']['data_path'])
 
             if data_path.is_dir():
                 return data_path.resolve()
@@ -176,7 +176,7 @@ class Settings():
 
         The database URL is taken from the *sqlalchemy_url* variable of the
         *alembic* section of the settings file. If this was not set, the
-        default URL *'sqlite:///<data_path>/mixxin.db'* is returned.
+        default URL *'sqlite:///<data_path>/mxxn.db'* is returned.
 
         Returns:
             The default database URL.
@@ -184,13 +184,13 @@ class Settings():
         if 'sqlalchemy.url' in self._data['alembic']:
             return self._data['alembic']['sqlalchemy.url']
         else:
-            return 'sqlite:///' + str(self.data_path/'mixxin.db')
+            return 'sqlite:///' + str(self.data_path/'mxxn.db')
 
     def _load(self, settings_file: Path) -> None:
         """
         Load the settings from the settings file.
 
-        The function reads the *mixxin* and the *alembic* section of the
+        The function reads the *mxxn* and the *alembic* section of the
         settings file into the self._data dictionary with the
         respective variables. Only the *sqlalchemy_url* variable is read
         from the `alembic` section, all others are ignored. After reading,
@@ -208,9 +208,9 @@ class Settings():
             config.read(settings_file)
             sections = config.sections()
 
-            if 'mixxin' in sections:
-                for option, value in config.items('mixxin'):
-                    self._data['mixxin'][option] = ast.literal_eval(value)
+            if 'mxxn' in sections:
+                for option, value in config.items('mxxn'):
+                    self._data['mxxn'][option] = ast.literal_eval(value)
 
             if 'alembic' in sections:
                 if 'sqlalchemy.url' in config['alembic']:
@@ -221,7 +221,7 @@ class Settings():
 
         except ValueError:
             raise settings_ex.SettingsFormatError(
-                    'One of the values in the mixxin section is not regular '
+                    'One of the values in the mxxn section is not regular '
                     'Python code. It must be a Python literal structure: '
                     'strings, numbers, tuples, lists, dicts, booleans, '
                     'and None.'
@@ -256,7 +256,7 @@ class Settings():
         """
         Get the path of the settings file.
 
-        The function checks if the environment variable *MIXXIN_SETTINGS* has
+        The function checks if the environment variable *MXXN_SETTINGS* has
         been set and whether the file exists in the file system. If the
         environment variable has not been set, the current working directory
         is searched for a file with the name *settings.ini*. If this file does
@@ -264,19 +264,19 @@ class Settings():
 
         Raises:
             mixxin.exceptions.filesys.FileNotExistError: If the file in the
-                environment variable MIXXIN_SETTINGS does not exist.
+                environment variable MXXN_SETTINGS does not exist.
 
         Returns:
             The absolute path to the settings file or None if it does
             not exist.
         """
-        if 'MIXXIN_SETTINGS' in environ:
-            if Path(environ['MIXXIN_SETTINGS']).is_file():
-                return Path(environ['MIXXIN_SETTINGS']).resolve()
+        if 'MXXN_SETTINGS' in environ:
+            if Path(environ['MXXN_SETTINGS']).is_file():
+                return Path(environ['MXXN_SETTINGS']).resolve()
             else:
                 raise filesys_ex.FileNotExistError(
                         'The settings file in the environment variable '
-                        'MIXXIN_SETTINGS does not exist.'
+                        'MXXN_SETTINGS does not exist.'
                 )
         else:
             if (Path.cwd()/'settings.ini').is_file():

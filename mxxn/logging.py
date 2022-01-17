@@ -8,7 +8,7 @@ def logger(context: Optional[str] = None) -> Logger:
     """
     Get a logger for the application.
 
-    The logger name is in format *mixxin.<package>.<context>*.
+    The logger name is in format *mxxn.<package>.<context>*.
     In mixxin each log entry should be assigned to a context.
     The respective context should be one of the following:
 
@@ -49,6 +49,6 @@ def logger(context: Optional[str] = None) -> Logger:
     caller_package = caller_package_name()
 
     if context:
-        return getLogger('mixxin.{}.{}'.format(caller_package, context))
+        return getLogger('mxxn.{}.{}'.format(caller_package, context))
 
-    return getLogger('mixxin.{}'.format(caller_package))
+    return getLogger('mxxn.{}'.format(caller_package))

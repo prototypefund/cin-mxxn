@@ -27,14 +27,14 @@ class TestFile():
         settings_file = tmp_path/'settings.ini'
         settings_file.touch()
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             assert Settings._file() == tmp_path/'settings.ini'
 
     def test_settings_file_is_not_a_file(self, tmp_path):
         """The settings file is in the environment variable is not a file."""
         settings_file = tmp_path
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(filesys_ex.FileNotExistError):
                 Settings._file()
 
@@ -49,7 +49,7 @@ class TestFile():
         chdir(path_2)
 
         with patch.dict(
-                environ, {'MIXXIN_SETTINGS': '../path_1/settings.ini'}):
+                environ, {'MXXN_SETTINGS': '../path_1/settings.ini'}):
             assert Settings._file() == settings_file
 
 
@@ -61,20 +61,20 @@ class TestLoad():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
-            enabled_mixins = 1
+            [mxxn]
+            enabled_mxns = 1
 
             [alembic]
             sqlalchemy.url = driver://user:pass@localhost/dbname
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError):
                 Settings()._load(settings_file)
 
-    def test_no_mixxin_section(self, tmp_path):
-        """The mixxin section does not exist in the INI file."""
+    def test_no_mxxn_section(self, tmp_path):
+        """The mxxn section does not exist in the INI file."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
@@ -83,12 +83,12 @@ class TestLoad():
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
             settings._load(settings_file)
 
             assert settings._data == {
-                'mixxin': {},
+                'mxxn': {},
                 'alembic': {
                     'sqlalchemy.url': 'driver://user:pass@localhost/dbname'
                 }
@@ -99,15 +99,15 @@ class TestLoad():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
             settings._load(settings_file)
 
-            assert settings._data == {'mixxin': {}, 'alembic': {}}
+            assert settings._data == {'mxxn': {}, 'alembic': {}}
 
     def test_no_sections_in_settings_file(self, tmp_path):
         """It is no section in the settings file."""
@@ -118,22 +118,22 @@ class TestLoad():
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError):
                 settings = Settings()
                 settings._load(settings_file)
 
     def test_additional_property(self, tmp_path):
-        """An addional property in the mixxin section."""
+        """An addional property in the mxxn section."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             additional = 123
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError) as excinfo:
                 settings = Settings()
                 settings._load(settings_file)
@@ -141,16 +141,16 @@ class TestLoad():
                 assert 'additional' in str(excinfo.value)
 
     def test_not_regular_python_code(self, tmp_path):
-        """A value in the mixxin section is not regular Python code."""
+        """A value in the mxxn section is not regular Python code."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             app_path = not_a_type
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(settings_ex.SettingsFormatError) as excinfo:
                 settings = Settings()
                 settings._load(settings_file)
@@ -158,54 +158,54 @@ class TestLoad():
                 assert 'literal structure' in str(excinfo.value)
 
 
-class TestSettingsEnabledMixxins():
-    """Test for the enabled_mixins porperty of the Settings class."""
+class TestSettingsEnabledMxns():
+    """Test for the enabled_mxns porperty of the Settings class."""
 
-    def test_enabled_mixins_in_settings_file(self, tmp_path):
-        """The enabled_mixins key is in settings file."""
+    def test_enabled_mxns_in_settings_file(self, tmp_path):
+        """The enabled_mxns key is in settings file."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
-            enabled_mixins = ['mxnone', 'mxntwo']
+            [mxxn]
+            enabled_mxns = ['mxnone', 'mxntwo']
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
-            assert settings.enabled_mixins == ['mxnone', 'mxntwo']
+            assert settings.enabled_mxns == ['mxnone', 'mxntwo']
 
-    def test_enabled_mixins_not_in_settings_file(self, tmp_path):
-        """No enabled_mixins key is in settings file."""
+    def test_enabled_mxns_not_in_settings_file(self, tmp_path):
+        """No enabled_mxns key is in settings file."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
-            assert not settings.enabled_mixins
-            assert not isinstance(settings.enabled_mixins, list)
+            assert not settings.enabled_mxns
+            assert not isinstance(settings.enabled_mxns, list)
 
     def test_empty_list_in_settings_file(self, tmp_path):
         """An empty list is in settings file."""
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
-            enabled_mixins = []
+            [mxxn]
+            enabled_mxns = []
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
-            assert not settings.enabled_mixins
-            assert isinstance(settings.enabled_mixins, list)
+            assert not settings.enabled_mxns
+            assert isinstance(settings.enabled_mxns, list)
 
 
 class TestSettingsAppPath():
@@ -216,12 +216,12 @@ class TestSettingsAppPath():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             app_path = '{}'
             """.format(tmp_path)
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
             assert settings.app_path == tmp_path
@@ -231,12 +231,12 @@ class TestSettingsAppPath():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             app_path = '{}'
             """.format(tmp_path/'test')
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(filesys_ex.PathNotExistError):
                 Settings().app_path
 
@@ -245,11 +245,11 @@ class TestSettingsAppPath():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             """
         )
         chdir(tmp_path)
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
             assert settings.app_path == tmp_path
@@ -263,12 +263,12 @@ class TestSettingsdataPath():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             data_path = '{}'
             """.format(tmp_path)
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
             assert settings.data_path == tmp_path
@@ -278,12 +278,12 @@ class TestSettingsdataPath():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             data_path = '{}'
             """.format(tmp_path/'test')
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             with pytest.raises(filesys_ex.PathNotExistError):
                 Settings().data_path
 
@@ -292,11 +292,11 @@ class TestSettingsdataPath():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             """
         )
         chdir(tmp_path)
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
             assert settings.data_path == tmp_path/'data'
@@ -315,7 +315,7 @@ class TestSettingsSqlalchemyUrl():
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
             assert settings.sqlalchemy_url ==\
@@ -326,12 +326,12 @@ class TestSettingsSqlalchemyUrl():
         settings_file = tmp_path/'settings.ini'
         settings_file.write_text(
             """
-            [mixxin]
+            [mxxn]
             """
         )
 
-        with patch.dict(environ, {'MIXXIN_SETTINGS': str(settings_file)}):
+        with patch.dict(environ, {'MXXN_SETTINGS': str(settings_file)}):
             settings = Settings()
 
             assert settings.sqlalchemy_url ==\
-                'sqlite:///' + str(settings.data_path/'mixxin.db')
+                'sqlite:///' + str(settings.data_path/'mxxn.db')

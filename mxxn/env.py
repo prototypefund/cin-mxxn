@@ -37,7 +37,6 @@ automatically loaded from the packages and registered in the framework.
 from pkg_resources import iter_entry_points
 from typing import List, TypedDict, Type, Dict,Optional
 import inspect
-import pkgutil
 from importlib import import_module
 import re
 from pathlib import Path
@@ -50,37 +49,37 @@ def mxns(settings: Optional[Settings] = None) -> List[str]:
     """
     Get a list of the installed mixins.
 
-    The function considers the enabled_mixins entry in the settings
+    The function considers the enabled_mxns entry in the settings
     file. If it is not included, all installed mixins are returned,
-    otherwise only the enabled mixins are given back. If the list
-    in the settings file is empty, no installed mixin is returned.
+    otherwise only the enabled mxns are given back. If the list
+    in the settings file is empty, no installed mxn is returned.
 
     Args:
         settings: The application settings.
 
     Returns:
-        list: A list of the names of the installed mixins.
+        list: A list of the names of the installed mxns.
 
     Raises:
-        mxxn.exceptions.env.MixinNotExistError: If mixin from enabled_mixins
+        mxxn.exceptions.env.MxnNotExistError: If mixin from enabled_mxns
             section of settings file does not exist.
     """
-    installed_mixins = [
+    installed_mxns = [
         item.name for item in iter_entry_points(group='mxxn_mixin')]
 
     if settings:
-        if isinstance(settings.enabled_mixins, list):
+        if isinstance(settings.enabled_mxns, list):
             if all(
-                item in installed_mixins for item in settings.enabled_mixins
+                item in installed_mxns for item in settings.enabled_mxns
             ):
-                return settings.enabled_mixins
+                return settings.enabled_mxns
 
             raise env_ex.MxnNotExistError(
-                'The key enabled_mixins in the settings file '
+                'The key enabled_mxns in the settings file '
                 'contains mixins that are not installed.'
             )
 
-    return installed_mixins
+    return installed_mxns
 
 
 class TypeResourceDict(TypedDict):
@@ -134,8 +133,8 @@ class Base():
         """
         Get the resources of the package.
 
-        This method searches the *resources* module or package of the Mixxin
-        package, Mixin package or a MixxinApp package for resources and returns
+        This method searches the *resources* module or package of the Mxxn
+        package, Mxn package or a MxnApp package for resources and returns
         a list of the resources found. If no resource exists or there is no
         resources module or package, then an empty list is returned. A
         resource is a class that implements at least one responder method of
@@ -243,31 +242,31 @@ class TypeCoveringResources(TypedDict):
 
 class MxnApp(Base):
     """
-    With this class elements of a mixxin app package can be accessed.
+    With this class elements of a MxnApp package can be accessed.
 
-    Application developers can overwrite almost all elements of the mixins or
-    the mixxin framework. This can include resources, static files, etc. For
+    Application developers can overwrite almost all elements of the Mxns or
+    the Mxxn framework. This can include resources, static files, etc. For
     this purpose, the covers package must be created in the application
-    package. All overloads of the mixxin framework are in the sub-package
-    mixxin, those of the mixins are in the sub-folder mixins. A sub-package
-    must exist for each mixin for which elements will be overloaded.
+    package. All overloads of the Mxxn framework are in the sub-package
+    mxxn, those of the mxns are in the sub-folder mxns. A sub-package
+    must exist for each mxn for which elements will be overloaded.
     The folder structure of the overloads is exactly the same as in the
     package that is to be overloaded.
 
     Here is the folder structure of an exemplary application that overloads
-    the resources of the frameworks and a mixin:
+    the resources of the framework and a Mxn:
 
     . code-block:: bash
         mxxnapp
         |-- covers
         |   |-- __init__.py
-        |   |-- mixins
+        |   |-- mxns
         |   |   |-- __init__.py
         |   |   |-- mxntest
         |   |       |-- __init__.py
         |   |       |-- resources.py
         |   |
-        |   |-- mixxin
+        |   |-- mxxn
         |   |   |-- __init__.py
         |   |   |-- resources.py
         |-- __init__.py
@@ -304,20 +303,20 @@ class MxnApp(Base):
 
         """
         resource_covers: TypeCoveringResources = {
-            'mixxin': [],
-            'mixins': {}
+            'mxxn': [],
+            'mxns': {}
         }
         try:
-            mixxin_covers = Mxxn('mxxnapp.covers.mixxin')
-            resource_covers['mixxin'] = mixxin_covers.resources
+            mixxin_covers = Mxxn('mxxnapp.covers.mxxn')
+            resource_covers['mxxn'] = mixxin_covers.resources
 
         except env_ex.PackageNotExistError:
             pass
 
-        for mixin_name in mxns(settings):
+        for mxn_name in mxns(settings):
             try:
-                mixin = Mxn('mxxnapp.covers.mixins.' + mixin_name)
-                resource_covers['mixins'][mixin_name] = mixin.resources
+                mxn = Mxn('mxxnapp.covers.mxns.' + mxn_name)
+                resource_covers['mxns'][mxn_name] = mxn.resources
 
             except env_ex.PackageNotExistError:
                 pass

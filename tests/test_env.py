@@ -8,26 +8,26 @@ from mxxn.settings import Settings
 
 
 class TestMixins():
-    """Tests for the mixins function."""
+    """Tests for the mxns function."""
 
-    def test_all_enabled_mixins_exist(self, mxxn_env):
+    def test_all_enabled_mxis_exist(self, mxxn_env):
         """Return the package names from settings if mixins are installed."""
         settings = MagicMock()
-        settings.enabled_mixins = ['mxnone', 'mxnthree']
+        settings.enabled_mxns = ['mxnone', 'mxnthree']
 
         assert env.mxns(settings) == ['mxnone', 'mxnthree']
 
     def test_not_in_settings(self, mxxn_env):
         """Return list of installed package names if no entry in settings."""
         settings = MagicMock()
-        settings.enabled_mixins = None
+        settings.enabled_mxns = None
 
         assert env.mxns(settings) == ['mxnone', 'mxntwo', 'mxnthree']
 
     def test_mixin_not_exist(self, mxxn_env):
         """Raise MixinNotExistError if mixin from settings not installed."""
         settings = MagicMock()
-        settings.enabled_mixins = ['mxnone', 'xyz']
+        settings.enabled_mxns = ['mxnone', 'xyz']
 
         with pytest.raises(env_ex.MxnNotExistError):
             env.mxns(settings)
@@ -35,14 +35,14 @@ class TestMixins():
     def test_empty_list_in_settings(self, mxxn_env):
         """Return a empty list if it is a empty list in settings."""
         settings = MagicMock()
-        settings.enabled_mixins = []
+        settings.enabled_mxns = []
 
         assert env.mxns(settings) == []
 
     def test_no_settings_file(self, mxxn_env):
         """Return all installed mxns if no settings file given."""
         settings = MagicMock()
-        settings.enabled_mixins = []
+        settings.enabled_mxns = []
 
         assert env.mxns() == ['mxnone', 'mxntwo', 'mxnthree']
 
@@ -244,13 +244,13 @@ class TestMixxinInit():
 
     def test_init(self):
         """Test if Mixxin instance has a name "mixxin"."""
-        mixxin = env.Mxxn()
+        mxxn = env.Mxxn()
 
-        assert mixxin.name == 'mxxn'
+        assert mxxn.name == 'mxxn'
 
 
 class TestMixxinAppInit():
-    """Tests for the MixxinApp initialisation."""
+    """Tests for the MxxnApp initialisation."""
 
     def test_app_not_exist(self):
         """The app does not exist."""
@@ -278,19 +278,19 @@ class TestMixxinAppInit():
                 env.MxnApp()
 
 
-class TestMixxinAppCoveringResources(object):
+class TestMixxinAppCoveringResources():
     """Tests for the covering_resources method."""
 
     def test_cover_for_a_mixxin_resource(self, mxxn_env):
-        """Cover for a mixxin resource."""
+        """Cover for a mxxn resource."""
         content = """
             class Resource(object):
                 def on_get(self, req, resp):
                     pass
         """
-        covers_mixxin = mxxn_env/'mxxnapp/covers/mixxin'
+        covers_mixxin = mxxn_env/'mxxnapp/covers/mxxn'
         covers_mixxin.mkdir(parents=True)
-        (mxxn_env/'mxxnapp/covers/mixxin/resources.py').write_text(
+        (mxxn_env/'mxxnapp/covers/mxxn/resources.py').write_text(
             inspect.cleandoc(content)
         )
 
@@ -298,19 +298,19 @@ class TestMixxinAppCoveringResources(object):
         app = env.MxnApp()
         resources = app.covering_resources(settings)
 
-        assert len(resources['mixxin']) == 1
-        assert resources['mixxin'][0]['routes'][0] == ['/.resource']
+        assert len(resources['mxxn']) == 1
+        assert resources['mxxn'][0]['routes'][0] == ['/.resource']
 
-    def test_cover_for_a_mixin_resource(self, mxxn_env):
-        """Cover for a mixin resource."""
+    def test_cover_for_a_mxn_resource(self, mxxn_env):
+        """Cover for a mxn resource."""
         content = """
             class Resource(object):
                 def on_get(self, req, resp):
                     pass
         """
-        covers_mixxin = mxxn_env/'mxxnapp/covers/mixins/mxnone'
+        covers_mixxin = mxxn_env/'mxxnapp/covers/mxns/mxnone'
         covers_mixxin.mkdir(parents=True)
-        (mxxn_env/'mxxnapp/covers/mixins/mxnone/resources.py').write_text(
+        (mxxn_env/'mxxnapp/covers/mxns/mxnone/resources.py').write_text(
             inspect.cleandoc(content)
         )
 
@@ -318,34 +318,34 @@ class TestMixxinAppCoveringResources(object):
         app = env.MxnApp()
         resources = app.covering_resources(settings)
 
-        assert len(resources['mixxin']) == 0
-        assert len(resources['mixins']['mxnone']) == 1
-        assert resources['mixins']['mxnone'][0]['routes'][0] == ['/.resource']
+        assert len(resources['mxxn']) == 0
+        assert len(resources['mxns']['mxnone']) == 1
+        assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
 
-    def test_respects_enabled_mixins(self, mxxn_env):
-        """Respects the enabled_mixins from settings file."""
+    def test_respects_enabled_mxns(self, mxxn_env):
+        """Respects the enabled_mxns from settings file."""
         content = """
             class Resource(object):
                 def on_get(self, req, resp):
                     pass
         """
-        covers_mixxin_one = mxxn_env/'mxxnapp/covers/mixins/mxnone'
-        covers_mixxin_two = mxxn_env/'mxxnapp/covers/mixins/mxntwo'
-        covers_mixxin_one.mkdir(parents=True)
-        covers_mixxin_two.mkdir(parents=True)
-        (mxxn_env/'mxxnapp/covers/mixins/mxnone/resources.py').write_text(
+        covers_mxn_one = mxxn_env/'mxxnapp/covers/mxns/mxnone'
+        covers_mxn_two = mxxn_env/'mxxnapp/covers/mxns/mxntwo'
+        covers_mxn_one.mkdir(parents=True)
+        covers_mxn_two.mkdir(parents=True)
+        (mxxn_env/'mxxnapp/covers/mxns/mxnone/resources.py').write_text(
             inspect.cleandoc(content)
         )
-        (mxxn_env/'mxxnapp/covers/mixins/mxntwo/resources.py').write_text(
+        (mxxn_env/'mxxnapp/covers/mxns/mxntwo/resources.py').write_text(
             inspect.cleandoc(content)
         )
 
         settings = Mock()
-        settings.enabled_mixins = ['mxnone', 'mxnthree']
+        settings.enabled_mxns = ['mxnone', 'mxnthree']
 
         app = env.MxnApp()
         resources = app.covering_resources(settings)
 
-        assert len(resources['mixxin']) == 0
-        assert len(resources['mixins']) == 1
-        assert resources['mixins']['mxnone'][0]['routes'][0] == ['/.resource']
+        assert len(resources['mxxn']) == 0
+        assert len(resources['mxns']) == 1
+        assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']

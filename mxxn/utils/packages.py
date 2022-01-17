@@ -1,9 +1,8 @@
 """The packages module of the utils module."""
 import inspect
-from typing import Optional
 
 
-def caller_package_name(depth: int = 1) -> Optional[str]:
+def caller_package_name(depth: int = 1) -> str:
     """
     Get the package name.
 
@@ -12,6 +11,9 @@ def caller_package_name(depth: int = 1) -> Optional[str]:
 
     Args:
         depth: The depth of the caller stack.
+
+    Raises:
+        ModuleNotFoundError: If caller module not exist.
     """
     stack = inspect.stack()
     frame = stack[depth]
@@ -20,4 +22,4 @@ def caller_package_name(depth: int = 1) -> Optional[str]:
     if module:
         return module.__name__.split('.')[0]
 
-    return None
+    raise ModuleNotFoundError('No caller Module found')

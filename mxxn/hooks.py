@@ -58,13 +58,15 @@ async def render(
             template not exist, if some syntax error in the template.
     """
     try:
-        if package_name:
-            package = package_name
-        else:
-            package = caller_package_name()
+        if not package_name:
+            package_name = caller_package_name()
+            # package = package_name
+        # else:
+            # package = caller_package_name()
 
         env = Environment(loader=PackageLoader(
-            package, 'templates'), enable_async=True)
+            package_name, 'templates'), enable_async=True)
+
         jinja2_template = env.get_template(str(template))
 
         if hasattr(resp.context, 'render'):
@@ -78,20 +80,20 @@ async def render(
     except ModuleNotFoundError:
         raise env_ex.PackageNotExistError(
             '{}: The framework package "{}" does not exist.'
-            .format('environment', package)
+            .format('environment', package_name)
         )
 
     except jinja2_ex.TemplateNotFound:
         raise filesys_ex.FileNotExistError(
             '{}: The template "{}" does not exist in the template folder '
             'of the "{}" package.'
-            .format('templates', template, package)
+            .format('templates', template, package_name)
         )
 
     except jinja2_ex.TemplateSyntaxError as e:
         message = '{}: There is a syntax error in template "{}" '\
             'of package "{}".'\
-            .format('templates', template, package)
+            .format('templates', template, package_name)
         e.args = (message,)
 
         raise

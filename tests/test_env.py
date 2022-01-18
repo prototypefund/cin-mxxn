@@ -349,3 +349,21 @@ class TestMixxinAppCoveringResources():
         assert len(resources['mxxn']) == 0
         assert len(resources['mxns']) == 1
         assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
+
+
+class TestPackageStaticPath():
+    """Tests for the static_path method of the Base class."""
+
+    def test_has_no_static_folder(self, mxxn_env):
+        """The package has no static folder."""
+        pkg = env.Base('mxnone')
+
+        assert not pkg.static_path
+
+    def test_has_a_static_folder(self, mxxn_env):
+        """The static_path function returns the path."""
+        patch = mxxn_env/'mxnone/frontend/static'
+        patch.mkdir(parents=True)
+        pkg = env.Base('mxnone')
+
+        assert pkg.static_path == mxxn_env/'mxnone/frontend/static'

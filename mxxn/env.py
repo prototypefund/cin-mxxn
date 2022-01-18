@@ -215,6 +215,27 @@ class Base():
 
         return resources_list
 
+    @property
+    def static_path(self) -> Optional[Path]:
+        """
+        Get the path to the static folder of the package.
+
+        If a framework package contains the folder *frontend/static*,
+        the path to this folder is returned. If the folder does not
+        exist, the function returns None.
+
+        Return:
+            The the absolute path, if it exists,
+            otherwise None.
+
+        """
+        static_path = Path(self.path/'frontend/static')
+
+        if static_path.is_dir():
+            return static_path
+
+        return None
+
 
 class Mxxn(Base):
     """With this class elements of the Mxxn framework can be accessed."""

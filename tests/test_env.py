@@ -1,6 +1,7 @@
 """This module contains tests for the env module."""
 import inspect
 import pytest
+from pathlib import Path
 from unittest.mock import Mock, MagicMock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
@@ -351,7 +352,7 @@ class TestMixxinAppCoveringResources():
         assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
 
 
-class TestPackageStaticPath():
+class TestBaseStaticPath():
     """Tests for the static_path method of the Base class."""
 
     def test_has_no_static_folder(self, mxxn_env):
@@ -367,3 +368,30 @@ class TestPackageStaticPath():
         pkg = env.Base('mxnone')
 
         assert pkg.static_path == mxxn_env/'mxnone/frontend/static'
+
+
+class TestBaseJsFiles():
+    """Tests for the js_files property of the Base class."""
+
+    def test_no_js_files(self, mxxn_env):
+        """The package does not have js files."""
+        pkg = env.Base('mxnone')
+
+        assert pkg.js_files == []
+
+    def test_js_files_returned(self, mxxn_env):
+        """The package has files."""
+        (mxxn_env/'mxnone/frontend/static').mkdir(parents=True)
+        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
+        pkg = env.Base('mxnone')
+
+        assert pkg.js_files == [Path('mxn.js')]
+
+    def test_js_files_from_sub_path_returned(self, mxxn_env):
+        """The js files from a sub directory were returned."""
+        (mxxn_env/'mxnone/frontend/static/sub').mkdir(parents=True)
+        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
+        (mxxn_env/'mxnone/frontend/static/sub/mxn_sub.js').touch()
+        pkg = env.Base('mxnone')
+
+        assert pkg.js_files == [Path('mxn.js'), Path('sub/mxn_sub.js')]

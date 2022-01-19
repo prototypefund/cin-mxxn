@@ -236,6 +236,28 @@ class Base():
 
         return None
 
+    @property
+    def js_files(self) -> List[Path]:
+        """
+        Get the static JavaScript files, if they exist in the package.
+
+        Return:
+            A list of absolute paths starting in, if it exists,
+            otherwise a empty list.
+
+        """
+        static_path = self.static_path
+
+        if static_path:
+            js_files = list(static_path.rglob('**/*.js'))
+
+            for i in range(len(js_files)):
+                js_files[i] = js_files[i].relative_to(static_path)
+
+            return js_files
+
+        return []
+
 
 class Mxxn(Base):
     """With this class elements of the Mxxn framework can be accessed."""

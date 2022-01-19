@@ -283,3 +283,20 @@ class Settings():
                 return Path.cwd()/'settings.ini'
 
             return None
+
+
+class SettingsMiddleware():
+    def __init__(self, settings):
+        self._settings = settings
+
+    async def process_request(self, req, resp):
+        """Process the request before routing it.
+
+        Args:
+            req: Request object that will eventually be
+                routed to an on_* responder method.
+            resp: Response object that will be routed to
+                the on_* responder.
+        """
+
+        req.context.settings = self._settings

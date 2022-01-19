@@ -1,8 +1,10 @@
 """Tests for the settings module."""
 import pytest
 from os import chdir, environ
+from falcon import asgi
+from falcon.testing import TestClient
 from unittest.mock import patch
-from mxxn.settings import Settings
+from mxxn.settings import Settings, SettingsMiddleware
 from mxxn.exceptions import settings as settings_ex
 from mxxn.exceptions import filesys as filesys_ex
 
@@ -335,3 +337,24 @@ class TestSettingsSqlalchemyUrl():
 
             assert settings.sqlalchemy_url ==\
                 'sqlite:///' + str(settings.data_path/'mxxn.db')
+
+
+class TestSettingsMiddleware():
+    """Tests for the SettingsMiddleware class."""
+
+    def test_settings_added_to_context(self):
+        """The settings object was added to req.context."""
+        class Resource():
+            async def on_get(self, req, resp):
+                req.context.settings
+
+        settings = Settings()
+        settings_middleware = SettingsMiddleware(settings)
+        app = asgi.App()
+        app.add_middleware(settings_middleware)
+        app.add_route('/', Resource())
+
+        client = TestClient(app)
+        resp = client.simulate_get('/')
+
+        assert resp.status_code == 200

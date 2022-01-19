@@ -262,17 +262,17 @@ class TestMixxinAppInit():
         """The app exists."""
         app = env.MxnApp()
 
-        assert app.name == 'mxxnapp'
+        assert app.name == 'mxnapp'
 
     def test_multiple_app(self, mxxn_env):
         """The app exists."""
-        mxxnapp_one = MagicMock()
-        mxxnapp_two = MagicMock()
-        mxxnapp_one.name = 'mxxnappone'
-        mxxnapp_two.name = 'mxxnapptwo'
+        mxnapp = MagicMock()
+        mxnapp = MagicMock()
+        mxnapp.name = 'mxnapp'
+        mxnapp.name = 'mxnapp'
 
         with patch('mxxn.env.iter_entry_points') as mock:
-            mock.return_value = [mxxnapp_one, mxxnapp_two]
+            mock.return_value = [mxnapp, mxnapp]
 
             with pytest.raises(env_ex.MultipleMxnAppsError):
                 env.MxnApp()
@@ -288,9 +288,9 @@ class TestMixxinAppCoveringResources():
                 def on_get(self, req, resp):
                     pass
         """
-        covers_mixxin = mxxn_env/'mxxnapp/covers/mxxn'
+        covers_mixxin = mxxn_env/'mxnapp/covers/mxxn'
         covers_mixxin.mkdir(parents=True)
-        (mxxn_env/'mxxnapp/covers/mxxn/resources.py').write_text(
+        (mxxn_env/'mxnapp/covers/mxxn/resources.py').write_text(
             inspect.cleandoc(content)
         )
 
@@ -308,9 +308,9 @@ class TestMixxinAppCoveringResources():
                 def on_get(self, req, resp):
                     pass
         """
-        covers_mixxin = mxxn_env/'mxxnapp/covers/mxns/mxnone'
+        covers_mixxin = mxxn_env/'mxnapp/covers/mxns/mxnone'
         covers_mixxin.mkdir(parents=True)
-        (mxxn_env/'mxxnapp/covers/mxns/mxnone/resources.py').write_text(
+        (mxxn_env/'mxnapp/covers/mxns/mxnone/resources.py').write_text(
             inspect.cleandoc(content)
         )
 
@@ -329,14 +329,14 @@ class TestMixxinAppCoveringResources():
                 def on_get(self, req, resp):
                     pass
         """
-        covers_mxn_one = mxxn_env/'mxxnapp/covers/mxns/mxnone'
-        covers_mxn_two = mxxn_env/'mxxnapp/covers/mxns/mxntwo'
+        covers_mxn_one = mxxn_env/'mxnapp/covers/mxns/mxnone'
+        covers_mxn_two = mxxn_env/'mxnapp/covers/mxns/mxntwo'
         covers_mxn_one.mkdir(parents=True)
         covers_mxn_two.mkdir(parents=True)
-        (mxxn_env/'mxxnapp/covers/mxns/mxnone/resources.py').write_text(
+        (mxxn_env/'mxnapp/covers/mxns/mxnone/resources.py').write_text(
             inspect.cleandoc(content)
         )
-        (mxxn_env/'mxxnapp/covers/mxns/mxntwo/resources.py').write_text(
+        (mxxn_env/'mxnapp/covers/mxns/mxntwo/resources.py').write_text(
             inspect.cleandoc(content)
         )
 

@@ -15,6 +15,7 @@ class App(object):
         self.asgi = asgi.App()
         self.asgi.add_error_handler(Exception, capture_errors)
         self._register_resources()
+        self._register_static_paths()
 
     def _register_resources(self) -> None:
         """
@@ -104,6 +105,56 @@ class App(object):
                 'The resources of the application package {} were registered.'
                 .format(app.name)
             )
+
+        except env_ex.MxnAppNotExistError:
+            pass
+
+    def _register_static_paths(self) -> None:
+        """
+        Register the static folder of the framework packages.
+
+        If the folder ``/frontend/static`` exists in the package,
+        it will be accessible under the URL
+        ``<domain>/static/<package_name>``.
+
+        """
+        log = logger('registration')
+        mxxn = Mxxn()
+
+        static_path = mxxn.static_path
+
+        if static_path:
+            self.asgi.add_static_route('/static', static_path)
+
+            log.debug(
+                'The static folder of the mxxn package was registered.')
+
+        for mxn_name in mxns(self.settings):
+            mxn = Mxn(mxn_name)
+            static_path = mxn.static_path
+
+            if static_path:
+                self.asgi.add_static_route(
+                    '/static/mxns/'+mxn_name, static_path
+                )
+
+                log.debug(
+                    'The static folder of the mxn "{}" was registered.'
+                    .format(mxn.name)
+                )
+
+        try:
+            mxnapp = MxnApp()
+
+            static_path = mxnapp.static_path
+
+            if static_path:
+                self.asgi.add_static_route('/static/app', static_path)
+
+                log.debug(
+                    'The static folder of the app package {} was registered.'
+                    .format(mxnapp.name)
+                )
 
         except env_ex.MxnAppNotExistError:
             pass

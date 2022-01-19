@@ -107,8 +107,8 @@ def resources(mxxn_env):
     (mxxn_env/'mxntwo/__init__.py').touch()
     (mxxn_env/'mxntwo/resources.py').write_text(cleandoc(content_mxns))
 
-    (mxxn_env/'mxxnapp/__init__.py').touch()
-    (mxxn_env/'mxxnapp/resources.py').write_text(cleandoc(content_app))
+    (mxxn_env/'mxnapp/__init__.py').touch()
+    (mxxn_env/'mxnapp/resources.py').write_text(cleandoc(content_app))
 
     with patch('mxxn.env.Mxxn.resources', new_callable=PropertyMock) as mock:
         mock.return_value = mock_mxxn_resources
@@ -191,3 +191,32 @@ class TestAppRegisterResources():
         assert response_three.text == 'AppResourceTwo list'
         assert response_three.status == falcon.HTTP_OK
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
+
+
+class TestStaticPaths(object):
+    """Tests for the _register_static_paths method of the App class."""
+
+    def test_mxn_registration(self, mxxn_env):
+        """The static folders have been registered."""
+        mxnone_static_path = mxxn_env/'mxnone/frontend/static'
+        mxntwo_static_path = mxxn_env/'mxntwo/frontend/static'
+        mxnone_static_path.mkdir(parents=True)
+        mxntwo_static_path.mkdir(parents=True)
+
+        app = App()
+
+        assert len(app.asgi._static_routes) == 3
+        assert app.asgi._static_routes[0][0]._prefix == '/static/mxns/mxntwo/'
+        assert app.asgi._static_routes[1][0]._prefix == '/static/mxns/mxnone/'
+        assert app.asgi._static_routes[2][0]._prefix == '/static/'
+
+    def test_mxnapp_registration(self, mxxn_env):
+        """The static folder of mxnapp has been registered."""
+        mxnapp = mxxn_env/'mxnapp/frontend/static'
+        mxnapp.mkdir(parents=True)
+
+        app = App()
+
+        assert len(app.asgi._static_routes) == 2
+        assert app.asgi._static_routes[0][0]._prefix == '/static/app/'
+        assert app.asgi._static_routes[1][0]._prefix == '/static/'

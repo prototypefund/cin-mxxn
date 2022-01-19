@@ -240,6 +240,51 @@ class TestPackageBaseResources():
             == 'mxnone.resources.pkg.resources'
 
 
+class TestBaseStaticPath():
+    """Tests for the static_path method of the Base class."""
+
+    def test_has_no_static_folder(self, mxxn_env):
+        """The package has no static folder."""
+        pkg = env.Base('mxnone')
+
+        assert not pkg.static_path
+
+    def test_has_a_static_folder(self, mxxn_env):
+        """The static_path function returns the path."""
+        patch = mxxn_env/'mxnone/frontend/static'
+        patch.mkdir(parents=True)
+        pkg = env.Base('mxnone')
+
+        assert pkg.static_path == mxxn_env/'mxnone/frontend/static'
+
+
+class TestBaseJsFiles():
+    """Tests for the js_files property of the Base class."""
+
+    def test_no_js_files(self, mxxn_env):
+        """The package does not have js files."""
+        pkg = env.Base('mxnone')
+
+        assert pkg.js_files == []
+
+    def test_js_files_returned(self, mxxn_env):
+        """The package has files."""
+        (mxxn_env/'mxnone/frontend/static').mkdir(parents=True)
+        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
+        pkg = env.Base('mxnone')
+
+        assert pkg.js_files == [Path('mxn.js')]
+
+    def test_js_files_from_sub_path_returned(self, mxxn_env):
+        """The js files from a sub directory were returned."""
+        (mxxn_env/'mxnone/frontend/static/sub').mkdir(parents=True)
+        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
+        (mxxn_env/'mxnone/frontend/static/sub/mxn_sub.js').touch()
+        pkg = env.Base('mxnone')
+
+        assert pkg.js_files == [Path('mxn.js'), Path('sub/mxn_sub.js')]
+
+
 class TestMixxinInit():
     """Tests for the creation of the Mixxin class."""
 
@@ -277,6 +322,22 @@ class TestMixxinAppInit():
 
             with pytest.raises(env_ex.MultipleMxnAppsError):
                 env.MxnApp()
+
+
+class TestMxnUnprefixedName():
+    """Tests for the unprefixed_name property of Mxn class."""
+
+    def test_has_prefix(self, mxxn_env):
+        """The name has a prefix."""
+        mxnone = env.Mxn('mxnone')
+
+        assert mxnone.unprefixed_name == 'one'
+
+    def test_has_no_prefix(self, mxxn_env):
+        """The name has a prefix."""
+        mxnone = env.Mxn('mxnone')
+
+        assert mxnone.unprefixed_name == 'one'
 
 
 class TestMixxinAppCoveringResources():
@@ -352,46 +413,3 @@ class TestMixxinAppCoveringResources():
         assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
 
 
-class TestBaseStaticPath():
-    """Tests for the static_path method of the Base class."""
-
-    def test_has_no_static_folder(self, mxxn_env):
-        """The package has no static folder."""
-        pkg = env.Base('mxnone')
-
-        assert not pkg.static_path
-
-    def test_has_a_static_folder(self, mxxn_env):
-        """The static_path function returns the path."""
-        patch = mxxn_env/'mxnone/frontend/static'
-        patch.mkdir(parents=True)
-        pkg = env.Base('mxnone')
-
-        assert pkg.static_path == mxxn_env/'mxnone/frontend/static'
-
-
-class TestBaseJsFiles():
-    """Tests for the js_files property of the Base class."""
-
-    def test_no_js_files(self, mxxn_env):
-        """The package does not have js files."""
-        pkg = env.Base('mxnone')
-
-        assert pkg.js_files == []
-
-    def test_js_files_returned(self, mxxn_env):
-        """The package has files."""
-        (mxxn_env/'mxnone/frontend/static').mkdir(parents=True)
-        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
-        pkg = env.Base('mxnone')
-
-        assert pkg.js_files == [Path('mxn.js')]
-
-    def test_js_files_from_sub_path_returned(self, mxxn_env):
-        """The js files from a sub directory were returned."""
-        (mxxn_env/'mxnone/frontend/static/sub').mkdir(parents=True)
-        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
-        (mxxn_env/'mxnone/frontend/static/sub/mxn_sub.js').touch()
-        pkg = env.Base('mxnone')
-
-        assert pkg.js_files == [Path('mxn.js'), Path('sub/mxn_sub.js')]

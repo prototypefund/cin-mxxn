@@ -275,7 +275,16 @@ class Mxxn(Base):
 class Mxn(Base):
     """With this class elements of a Mxn package can be accessed."""
 
-    pass
+    @property
+    def unprefixed_name(self) -> str:
+        """Get the name without prefix *mxn*."""
+        name = self.name
+        prefix = 'mxn'
+
+        if name.startswith(prefix):
+            return name.replace(prefix, '', 1)
+
+        return self.name
 
 
 class TypeCoveringResources(TypedDict):

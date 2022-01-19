@@ -1,7 +1,7 @@
 {
   "name": "mxxn",
-  "scripts": {
-  },
+  "scripts": {},
   "devDependencies": {
+    "rollup": "^2.64.0"
   }
 }

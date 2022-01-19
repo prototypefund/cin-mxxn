@@ -12,3 +12,7 @@
 
 # Sphinx files
 docs/build
+
+# Frontend
+mxxn/frontend/node_modules
+mxxn/frontend/package-lock.json

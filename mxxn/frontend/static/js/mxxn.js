@@ -1,2 +1,6 @@
+(function () {
+	'use strict';
 
-console.log('mxxn')
+	console.log('mxxn framework');
+
+})();

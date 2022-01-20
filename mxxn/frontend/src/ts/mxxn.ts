@@ -1,11 +1,14 @@
 import * as riot from 'riot'
 import MxxnApp from '../components/app.riot'
+import MxxnLogin from '../components/login.riot'
 
 
-const mountApp = riot.component(MxxnApp)
+export function app(){
+  const mountApp = riot.component(MxxnApp)
+  mountApp(document.body)
+}
 
-const app = mountApp(document.body)
-
-export default app
-
-
+export function login(){
+  const mountLogin = riot.component(MxxnLogin)
+  mountLogin(document.body)
+}

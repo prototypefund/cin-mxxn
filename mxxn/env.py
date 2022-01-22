@@ -35,7 +35,7 @@ automatically loaded from the packages and registered in the framework.
     * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
 """
 from pkg_resources import iter_entry_points
-from typing import List, TypedDict, Type, Dict,Optional
+from typing import List, TypedDict, Type, Dict, Optional
 import inspect
 from importlib import import_module
 import re
@@ -64,8 +64,9 @@ def mxns(settings: Optional[Settings] = None) -> List[str]:
         mxxn.exceptions.env.MxnNotExistError: If mixin from enabled_mxns
             section of settings file does not exist.
     """
+
     installed_mxns = [
-        item.name for item in iter_entry_points(group='mxxn_mixin')]
+        item.name for item in iter_entry_points(group='mxxn_mxn')]
 
     if settings:
         if isinstance(settings.enabled_mxns, list):

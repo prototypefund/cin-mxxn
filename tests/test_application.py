@@ -206,8 +206,8 @@ class TestStaticPaths(object):
         app = App()
 
         assert len(app.asgi._static_routes) == 3
-        assert app.asgi._static_routes[0][0]._prefix == '/static/mxns/mxntwo/'
-        assert app.asgi._static_routes[1][0]._prefix == '/static/mxns/mxnone/'
+        assert app.asgi._static_routes[0][0]._prefix == '/static/mxns/two/'
+        assert app.asgi._static_routes[1][0]._prefix == '/static/mxns/one/'
         assert app.asgi._static_routes[2][0]._prefix == '/static/'
 
     def test_mxnapp_registration(self, mxxn_env):

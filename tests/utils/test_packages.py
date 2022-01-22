@@ -21,20 +21,3 @@ class TestCallerPackageName():
         import mxnone
 
         assert mxnone.test() == 'mxnone'
-
-    def test_call_with_depth(self, mxxn_env):
-        """Test for call with depth argument."""
-        code = inspect.cleandoc(
-            '''
-            from mxxn.utils.packages import caller_package_name
-
-            def test():
-                return caller_package_name(2)
-            '''
-        )
-
-        (mxxn_env/'mxnone/__init__.py').write_text(code)
-
-        import mxnone
-
-        assert mxnone.test() == 'test_packages'

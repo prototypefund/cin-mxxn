@@ -1,6 +1,6 @@
 """The app module."""
 from falcon import asgi
-from mxxn.settings import Settings
+from mxxn.settings import Settings, SettingsMiddleware
 from mxxn.logging import logger
 from mxxn.env import Mxxn, mxns, Mxn, MxnApp
 from mxxn.exceptions import env as env_ex
@@ -12,8 +12,10 @@ class App(object):
 
     def __init__(self) -> None:
         self.settings = Settings()
+        settings_middleware = SettingsMiddleware(self.settings)
         self.asgi = asgi.App()
         self.asgi.add_error_handler(Exception, capture_errors)
+        self.asgi.add_middleware([settings_middleware])
         self._register_resources()
         self._register_static_paths()
 
@@ -135,7 +137,7 @@ class App(object):
 
             if static_path:
                 self.asgi.add_static_route(
-                    '/static/mxns/'+mxn_name, static_path
+                    '/static/mxns/'+mxn.unprefixed_name, static_path
                 )
 
                 log.debug(

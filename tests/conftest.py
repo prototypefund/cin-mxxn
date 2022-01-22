@@ -17,7 +17,7 @@ def iter_entry_points():
     mxnapp.name = 'mxnapp'
 
     def mock_iter_entry_points(group=''):
-        if group == 'mxxn_mixin':
+        if group == 'mxxn_mxn':
             return [mxnone, mxntwo, mxnthree]
 
         if group == 'mxxn_app':

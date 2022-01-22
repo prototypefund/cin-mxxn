@@ -141,7 +141,7 @@ class App(object):
                 )
 
                 log.debug(
-                    'The static folder of the mxn "{}" was registered.'
+                    'The static folder of the {} package was registered.'
                     .format(mxn.name)
                 )
 

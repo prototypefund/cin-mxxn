@@ -1,6 +1,5 @@
 """The Resource package of the Mixxin package."""
-import falcon
-from falcon import Request, Response
+from falcon import after, Request, Response, HTTPMovedPermanently
 from mxxn.hooks import render
 from mxxn.exceptions import env as env_ex
 from mxxn import env
@@ -10,16 +9,29 @@ class Root():
     """The Root resource of the Mxxn package."""
 
     async def on_get(self, req: Request, resp: Response) -> None:
-        """Forward the get request to the App resource."""
-        raise falcon.HTTPMovedPermanently('.app')
+        """
+        Forward the get request to the App resource.
+
+        Args:
+            req: The request object.
+            resp: The response object.
+        """
+        raise HTTPMovedPermanently('.app')
 
 
 class App():
     """The App resource of the Mxxn package."""
 
-    @falcon.after(render, template='app.j2')
+    @after(render, template='app.j2')
     async def on_get(self, req: Request, resp: Response) -> None:
-        """Get the application frontend."""
+        """
+        Get the application frontend.
+
+        Args:
+            req: The request object.
+            resp: The response object.
+
+        """
         js_urls = []
         mxxn = env.Mxxn()
 

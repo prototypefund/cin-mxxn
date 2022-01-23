@@ -30,21 +30,21 @@ async def render(
     Examples:
         .. code-block:: python
 
-            import falcon
+            import falcon import after
             from mxxn import hooks
             from pathlib import Path
 
             class Resource(object):
-                @falcon.after(
-                    hooks.render, Path('path/to/template.j2', 'package_name')
+                @after(
+                    hooks.render, Path('path/to/template.j2'), 'package_name'
                 )
                 def on_get(self, req, resp):
                     resp.context.render = {'variable': 123}
 
     Args:
         req: The Falcon request object.
-        resp: The Falcon response object containing the variables in
-            the media attribute.
+        resp: The Falcon response object containing the context.render
+            variable.
         resource: The called Falcon resource.
         template: The name of the template (relative to the template folder
             of the package).

@@ -1,3 +1,7 @@
+"""The database module."""
+from sqlalchemy import Column, Integer
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.schema import MetaData
 
 naming_convention: dict = {
     "ix": 'ix_%(column_0_label)s',
@@ -7,3 +11,16 @@ naming_convention: dict = {
     "pk": "pk_%(table_name)s"
 }
 """The SQLAlchemy naming convention."""
+
+
+class DeclarativeBase():
+    """The declarative base class."""
+
+    __table_args__ = {'sqlite_autoincrement': True}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+
+metadata = MetaData(naming_convention=naming_convention)
+Base = declarative_base(cls=DeclarativeBase, metadata=metadata)
+"""The Base class for all database models."""

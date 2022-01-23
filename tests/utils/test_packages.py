@@ -5,7 +5,7 @@ import inspect
 class TestCallerPackageName():
     """Tests for the caller_package_name function."""
 
-    def test_direct_call(self, mxxn_env):
+    def test_call(self, mxxn_env):
         """Test for direct call."""
         code = inspect.cleandoc(
             '''

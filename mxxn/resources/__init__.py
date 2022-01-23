@@ -19,7 +19,6 @@ class App(object):
     @falcon.after(render, template='app.j2')
     async def on_get(self, req, resp):
         """Get the application frontend."""
-        # TODO mxnapp js
         js_urls = []
         mxxn = env.Mxxn()
 

@@ -2,33 +2,33 @@
 """
 The Settings module is used to access the application settings.
 
-Like most Python packages, the Mixxin framework uses a settings file in INI
+Like most Python packages, the Mxxn framework uses a settings file in INI
 format. This has the advantage that there is the possibility of using only
-one settings file for Mixxin, Alembic, Supervisor, Uvicorn etc.
+one settings file for Mxxn, Alembic, Supervisor, Gunicorn etc.
 
-Mixxin itself reads the *mixxin* section and the *sqlalchemy_url* variable of
+Mxxn itself reads the *mxxn* section and the *sqlalchemy_url* variable of
 the *alembic* section of the settings file.
 
 .. note::
     If an extra settings file is used for alembic, then the alembic section
-    with the sqlalchemy_url variable must still be present in the Mixxin
+    with the sqlalchemy_url variable must still be present in the Mxxn
     settings file.
 
-The Mixxin settings file can be passed to the framework via the environment
-variable *MIXXIN_SETTINGS*. If the variable is not used, the settings.ini file
+The Mxxn settings file can be passed to the framework via the environment
+variable *MXXN_SETTINGS*. If the variable is not used, the settings.ini file
 is searched for in the current working directory. If no settings file is
-applied, the default settings of the Mixxin framework are used.
+applied, the default settings of the Mxxn framework are used.
 
 List of variables:
 
 +-------------+------------------+-------+--------------------------+
 | Section     | Variable         | Type  | Description              |
 +=============+==================+=======+==========================+
-| mixxin      | enabled_mxns     | list  | List of enabled mixxins  |
+| mxxn        | enabled_mxns     | list  | List of enabled mxns     |
 +-------------+------------------+-------+--------------------------+
-| mixxin      | app_path         | str   | Application directory    |
+| mxxn        | app_path         | str   | Application directory    |
 +-------------+------------------+-------+--------------------------+
-| mixxin      | data_path        | str   | Data directory           |
+| mxxn        | data_path        | str   | Data directory           |
 +-------------+------------------+-------+--------------------------+
 | alembic     | sqlalchemy_url   | str   | SQLAlchemy database url  |
 +-------------+------------------+-------+--------------------------+
@@ -40,6 +40,7 @@ from typing import Optional, List
 from jsonschema import validate
 import configparser
 import ast
+from falcon.asgi import Request, Response
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import settings as settings_ex
 
@@ -96,7 +97,7 @@ class Settings():
 
     def __init__(self) -> None:
         """
-        Initialize the Settings class.
+        Initialize the Settings class instance.
 
         If a settings file exists, it is read in and the default settings are
         set for variables that are not in the file.
@@ -110,10 +111,10 @@ class Settings():
     @property
     def enabled_mxns(self) -> Optional[List[str]]:
         """
-        Get a list of enabled mixins.
+        Get a list of enabled mxns.
 
         It is possible to activate only specific mixins in the
-        settings file. If the `enabled_mxns` variable of the settings
+        settings file. If the *enabled_mxns* variable of the settings
         file is not set, None is returned. To deactivate all installed mxns,
         an empty list can be set in the settings file.
         """
@@ -176,7 +177,7 @@ class Settings():
 
         The database URL is taken from the *sqlalchemy_url* variable of the
         *alembic* section of the settings file. If this was not set, the
-        default URL *'sqlite:///<data_path>/mxxn.db'* is returned.
+        default URL *sqlite:///<data_path>/mxxn.db* is returned.
 
         Returns:
             The default database URL.
@@ -286,17 +287,26 @@ class Settings():
 
 
 class SettingsMiddleware():
-    def __init__(self, settings):
-        self._settings = settings
+    """The middleware for the Settings class."""
 
-    async def process_request(self, req, resp):
-        """Process the request before routing it.
+    def __init__(self, settings: Settings):
+        """
+        Initialize the SettingsMiddleware instance.
 
         Args:
-            req: Request object that will eventually be
-                routed to an on_* responder method.
-            resp: Response object that will be routed to
-                the on_* responder.
+            settings: The settings of the application.
         """
+        self._settings = settings
 
+    async def process_request(self, req: Request, resp: Response) -> None:
+        """
+        Add the application settings to the request object.
+
+        The settings can be accessed via the context variable
+        req.context.settings.
+
+        Args:
+            req: The request object.
+            resp: The response object.
+        """
         req.context.settings = self._settings

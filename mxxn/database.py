@@ -2,6 +2,9 @@
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import MetaData
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql.functions import now
+
 
 naming_convention: dict = {
     "ix": 'ix_%(column_0_label)s',
@@ -11,6 +14,12 @@ naming_convention: dict = {
     "pk": "pk_%(table_name)s"
 }
 """The SQLAlchemy naming convention."""
+
+
+@compiles(now, 'sqlite')
+def sqlite_now(element, compiler, **kw):
+    """Overwrite the func.now() function for SQLite."""
+    return "strftime('%Y-%m-%d %H:%M:%f000', 'now')"
 
 
 class DeclarativeBase():

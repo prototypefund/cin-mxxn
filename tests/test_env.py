@@ -269,17 +269,17 @@ class TestBaseJsFiles():
 
     def test_js_files_returned(self, mxxn_env):
         """The package has files."""
-        (mxxn_env/'mxnone/frontend/static').mkdir(parents=True)
-        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
+        (mxxn_env/'mxnone/frontend/static/js').mkdir(parents=True)
+        (mxxn_env/'mxnone/frontend/static/js/mxn.js').touch()
         pkg = env.Base('mxnone')
 
         assert pkg.js_files == [Path('mxn.js')]
 
     def test_js_files_from_sub_path_returned(self, mxxn_env):
         """The js files from a sub directory were returned."""
-        (mxxn_env/'mxnone/frontend/static/sub').mkdir(parents=True)
-        (mxxn_env/'mxnone/frontend/static/mxn.js').touch()
-        (mxxn_env/'mxnone/frontend/static/sub/mxn_sub.js').touch()
+        (mxxn_env/'mxnone/frontend/static/js/sub').mkdir(parents=True)
+        (mxxn_env/'mxnone/frontend/static/js/mxn.js').touch()
+        (mxxn_env/'mxnone/frontend/static/js/sub/mxn_sub.js').touch()
         pkg = env.Base('mxnone')
 
         assert pkg.js_files == [Path('mxn.js'), Path('sub/mxn_sub.js')]

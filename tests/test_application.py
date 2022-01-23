@@ -158,7 +158,7 @@ class TestAppRegisterResources():
         assert response_three.status == falcon.HTTP_OK
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_root_resource_of_patchwork(self, resources, tmp_path):
+    def test_root_resource_of_mxxn(self, resources, tmp_path):
         """Test if the "/.root" route was registered under "/"."""
         app = App()
         client = testing.TestClient(app.asgi)

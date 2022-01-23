@@ -55,14 +55,6 @@ class App(object):
         for mixin_name in mxns(self.settings):
             mixin = Mxn(mixin_name)
 
-            if not mixin.resources:
-                log.debug(
-                    'The mxn "{}" contains no resources.'
-                    .format(mixin_name)
-                )
-
-                continue
-
             for resource_dict in mixin.resources:
                 resource = resource_dict['resource']
                 routes = resource_dict['routes']

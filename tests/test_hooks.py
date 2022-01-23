@@ -102,7 +102,7 @@ class TestRender(object):
         assert response.status == '500 Internal Server Error'
         assert 'FileNotExistError' in str(caplog.records[-1])
 
-    def test_template_from_other_package(self, mxxn_env):
+    def test_a_template_from_other_package(self, mxxn_env):
         """Template is in other package."""
         content = '''
         import falcon
@@ -198,7 +198,7 @@ class TestRender(object):
         assert response.text == 'test 123 template'
         assert response.headers['content-type'] == falcon.MEDIA_TEXT
 
-    def test_template_syntax_error(self, mxxn_env, caplog):
+    def test_a_template_syntax_error(self, mxxn_env, caplog):
         """There is a syntax error in the template."""
         content = '''
         import falcon

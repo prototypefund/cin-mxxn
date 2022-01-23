@@ -1,6 +1,7 @@
 """The Resource package of the Mixxin package."""
 import falcon
 from mxxn.hooks import render
+from mxxn.exceptions import env as env_ex
 from mxxn import env
 
 
@@ -23,13 +24,23 @@ class App(object):
         mxxn = env.Mxxn()
 
         for js_file in mxxn.js_files:
-            js_urls.append('static'/js_file)
+            js_urls.append('static/js'/js_file)
 
         for mxn_name in env.mxns(req.context.settings):
             mxn = env.Mxn(mxn_name)
 
-            for js_file in mxn.static_path:
-                js_urls.append(('static/'+mxn_name)/js_file)
+            for js_file in mxn.js_files:
+                js_urls.append(
+                    ('static/mxns/'+mxn.unprefixed_name+'/js')/js_file)
+
+        try:
+            mxnapp = env.MxnApp()
+
+            for js_file in mxnapp.js_files:
+                js_urls.append('static/app/js/'+js_file)
+
+        except env_ex.MxnAppNotExistError:
+            pass
 
         resp.context.render = {
                 'auth': True,

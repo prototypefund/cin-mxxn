@@ -29,6 +29,7 @@ class App(object):
         """
         # TODO add covers!
         log = logger('registration')
+        routes_list = []
         mixxin = Mxxn()
 
         for resource_dict in mixxin.resources:
@@ -37,16 +38,19 @@ class App(object):
 
             for route in routes:
                 if len(route) > 1:
-                    self.asgi.add_route(route[0], resource(), suffix=route[1])
+                    routes_list.append([route[0], resource(), route[1]])
+                    # self.asgi.add_route(route[0], resource(), suffix=route[1])
 
                     continue
 
                 if route[0] == '/.root':
-                    self.asgi.add_route('/', resource())
+                    routes_list.append(['/', resource()])
+                    # self.asgi.add_route('/', resource())
 
                     continue
 
-                self.asgi.add_route(route[0], resource())
+                routes_list.append([route[0], resource()])
+                # self.asgi.add_route(route[0], resource())
 
         log.debug(
             'The resources of the mxxn package were registered.'
@@ -60,40 +64,50 @@ class App(object):
                 routes = resource_dict['routes']
 
                 for route in routes:
-                    prefix = '/mxns/' + mixin_name
+                    prefix = '/mxns/' + mixin.unprefixed_name
+
                     if len(route) > 1:
-                        self.asgi.add_route(
-                            prefix + route[0], resource(),
-                            suffix=route[1]
-                        )
+                        routes_list.append([prefix + route[0], resource(), route[1]])
+                        # self.asgi.add_route(
+                        #     prefix + route[0], resource(),
+                        #     suffix=route[1]
+                        # )
 
                         continue
 
-                    self.asgi.add_route(prefix + route[0], resource())
+                    routes_list.append([prefix + route[0], resource()])
+                    # self.asgi.add_route(prefix + route[0], resource())
 
             log.debug(
                 'The resources of the mxn "{}" were registered.'
                 .format(mixin_name)
             )
 
+        covering_resources = None
+
         try:
             app = MxnApp()
+            covering_resources = app.covering_resources(self.settings)
 
             for resource_dict in app.resources:
                 resource = resource_dict['resource']
                 routes = resource_dict['routes']
 
                 for route in routes:
+                    prefix = '/app'
+
                     if len(route) > 1:
-                        self.asgi.add_route(
-                            '/app'+route[0],
-                            resource(),
-                            suffix=route[1]
-                        )
+                        routes_list.append([prefix + route[0], resource(), route[1]])
+                        # self.asgi.add_route(
+                        #     '/app'+route[0],
+                        #     resource(),
+                        #     suffix=route[1]
+                        # )
 
                         continue
 
-                    self.asgi.add_route('/app'+route[0], resource())
+                    routes_list.append([prefix + route[0], resource()])
+                    # self.asgi.add_route('/app'+route[0], resource())
 
             log.debug(
                 'The resources of the application package {} were registered.'
@@ -102,6 +116,16 @@ class App(object):
 
         except env_ex.MxnAppNotExistError:
             pass
+
+        # print(covering_resources)
+
+        for route in routes_list:
+            if len(route) == 2:
+                self.asgi.add_route(route[0], route[1])
+
+                continue
+
+            self.asgi.add_route(route[0], route[1], suffix=route[2])
 
     def _register_static_paths(self) -> None:
         """

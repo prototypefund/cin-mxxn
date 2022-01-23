@@ -312,7 +312,8 @@ class MxnApp(Base):
     Here is the folder structure of an exemplary application that overloads
     the resources of the framework and a Mxn:
 
-    . code-block:: bash
+    .. code-block:: bash
+
         mxxnapp
         |-- covers
         |   |-- __init__.py

@@ -411,5 +411,3 @@ class TestMixxinAppCoveringResources():
         assert len(resources['mxxn']) == 0
         assert len(resources['mxns']) == 1
         assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
-
-

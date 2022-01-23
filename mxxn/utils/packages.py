@@ -4,9 +4,9 @@ import inspect
 
 def caller_package_name(depth: int = 1) -> str:
     """
-    Get the package name.
+    Get the Python package name.
 
-    The function returns the name of the package in
+    The function returns the name of the Python package in
     which the function was called.
 
     Args:
@@ -22,4 +22,4 @@ def caller_package_name(depth: int = 1) -> str:
     if module:
         return module.__name__.split('.')[0]
 
-    raise ModuleNotFoundError('No caller Module found')
+    raise ModuleNotFoundError('No caller package found')

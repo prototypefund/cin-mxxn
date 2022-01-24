@@ -1,5 +1,5 @@
 """This module contains several database exceptions."""
-from pwork import exceptions
+from mxxn import exceptions
 
 
 class DBError(exceptions.Base):

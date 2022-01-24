@@ -185,7 +185,7 @@ class Settings():
         if 'sqlalchemy.url' in self._data['alembic']:
             return self._data['alembic']['sqlalchemy.url']
         else:
-            return 'sqlite:///' + str(self.data_path/'mxxn.db')
+            return 'sqlite+aiosqlite:///' + str(self.data_path/'mxxn.db')
 
     def _load(self, settings_file: Path) -> None:
         """

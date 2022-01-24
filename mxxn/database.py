@@ -4,6 +4,12 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import MetaData
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.functions import now
+from sqlalchemy import exc as sqlalchemy_ex
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import sessionmaker
+from mxxn.exceptions import database as database_ex
+from mxxn.settings import Settings
 
 
 naming_convention: dict = {
@@ -33,3 +39,22 @@ class DeclarativeBase():
 metadata = MetaData(naming_convention=naming_convention)
 Base = declarative_base(cls=DeclarativeBase, metadata=metadata)
 """The Base class for all database models."""
+
+
+class Database():
+    """The Database class."""
+
+    def __init__(self, settings: Settings) -> None:
+        """
+        Initiliaze the Database instance.
+
+        Args:
+            settings: The settings object of the application.
+
+        """
+        try:
+            self.engine = create_async_engine(settings.sqlalchemy_url)
+
+        except (sqlalchemy_ex.NoSuchModuleError, sqlalchemy_ex.ArgumentError):
+            raise database_ex.URLError(
+                    'The SQLAlchemy database URL format is not correct.')

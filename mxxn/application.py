@@ -5,6 +5,7 @@ from mxxn.logging import logger
 from mxxn.env import Mxxn, mxns, Mxn, MxnApp
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import capture_errors
+from mxxn.database import Database
 
 
 class App(object):
@@ -12,6 +13,7 @@ class App(object):
 
     def __init__(self) -> None:
         self.settings = Settings()
+        self.database = Database(self.settings)
         settings_middleware = SettingsMiddleware(self.settings)
         self.asgi = asgi.App()
         self.asgi.add_error_handler(Exception, capture_errors)

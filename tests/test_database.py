@@ -1,6 +1,7 @@
 """Tests for the database module."""
 from unittest.mock import patch, PropertyMock
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
+from sqlalchemy.ext.asyncio.scoping import async_scoped_session
 import pytest
 from mxxn.database import Database
 from mxxn.settings import Settings
@@ -40,3 +41,25 @@ class TestDatabaseInit():
             settings = Settings()
             with pytest.raises(database_ex.URLError):
                 Database(settings)
+
+    def test_is_async_scoped_session(self):
+        """Is a async scoped session."""
+        with patch.object(
+                Settings, 'sqlalchemy_url', new_callable=PropertyMock) as mock:
+            mock.return_value = 'sqlite+aiosqlite://'
+
+            settings = Settings()
+            db = Database(settings)
+
+            assert isinstance(db.session, async_scoped_session)
+
+    @pytest.mark.asyncio
+    async def test_emp(self):
+        with patch.object(
+                Settings, 'sqlalchemy_url', new_callable=PropertyMock) as mock:
+            mock.return_value = 'sqlite+aiosqlite://'
+
+            settings = Settings()
+            db = Database(settings)
+
+            assert db.session.bind == db.engine

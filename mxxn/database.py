@@ -5,9 +5,10 @@ from sqlalchemy.schema import MetaData
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.functions import now
 from sqlalchemy import exc as sqlalchemy_ex
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import (
+        AsyncSession, async_scoped_session, create_async_engine)
 from sqlalchemy.orm import sessionmaker
+from asyncio import current_task
 from mxxn.exceptions import database as database_ex
 from mxxn.settings import Settings
 
@@ -54,6 +55,11 @@ class Database():
         """
         try:
             self.engine = create_async_engine(settings.sqlalchemy_url)
+            session_factory = sessionmaker(
+                self.engine, expire_on_commit=False, class_=AsyncSession)
+
+            self.session = async_scoped_session(
+                    session_factory, scopefunc=current_task)
 
         except (sqlalchemy_ex.NoSuchModuleError, sqlalchemy_ex.ArgumentError):
             raise database_ex.URLError(

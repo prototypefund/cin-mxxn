@@ -336,7 +336,7 @@ class TestSettingsSqlalchemyUrl():
             settings = Settings()
 
             assert settings.sqlalchemy_url ==\
-                'sqlite:///' + str(settings.data_path/'mxxn.db')
+                'sqlite+aiosqlite:///' + str(settings.data_path/'mxxn.db')
 
 
 class TestSettingsMiddleware():

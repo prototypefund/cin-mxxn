@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from asyncio import current_task
 from mxxn.exceptions import database as database_ex
 from mxxn.settings import Settings
+from mxxn.logging import logger
 
 
 naming_convention: dict = {
@@ -60,6 +61,9 @@ class Database():
 
             self.session = async_scoped_session(
                     session_factory, scopefunc=current_task)
+
+            log = logger('Database')
+            log.debug('Engine and session initialized.')
 
         except (sqlalchemy_ex.NoSuchModuleError, sqlalchemy_ex.ArgumentError):
             raise database_ex.URLError(

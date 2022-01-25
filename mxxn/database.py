@@ -1,7 +1,4 @@
 """The database module."""
-from sqlalchemy import Column, Integer
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.schema import MetaData
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql.functions import now
 from sqlalchemy import exc as sqlalchemy_ex
@@ -28,19 +25,6 @@ naming_convention: dict = {
 def sqlite_now(element, compiler, **kw):
     """Overwrite the func.now() function for SQLite."""
     return "strftime('%Y-%m-%d %H:%M:%f000', 'now')"
-
-
-class DeclarativeBase():
-    """The declarative base class."""
-
-    __table_args__ = {'sqlite_autoincrement': True}
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-
-
-metadata = MetaData(naming_convention=naming_convention)
-Base = declarative_base(cls=DeclarativeBase, metadata=metadata)
-"""The Base class for all database models."""
 
 
 class Database():

@@ -2,6 +2,7 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from alembic import command
+from alembic.util import exc as alembic_ex
 from alembic.config import Config
 import logging
 import sys
@@ -18,18 +19,32 @@ logging.basicConfig(
 log = logger()
 
 
+def generate_alembic_cfg() -> Config:
+    versions_path = Path('migrations/versions')
+    version_locations = 'mxxn:' + str(versions_path)
+
+    for mxn in mxns():
+        path = str(Mxn(mxn).path)/versions_path
+
+        if path.is_dir():
+            version_locations = version_locations + ' ' + mxn + ':'\
+                    + str(versions_path)
+
+    settings = Settings()
+    alembic_cfg = Config()
+    alembic_cfg.set_main_option('script_location', 'mxxn:migrations')
+    alembic_cfg.set_main_option('version_locations', version_locations)
+    alembic_cfg.set_main_option('sqlalchemy.url', settings.sqlalchemy_url)
+
+    return alembic_cfg
+
+
 def db_init_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+    version_locations = alembic_cfg.get_main_option('version_locations')
+    versions_path = Path('migrations/versions')
+
     try:
-        versions_path = Path('migrations/versions')
-        version_locations = 'mxxn:' + str(versions_path)
-
-        for mxn in mxns():
-            path = str(Mxn(mxn).path)/versions_path
-
-            if path.is_dir():
-                version_locations = version_locations + ' ' + mxn + ':'\
-                        + str(versions_path)
-
         path = Mxn(args.name).path/versions_path
 
         if path.is_dir():
@@ -43,22 +58,29 @@ def db_init_handler(args: Namespace) -> None:
         version_locations = version_locations + ' ' + args.name + ':' \
             + str(versions_path)
 
-        settings = Settings()
-        alembic_cfg = Config()
-        alembic_cfg.set_main_option('script_location', 'mxxn:migrations')
         alembic_cfg.set_main_option('version_locations', version_locations)
-        alembic_cfg.set_main_option('sqlalchemy.url', settings.sqlalchemy_url)
 
         message = 'ADD: {} branch'.format(args.name)
         command.revision(
-                alembic_cfg, message=message, head='base',
-                branch_label=args.name, version_path=str(path))
+            alembic_cfg, message=message, head='base',
+            branch_label=args.name, version_path=str(path))
+
     except env_ex.PackageNotExistError:
         log.error(
             'The {} package is not installed in '
             'the environment.\n'.format(args.name))
 
         sys.exit(1)
+
+
+def db_upgrade_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.upgrade(alembic_cfg, args.revision)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
 
 
 parser = ArgumentParser(description='The cli for MXXN management.')
@@ -68,6 +90,13 @@ db_subparsers = db_parser.add_subparsers()
 db_init_parser = db_subparsers.add_parser('init', help='Initialize branch.')
 db_init_parser.add_argument('name', help='The name of the package.')
 db_init_parser.set_defaults(func=db_init_handler)
+db_upgrade_parser = db_subparsers.add_parser(
+        'upgrade', help='Upgrade the database schema.')
+db_upgrade_parser.add_argument('revision', help='The revision identifier.')
+db_upgrade_parser.add_argument(
+        '--sql', 
+        help='Don\'t emit SQL to database - dump to standard output/file instead. See docs on offline mode.')
+db_upgrade_parser.set_defaults(func=db_upgrade_handler)
 
 
 def main() -> None:

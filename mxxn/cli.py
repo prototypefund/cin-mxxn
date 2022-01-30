@@ -93,6 +93,16 @@ def db_downgrade_handler(args: Namespace) -> None:
         log.error(e)
 
 
+def db_branches_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.branches(alembic_cfg)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
 parser = ArgumentParser(description='The cli for MXXN management.')
 subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
@@ -121,6 +131,14 @@ db_downgrade_parser.add_argument(
         help='Don\'t emit SQL to database - dump to standard output/file '
         'instead. See docs on offline mode.')
 db_downgrade_parser.set_defaults(func=db_downgrade_handler)
+
+db_branches_parser = db_subparsers.add_parser(
+        'branches', help='Show current branch points.')
+db_branches_parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Use more verbose output')
+db_branches_parser.set_defaults(func=db_branches_handler)
 
 
 def main() -> None:

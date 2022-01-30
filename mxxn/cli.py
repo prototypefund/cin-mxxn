@@ -77,17 +77,20 @@ def db_upgrade_handler(args: Namespace) -> None:
     alembic_cfg = generate_alembic_cfg()
 
     try:
-        command.upgrade(alembic_cfg, args.revision)
+        command.upgrade(
+            alembic_cfg, args.revision, sql=args.sql, tag=args.tag)
 
     except alembic_ex.CommandError as e:
         log.error(e)
 
 
 def db_downgrade_handler(args: Namespace) -> None:
+    print(args)
     alembic_cfg = generate_alembic_cfg()
 
     try:
-        command.downgrade(alembic_cfg, args.revision)
+        command.downgrade(
+            alembic_cfg, args.revision, sql=args.sql, tag=args.tag)
 
     except alembic_ex.CommandError as e:
         log.error(e)
@@ -120,6 +123,10 @@ db_upgrade_parser.add_argument(
         action='store_true',
         help='Don\'t emit SQL to database - dump to standard output/file '
         'instead. See docs on offline mode.')
+db_upgrade_parser.add_argument(
+        '--tag',
+        type=str,
+        help='Arbitrary "tag" name - can be used by custom env.py scripts.')
 db_upgrade_parser.set_defaults(func=db_upgrade_handler)
 
 db_downgrade_parser = db_subparsers.add_parser(
@@ -130,6 +137,10 @@ db_downgrade_parser.add_argument(
         action='store_true',
         help='Don\'t emit SQL to database - dump to standard output/file '
         'instead. See docs on offline mode.')
+db_downgrade_parser.add_argument(
+        '--tag',
+        type=str,
+        help='Arbitrary "tag" name - can be used by custom env.py scripts.')
 db_downgrade_parser.set_defaults(func=db_downgrade_handler)
 
 db_branches_parser = db_subparsers.add_parser(

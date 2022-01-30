@@ -20,7 +20,7 @@ log = logger()
 
 
 def generate_alembic_cfg() -> Config:
-    versions_path = Path('migrations/versions')
+    versions_path = Path('models/versions')
     version_locations = 'mxxn:' + str(versions_path)
 
     for mxn in mxns():
@@ -32,7 +32,7 @@ def generate_alembic_cfg() -> Config:
 
     settings = Settings()
     alembic_cfg = Config()
-    alembic_cfg.set_main_option('script_location', 'mxxn:migrations')
+    alembic_cfg.set_main_option('script_location', 'mxxn:alembic')
     alembic_cfg.set_main_option('version_locations', version_locations)
     alembic_cfg.set_main_option('sqlalchemy.url', settings.sqlalchemy_url)
 
@@ -42,7 +42,7 @@ def generate_alembic_cfg() -> Config:
 def db_init_handler(args: Namespace) -> None:
     alembic_cfg = generate_alembic_cfg()
     version_locations = alembic_cfg.get_main_option('version_locations')
-    versions_path = Path('migrations/versions')
+    versions_path = Path('models/versions')
 
     try:
         path = Mxn(args.name).path/versions_path

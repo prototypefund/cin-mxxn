@@ -83,20 +83,44 @@ def db_upgrade_handler(args: Namespace) -> None:
         log.error(e)
 
 
+def db_downgrade_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.downgrade(alembic_cfg, args.revision)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
 parser = ArgumentParser(description='The cli for MXXN management.')
 subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
 db_subparsers = db_parser.add_subparsers()
+
 db_init_parser = db_subparsers.add_parser('init', help='Initialize branch.')
 db_init_parser.add_argument('name', help='The name of the package.')
 db_init_parser.set_defaults(func=db_init_handler)
+
 db_upgrade_parser = db_subparsers.add_parser(
-        'upgrade', help='Upgrade the database schema.')
+        'upgrade', help='Upgrade to a later version.')
 db_upgrade_parser.add_argument('revision', help='The revision identifier.')
 db_upgrade_parser.add_argument(
-        '--sql', 
-        help='Don\'t emit SQL to database - dump to standard output/file instead. See docs on offline mode.')
+        '--sql',
+        action='store_true',
+        help='Don\'t emit SQL to database - dump to standard output/file '
+        'instead. See docs on offline mode.')
 db_upgrade_parser.set_defaults(func=db_upgrade_handler)
+
+db_downgrade_parser = db_subparsers.add_parser(
+        'downgrade', help='Revert to a previous version.')
+db_downgrade_parser.add_argument('revision', help='The revision identifier.')
+db_downgrade_parser.add_argument(
+        '--sql',
+        action='store_true',
+        help='Don\'t emit SQL to database - dump to standard output/file '
+        'instead. See docs on offline mode.')
+db_downgrade_parser.set_defaults(func=db_downgrade_handler)
 
 
 def main() -> None:

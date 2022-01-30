@@ -97,7 +97,7 @@ def db_branches_handler(args: Namespace) -> None:
     alembic_cfg = generate_alembic_cfg()
 
     try:
-        command.branches(alembic_cfg)
+        command.branches(alembic_cfg, verbose=args.verbose)
 
     except alembic_ex.CommandError as e:
         log.error(e)

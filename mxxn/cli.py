@@ -116,6 +116,18 @@ def db_current_handler(args: Namespace) -> None:
         log.error(e)
 
 
+def db_heads_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.heads(
+            alembic_cfg, verbose=args.verbose,
+            resolve_dependencies=args.resolve_dependencies)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
 parser = ArgumentParser(description='The cli for MXXN management.')
 subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
@@ -154,12 +166,24 @@ db_branches_parser.add_argument(
 db_branches_parser.set_defaults(func=db_branches_handler)
 
 db_current_parser = db_subparsers.add_parser(
-        'current', help='Show current branch points.')
+        'current', help='Display the current revision for a database.')
 db_current_parser.add_argument(
         '-v', '--verbose',
         action='store_true',
         help='Use more verbose output')
 db_current_parser.set_defaults(func=db_current_handler)
+
+db_heads_parser = db_subparsers.add_parser(
+        'heads', help='Show current available heads in the script directory.')
+db_heads_parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Use more verbose output')
+db_heads_parser.add_argument(
+        '--resolve-dependencies',
+        action='store_true',
+        help='Treat dependency versions as down revisions')
+db_heads_parser.set_defaults(func=db_heads_handler)
 
 def main() -> None:
     args = parser.parse_args()

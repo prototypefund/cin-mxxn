@@ -78,7 +78,7 @@ def db_upgrade_handler(args: Namespace) -> None:
 
     try:
         command.upgrade(
-            alembic_cfg, args.revision, sql=args.sql, tag=args.tag)
+            alembic_cfg, args.revision, sql=args.sql)
 
     except alembic_ex.CommandError as e:
         log.error(e)
@@ -90,7 +90,7 @@ def db_downgrade_handler(args: Namespace) -> None:
 
     try:
         command.downgrade(
-            alembic_cfg, args.revision, sql=args.sql, tag=args.tag)
+            alembic_cfg, args.revision, sql=args.sql)
 
     except alembic_ex.CommandError as e:
         log.error(e)
@@ -101,6 +101,16 @@ def db_branches_handler(args: Namespace) -> None:
 
     try:
         command.branches(alembic_cfg, verbose=args.verbose)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
+def db_current_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.current(alembic_cfg, verbose=args.verbose)
 
     except alembic_ex.CommandError as e:
         log.error(e)
@@ -123,10 +133,6 @@ db_upgrade_parser.add_argument(
         action='store_true',
         help='Don\'t emit SQL to database - dump to standard output/file '
         'instead. See docs on offline mode.')
-db_upgrade_parser.add_argument(
-        '--tag',
-        type=str,
-        help='Arbitrary "tag" name - can be used by custom env.py scripts.')
 db_upgrade_parser.set_defaults(func=db_upgrade_handler)
 
 db_downgrade_parser = db_subparsers.add_parser(
@@ -137,10 +143,6 @@ db_downgrade_parser.add_argument(
         action='store_true',
         help='Don\'t emit SQL to database - dump to standard output/file '
         'instead. See docs on offline mode.')
-db_downgrade_parser.add_argument(
-        '--tag',
-        type=str,
-        help='Arbitrary "tag" name - can be used by custom env.py scripts.')
 db_downgrade_parser.set_defaults(func=db_downgrade_handler)
 
 db_branches_parser = db_subparsers.add_parser(
@@ -151,6 +153,13 @@ db_branches_parser.add_argument(
         help='Use more verbose output')
 db_branches_parser.set_defaults(func=db_branches_handler)
 
+db_current_parser = db_subparsers.add_parser(
+        'current', help='Show current branch points.')
+db_current_parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Use more verbose output')
+db_current_parser.set_defaults(func=db_current_handler)
 
 def main() -> None:
     args = parser.parse_args()

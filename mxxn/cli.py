@@ -128,6 +128,18 @@ def db_heads_handler(args: Namespace) -> None:
         log.error(e)
 
 
+def db_history_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.history(
+            alembic_cfg, verbose=args.verbose,
+            rev_range=args.rev_range, indicate_current=args.indicate_current)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
 parser = ArgumentParser(description='The cli for MXXN management.')
 subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
@@ -184,6 +196,23 @@ db_heads_parser.add_argument(
         action='store_true',
         help='Treat dependency versions as down revisions')
 db_heads_parser.set_defaults(func=db_heads_handler)
+
+db_history_parser = db_subparsers.add_parser(
+        'history', help='List changeset scripts in chronological order.')
+db_history_parser.add_argument(
+        '-r', '--rev-range',
+        action='store',
+        help='Specify a revision range; format is [start]:[end]')
+db_history_parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='Use more verbose output')
+db_history_parser.add_argument(
+        '-i', '--indicate-current',
+        action='store_true',
+        help='Indicate the current revision')
+db_history_parser.set_defaults(func=db_history_handler)
+
 
 def main() -> None:
     args = parser.parse_args()

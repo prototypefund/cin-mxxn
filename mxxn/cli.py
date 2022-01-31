@@ -140,6 +140,16 @@ def db_history_handler(args: Namespace) -> None:
         log.error(e)
 
 
+def db_merge_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.merge(
+            alembic_cfg, revisions=args.revisions, message=args.message)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
 parser = ArgumentParser(description='The cli for MXXN management.')
 subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
@@ -213,6 +223,16 @@ db_history_parser.add_argument(
         help='Indicate the current revision')
 db_history_parser.set_defaults(func=db_history_handler)
 
+db_merge_parser = db_subparsers.add_parser(
+        'merge', help='Merge two revisions together. Creates a new migration file.')
+db_merge_parser.add_argument(
+        'revisions',
+        action='store',
+        help='One or more revisions, or "heads" for all heads')
+db_merge_parser.add_argument(
+        '-m', '--message',
+        action='store',
+        help='Message string to use with "revision"')
 
 def main() -> None:
     args = parser.parse_args()

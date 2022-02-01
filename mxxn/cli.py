@@ -4,19 +4,10 @@ from pathlib import Path
 from alembic import command
 from alembic.util import exc as alembic_ex
 from alembic.config import Config
-import logging
 import sys
 from mxxn.env import mxns, Mxn
 from mxxn.settings import Settings
 from mxxn.exceptions import env as env_ex
-from mxxn.logging import logger
-
-
-logging.basicConfig(
-        level=logging.WARNING,
-        format='%(levelname)s: %(message)s')
-
-log = logger()
 
 
 def generate_alembic_cfg() -> Config:
@@ -49,8 +40,8 @@ def db_init_handler(args: Namespace) -> None:
 
         if path.is_dir():
             if any(path.iterdir()):
-                log.error(
-                    'The versions path of the {} package is '
+                print(
+                    'ERROR: The versions path of the {} package is '
                     'not empty.\n'.format(args.name))
                 sys.exit(1)
 
@@ -66,8 +57,8 @@ def db_init_handler(args: Namespace) -> None:
             branch_label=args.name, version_path=str(path))
 
     except env_ex.PackageNotExistError:
-        log.error(
-            'The {} package is not installed in '
+        print(
+            'ERROR: The {} package is not installed in '
             'the environment.\n'.format(args.name))
 
         sys.exit(1)
@@ -81,7 +72,7 @@ def db_upgrade_handler(args: Namespace) -> None:
             alembic_cfg, args.revision, sql=args.sql)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_downgrade_handler(args: Namespace) -> None:
@@ -93,7 +84,7 @@ def db_downgrade_handler(args: Namespace) -> None:
             alembic_cfg, args.revision, sql=args.sql)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_branches_handler(args: Namespace) -> None:
@@ -103,7 +94,7 @@ def db_branches_handler(args: Namespace) -> None:
         command.branches(alembic_cfg, verbose=args.verbose)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_current_handler(args: Namespace) -> None:
@@ -113,7 +104,7 @@ def db_current_handler(args: Namespace) -> None:
         command.current(alembic_cfg, verbose=args.verbose)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_heads_handler(args: Namespace) -> None:
@@ -125,7 +116,7 @@ def db_heads_handler(args: Namespace) -> None:
             resolve_dependencies=args.resolve_dependencies)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_history_handler(args: Namespace) -> None:
@@ -137,7 +128,7 @@ def db_history_handler(args: Namespace) -> None:
             rev_range=args.rev_range, indicate_current=args.indicate_current)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_merge_handler(args: Namespace) -> None:
@@ -148,7 +139,7 @@ def db_merge_handler(args: Namespace) -> None:
             alembic_cfg, revisions=args.revisions, message=args.message)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_show_handler(args: Namespace) -> None:
@@ -159,7 +150,7 @@ def db_show_handler(args: Namespace) -> None:
             alembic_cfg, rev=args.rev)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 def db_revision_handler(args: Namespace) -> None:
@@ -171,7 +162,7 @@ def db_revision_handler(args: Namespace) -> None:
             autogenerate=args.autogenerate, head=args.head)
 
     except alembic_ex.CommandError as e:
-        log.error(e)
+        print('ERROR: ' + e)
 
 
 parser = ArgumentParser(description='The cli for MXXN management.')

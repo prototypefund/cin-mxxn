@@ -150,13 +150,39 @@ def db_merge_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         log.error(e)
 
+
+def db_show_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.show(
+            alembic_cfg, rev=args.rev)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
+def db_revision_handler(args: Namespace) -> None:
+    alembic_cfg = generate_alembic_cfg()
+
+    try:
+        command.revision(
+            alembic_cfg, message=args.message, sql=args.sql,
+            autogenerate=args.autogenerate, head=args.head)
+
+    except alembic_ex.CommandError as e:
+        log.error(e)
+
+
 parser = ArgumentParser(description='The cli for MXXN management.')
 subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
 db_subparsers = db_parser.add_subparsers()
 
-db_init_parser = db_subparsers.add_parser('init', help='Initialize branch.')
-db_init_parser.add_argument('name', help='The name of the package.')
+db_init_parser = db_subparsers.add_parser(
+        'init', help='Initialize the mxn or mxnapp branch.')
+db_init_parser.add_argument(
+        'name', help='The name of the mxn or mxnapp package.')
 db_init_parser.set_defaults(func=db_init_handler)
 
 db_upgrade_parser = db_subparsers.add_parser(
@@ -224,7 +250,8 @@ db_history_parser.add_argument(
 db_history_parser.set_defaults(func=db_history_handler)
 
 db_merge_parser = db_subparsers.add_parser(
-        'merge', help='Merge two revisions together. Creates a new migration file.')
+        'merge',
+        help='Merge two revisions together. Creates a new migration file.')
 db_merge_parser.add_argument(
         'revisions',
         action='store',
@@ -233,6 +260,44 @@ db_merge_parser.add_argument(
         '-m', '--message',
         action='store',
         help='Message string to use with "revision"')
+db_merge_parser.set_defaults(func=db_merge_handler)
+
+db_show_parser = db_subparsers.add_parser(
+        'show', help='Show the revision(s) denoted by the given symbol.')
+db_show_parser.add_argument(
+        'rev',
+        action='store',
+        help='The revision target')
+db_show_parser.set_defaults(func=db_show_handler)
+
+db_revision_parser = db_subparsers.add_parser(
+        'revision', help='Create a new revision file.')
+db_revision_parser.add_argument(
+        '-m', '--message',
+        action='store',
+        help='Message string to use with "revision"')
+db_revision_parser.add_argument(
+        '--head',
+        action='store',
+        help='Specify head revision or <branchname>@head '
+        'to base new revision on.')
+db_revision_parser.add_argument(
+        '--autogenerate',
+        action='store_true',
+        help='Populate revision script with candidate migration operations, '
+        'based on comparison of database to model.')
+db_revision_parser.add_argument(
+        '--sql',
+        action='store_true',
+        help='Don\'t emit SQL to database - dump to standard output/file '
+        'instead. See docs on offline mode.')
+db_revision_parser.add_argument(
+        '--depends-on',
+        action='store',
+        help='Specify one or more revision identifiers which this '
+        'revision should depend on')
+db_revision_parser.set_defaults(func=db_revision_handler)
+
 
 def main() -> None:
     args = parser.parse_args()

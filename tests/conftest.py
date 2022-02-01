@@ -1,6 +1,6 @@
 """Pytest conftest.py file."""
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, PropertyMock
 import sys
 
 
@@ -62,3 +62,20 @@ def mxxn_env(tmp_path, iter_entry_points):
     for mod in list(sys.modules.keys()):
         if mod.startswith('mxn'):
             del sys.modules[mod]
+
+
+@pytest.fixture
+def db(tmp_path):
+    """
+    Get an initialzed database test environment.
+
+    Args:
+        tmp_path: Pytest temp directory.
+
+    """
+    with patch(
+            'mxxn.cli.Settings.sqlalchemy_url',
+            new_callable=PropertyMock) as mock:
+        mock.return_value = 'sqlite:///' + str(tmp_path/'db.sqlite')
+
+        yield

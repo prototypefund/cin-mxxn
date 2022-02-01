@@ -12,7 +12,7 @@ class TestDbInitHandler():
         args_mock.name = 'mxnone'
 
         cli.db_init_handler(args_mock)
-        versions_path = mxxn_env/'mxnone/migrations/versions'
+        versions_path = mxxn_env/'mxnone/models/versions'
 
         assert versions_path.is_dir()
         assert list(versions_path.glob('*add_mxnone_branch.py'))
@@ -35,7 +35,7 @@ class TestDbInitHandler():
         args_mock = Mock()
         args_mock.name = 'mxnone'
 
-        versions_path = mxxn_env/'mxnone/migrations/versions'
+        versions_path = mxxn_env/'mxnone/models/versions'
         versions_path.mkdir(parents=True)
         (versions_path/'revision.py').touch()
         caplog.set_level(logging.ERROR)

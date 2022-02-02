@@ -125,7 +125,7 @@ class Base():
         return self._package.__name__
 
     @property
-    def path(self) -> str:
+    def path(self) -> Path:
         """Get the package path."""
         return Path(self._package.__path__[0])
 
@@ -292,8 +292,8 @@ class Mxn(Base):
 
 
 class TypeCoveringResources(TypedDict):
-    mixxin: TypeListOfResourceDicts
-    mixins: Dict[str, TypeListOfResourceDicts]
+    mxxn: TypeListOfResourceDicts
+    mxns: Dict[str, TypeListOfResourceDicts]
 
 
 class MxnApp(Base):

@@ -1,4 +1,18 @@
-"""CLI application for the MXXN framework."""
+"""
+CLI application for the MXXN framework.
+
+When installing the MXXN framework, the main function of this
+module is registered as console scripts under the name mxxr.
+This command line program can be used to manage the database
+schema of the Mxxn, Mxn or MxnApp packages.
+For this purpose, a reduced selection of Alembic command
+line functions has been added as CLI argument 'mxxr db'.
+For more information use the following command:
+
+.. code-block:: bash
+
+   $ mxxr db -h
+"""
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from alembic import command
@@ -11,6 +25,14 @@ from mxxn.exceptions import env as env_ex
 
 
 def generate_alembic_cfg() -> Config:
+    """
+    Generate a Alembic config object.
+
+    This function adds the script location *mxxn:alembic* to the config.
+    It also adds the *models/versions* folders of all installed mxns as
+    version locations. The SQLAlchemy URL is taken from the application
+    settings.
+    """
     versions_path = Path('models/versions')
     version_locations = 'mxxn:' + str(versions_path)
 
@@ -24,15 +46,21 @@ def generate_alembic_cfg() -> Config:
     settings = Settings()
     alembic_cfg = Config()
     alembic_cfg.set_main_option('script_location', 'mxxn:alembic')
-    alembic_cfg.set_main_option('version_locations', version_locations)
+    alembic_cfg.set_main_option('version_locations', str(version_locations))
     alembic_cfg.set_main_option('sqlalchemy.url', settings.sqlalchemy_url)
 
     return alembic_cfg
 
 
 def db_init_handler(args: Namespace) -> None:
+    """
+    Handle the db init command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
-    version_locations = alembic_cfg.get_main_option('version_locations')
+    version_locations = str(alembic_cfg.get_main_option('version_locations'))
     versions_path = Path('models/versions')
 
     try:
@@ -65,6 +93,12 @@ def db_init_handler(args: Namespace) -> None:
 
 
 def db_upgrade_handler(args: Namespace) -> None:
+    """
+    Handle the db upgrade command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -72,11 +106,16 @@ def db_upgrade_handler(args: Namespace) -> None:
             alembic_cfg, args.revision, sql=args.sql)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_downgrade_handler(args: Namespace) -> None:
-    print(args)
+    """
+    Handle the db downgrade command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -84,30 +123,48 @@ def db_downgrade_handler(args: Namespace) -> None:
             alembic_cfg, args.revision, sql=args.sql)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_branches_handler(args: Namespace) -> None:
+    """
+    Handle the db branches command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
         command.branches(alembic_cfg, verbose=args.verbose)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_current_handler(args: Namespace) -> None:
+    """
+    Handle the db current command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
         command.current(alembic_cfg, verbose=args.verbose)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_heads_handler(args: Namespace) -> None:
+    """
+    Handle the db heads command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -116,10 +173,16 @@ def db_heads_handler(args: Namespace) -> None:
             resolve_dependencies=args.resolve_dependencies)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_history_handler(args: Namespace) -> None:
+    """
+    Handle the db history command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -128,10 +191,16 @@ def db_history_handler(args: Namespace) -> None:
             rev_range=args.rev_range, indicate_current=args.indicate_current)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_merge_handler(args: Namespace) -> None:
+    """
+    Handle the db merge command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -139,10 +208,16 @@ def db_merge_handler(args: Namespace) -> None:
             alembic_cfg, revisions=args.revisions, message=args.message)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_show_handler(args: Namespace) -> None:
+    """
+    Handle the db show command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -150,10 +225,16 @@ def db_show_handler(args: Namespace) -> None:
             alembic_cfg, rev=args.rev)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 def db_revision_handler(args: Namespace) -> None:
+    """
+    Handle the db revision command.
+
+    Args:
+        args: The argparse Namespace.
+    """
     alembic_cfg = generate_alembic_cfg()
 
     try:
@@ -162,7 +243,7 @@ def db_revision_handler(args: Namespace) -> None:
             autogenerate=args.autogenerate, head=args.head)
 
     except alembic_ex.CommandError as e:
-        print('ERROR: ' + e)
+        print('ERROR: ' + str(e))
 
 
 parser = ArgumentParser(description='The cli for MXXN management.')
@@ -291,5 +372,6 @@ db_revision_parser.set_defaults(func=db_revision_handler)
 
 
 def main() -> None:
+    """CLI script entry point."""
     args = parser.parse_args()
     args.func(args)

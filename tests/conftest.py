@@ -76,6 +76,6 @@ def db(tmp_path):
     with patch(
             'mxxn.cli.Settings.sqlalchemy_url',
             new_callable=PropertyMock) as mock:
-        mock.return_value = 'sqlite:///' + str(tmp_path/'db.sqlite')
+        mock.return_value = 'sqlite+aiosqlite:///' + str(tmp_path/'db.sqlite')
 
         yield

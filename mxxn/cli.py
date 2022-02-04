@@ -12,6 +12,25 @@ For more information use the following command:
 .. code-block:: bash
 
    $ mxxr db -h
+   usage: mxxr db [-h]
+   {init,upgrade,downgrade,branches,current,heads,history,merge,show,revision}
+
+    positional arguments:
+      {init,upgrade,downgrade,branches,current,heads,history,merge,show,revision}
+
+        init        Initialize the mxn or mxnapp branch.
+        upgrade     Upgrade to a later version.
+        downgrade   Revert to a previous version.
+        branches    Show current branch points.
+        current     Display the current revision for a database.
+        heads       Show current available heads in the script directory.
+        history     List changeset scripts in chronological order.
+        merge       Merge two revisions together. Creates a new migration file.
+        show        Show the revision(s) denoted by the given symbol.
+        revision    Create a new revision file.
+
+    options:
+      -h, --help            show this help message and exit
 """
 from argparse import ArgumentParser, Namespace
 from pathlib import Path

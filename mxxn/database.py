@@ -1,5 +1,6 @@
 """The database module."""
 from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.schema import MetaData
 from sqlalchemy.sql.functions import now
 from sqlalchemy import exc as sqlalchemy_ex
 from sqlalchemy.ext.asyncio import (
@@ -19,6 +20,9 @@ naming_convention: dict = {
     "pk": "pk_%(table_name)s"
 }
 """The SQLAlchemy naming convention."""
+
+metadata = MetaData(naming_convention=naming_convention)
+"""A collection of Table objects and their associated schema constructs."""
 
 
 @compiles(now, 'sqlite')

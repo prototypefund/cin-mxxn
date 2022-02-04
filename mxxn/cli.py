@@ -371,11 +371,11 @@ db_show_parser.set_defaults(func=db_show_handler)
 db_revision_parser = db_subparsers.add_parser(
         'revision', help='Create a new revision file.')
 db_revision_parser.add_argument(
-        '--message',
+        'message',
         action='store',
         help='Message string to use with "revision"')
 db_revision_parser.add_argument(
-        '--head',
+        'head',
         action='store',
         help='Specify head revision or <branchname>@head '
         'to base new revision on.')

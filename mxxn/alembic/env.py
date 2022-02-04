@@ -28,7 +28,8 @@ if branch_name:
 
     module_list = []
     modules.submodules(models_module, module_list)
-    target_metadata = Base.metadata
+
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

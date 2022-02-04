@@ -35,7 +35,6 @@ For more information use the following command:
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from alembic import command
-from alembic.util import exc as alembic_ex
 from alembic.config import Config
 import sys
 import re

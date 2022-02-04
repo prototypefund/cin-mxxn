@@ -28,7 +28,6 @@ class TestDbInitHandler():
         with pytest.raises(env_ex.PackageNotExistError):
             cli.db_init_handler(args_mock)
 
-
     def test_already_intialized(self, mxxn_env, db):
         """The package was already initialized."""
         args_mock = Mock()
@@ -44,6 +43,7 @@ class TestDbInitHandler():
 
 class TestDbRevisionHandler():
     """Tests for the db_revision_handler."""
+
     def test_worng_head_format(self, mxxn_env, db, capfd):
         """Wrong format for head argument."""
         init_args_mock = Mock()

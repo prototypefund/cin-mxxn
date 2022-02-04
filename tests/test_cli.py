@@ -46,3 +46,51 @@ class TestDbInitHandler():
             captured = capfd.readouterr()
 
             assert 'mxnone package is not empty.' in captured.out
+
+
+class TestDbRevisionHandler():
+    """Tests for the db_revision_handler."""
+    def test_worng_head_format(self, mxxn_env, db, capfd):
+        """Wrong format for head argument."""
+        init_args_mock = Mock()
+        init_args_mock.name = 'mxnone'
+
+        upgrade_args_mock = Mock()
+        upgrade_args_mock.revision = 'heads'
+
+        revision_args_mock = Mock()
+        revision_args_mock.message = 'ADD: some chnages'
+        revision_args_mock.autogenerate = None
+        revision_args_mock.sql = None
+        revision_args_mock.head = 'mxnonehead'
+
+        cli.db_init_handler(init_args_mock)
+        cli.db_upgrade_handler(upgrade_args_mock)
+
+        try:
+            cli.db_revision_handler(revision_args_mock)
+        except SystemExit:
+            captured = capfd.readouterr()
+
+            assert 'not in format <branchname>@head' in captured.out
+
+    def test_correct_head_format(self, mxxn_env, db, capfd):
+        """Correct format for head argument."""
+        init_args_mock = Mock()
+        init_args_mock.name = 'mxnone'
+
+        upgrade_args_mock = Mock()
+        upgrade_args_mock.revision = 'heads'
+
+        revision_args_mock = Mock()
+        revision_args_mock.message = 'ADD: some changes'
+        revision_args_mock.autogenerate = None
+        revision_args_mock.sql = None
+        revision_args_mock.head = 'mxnone@head'
+
+        cli.db_init_handler(init_args_mock)
+        cli.db_upgrade_handler(upgrade_args_mock)
+        cli.db_revision_handler(revision_args_mock)
+        captured = capfd.readouterr()
+
+        assert '_add_some_changes.py' in captured.out

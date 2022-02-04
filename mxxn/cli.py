@@ -19,6 +19,7 @@ from alembic import command
 from alembic.util import exc as alembic_ex
 from alembic.config import Config
 import sys
+import re
 from mxxn.env import mxns, Mxn
 from mxxn.settings import Settings
 from mxxn.exceptions import env as env_ex
@@ -108,6 +109,8 @@ def db_upgrade_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
 
+        sys.exit(1)
+
 
 def db_downgrade_handler(args: Namespace) -> None:
     """
@@ -125,6 +128,8 @@ def db_downgrade_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
 
+        sys.exit(1)
+
 
 def db_branches_handler(args: Namespace) -> None:
     """
@@ -141,6 +146,8 @@ def db_branches_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
 
+        sys.exit(1)
+
 
 def db_current_handler(args: Namespace) -> None:
     """
@@ -156,6 +163,8 @@ def db_current_handler(args: Namespace) -> None:
 
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
+
+        sys.exit(1)
 
 
 def db_heads_handler(args: Namespace) -> None:
@@ -175,6 +184,8 @@ def db_heads_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
 
+        sys.exit(1)
+
 
 def db_history_handler(args: Namespace) -> None:
     """
@@ -193,6 +204,8 @@ def db_history_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
 
+        sys.exit(1)
+
 
 def db_merge_handler(args: Namespace) -> None:
     """
@@ -209,6 +222,8 @@ def db_merge_handler(args: Namespace) -> None:
 
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
+
+        sys.exit(1)
 
 
 def db_show_handler(args: Namespace) -> None:
@@ -227,6 +242,8 @@ def db_show_handler(args: Namespace) -> None:
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
 
+        sys.exit(1)
+
 
 def db_revision_handler(args: Namespace) -> None:
     """
@@ -235,7 +252,14 @@ def db_revision_handler(args: Namespace) -> None:
     Args:
         args: The argparse Namespace.
     """
+    if not re.search(r'^\w+@\w+$', args.head):
+        print('ERROR: head is not in format <branchname>@head.')
+
+        sys.exit(1)
+
+    branch_name = args.head.split('@')[0]
     alembic_cfg = generate_alembic_cfg()
+    alembic_cfg.set_main_option('branch_name', branch_name)
 
     try:
         command.revision(
@@ -244,6 +268,8 @@ def db_revision_handler(args: Namespace) -> None:
 
     except alembic_ex.CommandError as e:
         print('ERROR: ' + str(e))
+
+        sys.exit(1)
 
 
 parser = ArgumentParser(description='The cli for MXXN management.')
@@ -345,7 +371,7 @@ db_show_parser.set_defaults(func=db_show_handler)
 db_revision_parser = db_subparsers.add_parser(
         'revision', help='Create a new revision file.')
 db_revision_parser.add_argument(
-        '-m', '--message',
+        '--message',
         action='store',
         help='Message string to use with "revision"')
 db_revision_parser.add_argument(

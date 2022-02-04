@@ -78,6 +78,12 @@ def db_init_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        mxxn.exceptions.filesys.PathNotEmptyError: If the version path is
+            not empty.
+        mxxn.exceptions.env.PackageNotExistError: If the package not in
+            the environment.
     """
     alembic_cfg = generate_alembic_cfg()
     version_locations = str(alembic_cfg.get_main_option('version_locations'))
@@ -115,6 +121,9 @@ def db_upgrade_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -128,6 +137,9 @@ def db_downgrade_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -141,6 +153,9 @@ def db_branches_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -153,6 +168,9 @@ def db_current_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -165,6 +183,9 @@ def db_heads_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -179,6 +200,9 @@ def db_history_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -193,6 +217,9 @@ def db_merge_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -206,6 +233,9 @@ def db_show_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     alembic_cfg = generate_alembic_cfg()
 
@@ -219,6 +249,9 @@ def db_revision_handler(args: Namespace) -> None:
 
     Args:
         args: The argparse Namespace.
+
+    Raises:
+        alembic.util.exc.CommandError: If alembic command error occurs.
     """
     if not re.search(r'^\w+@\w+$', args.head):
         raise ValueError('head is not in format <branchname>@head.')
@@ -358,7 +391,12 @@ db_revision_parser.set_defaults(func=db_revision_handler)
 
 
 def main() -> None:
-    """CLI script entry point."""
+    """
+    CLI script entry point.
+
+    Raises:
+        SystemExit: The program exit exception.
+    """
     try:
         args = parser.parse_args()
         args.func(args)

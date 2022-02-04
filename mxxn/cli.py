@@ -42,6 +42,7 @@ import re
 from mxxn.env import mxns, Mxn
 from mxxn.settings import Settings
 from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import filesys as filesys_ex
 
 
 def generate_alembic_cfg() -> Config:
@@ -88,10 +89,9 @@ def db_init_handler(args: Namespace) -> None:
 
         if path.is_dir():
             if any(path.iterdir()):
-                print(
-                    'ERROR: The versions path of the {} package is '
+                raise filesys_ex.PathNotEmptyError(
+                    'The versions path of the {} package is '
                     'not empty.\n'.format(args.name))
-                sys.exit(1)
 
         path.mkdir(parents=True, exist_ok=True)
         version_locations = version_locations + ' ' + args.name + ':' \
@@ -104,12 +104,10 @@ def db_init_handler(args: Namespace) -> None:
             alembic_cfg, message=message, head='base',
             branch_label=args.name, version_path=str(path))
 
-    except env_ex.PackageNotExistError:
-        print(
-            'ERROR: The {} package is not installed in '
-            'the environment.\n'.format(args.name))
-
-        sys.exit(1)
+    except env_ex.PackageNotExistError as e:
+        raise env_ex.PackageNotExistError(
+            'The {} package is not installed in the environment.\n'
+            .format(args.name)) from e
 
 
 def db_upgrade_handler(args: Namespace) -> None:
@@ -121,14 +119,8 @@ def db_upgrade_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.upgrade(
-            alembic_cfg, args.revision, sql=args.sql)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.upgrade(
+        alembic_cfg, args.revision, sql=args.sql)
 
 
 def db_downgrade_handler(args: Namespace) -> None:
@@ -140,14 +132,8 @@ def db_downgrade_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.downgrade(
-            alembic_cfg, args.revision, sql=args.sql)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.downgrade(
+        alembic_cfg, args.revision, sql=args.sql)
 
 
 def db_branches_handler(args: Namespace) -> None:
@@ -159,13 +145,7 @@ def db_branches_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.branches(alembic_cfg, verbose=args.verbose)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.branches(alembic_cfg, verbose=args.verbose)
 
 
 def db_current_handler(args: Namespace) -> None:
@@ -177,13 +157,7 @@ def db_current_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.current(alembic_cfg, verbose=args.verbose)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.current(alembic_cfg, verbose=args.verbose)
 
 
 def db_heads_handler(args: Namespace) -> None:
@@ -195,15 +169,9 @@ def db_heads_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.heads(
-            alembic_cfg, verbose=args.verbose,
-            resolve_dependencies=args.resolve_dependencies)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.heads(
+        alembic_cfg, verbose=args.verbose,
+        resolve_dependencies=args.resolve_dependencies)
 
 
 def db_history_handler(args: Namespace) -> None:
@@ -215,15 +183,9 @@ def db_history_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.history(
-            alembic_cfg, verbose=args.verbose,
-            rev_range=args.rev_range, indicate_current=args.indicate_current)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.history(
+        alembic_cfg, verbose=args.verbose,
+        rev_range=args.rev_range, indicate_current=args.indicate_current)
 
 
 def db_merge_handler(args: Namespace) -> None:
@@ -235,14 +197,8 @@ def db_merge_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.merge(
-            alembic_cfg, revisions=args.revisions, message=args.message)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.merge(
+        alembic_cfg, revisions=args.revisions, message=args.message)
 
 
 def db_show_handler(args: Namespace) -> None:
@@ -254,14 +210,8 @@ def db_show_handler(args: Namespace) -> None:
     """
     alembic_cfg = generate_alembic_cfg()
 
-    try:
-        command.show(
-            alembic_cfg, rev=args.rev)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.show(
+        alembic_cfg, rev=args.rev)
 
 
 def db_revision_handler(args: Namespace) -> None:
@@ -272,23 +222,15 @@ def db_revision_handler(args: Namespace) -> None:
         args: The argparse Namespace.
     """
     if not re.search(r'^\w+@\w+$', args.head):
-        print('ERROR: head is not in format <branchname>@head.')
-
-        sys.exit(1)
+        raise ValueError('head is not in format <branchname>@head.')
 
     branch_name = args.head.split('@')[0]
     alembic_cfg = generate_alembic_cfg()
     alembic_cfg.set_main_option('branch_name', branch_name)
 
-    try:
-        command.revision(
-            alembic_cfg, message=args.message, sql=args.sql,
-            autogenerate=args.autogenerate, head=args.head)
-
-    except alembic_ex.CommandError as e:
-        print('ERROR: ' + str(e))
-
-        sys.exit(1)
+    command.revision(
+        alembic_cfg, message=args.message, sql=args.sql,
+        autogenerate=args.autogenerate, head=args.head)
 
 
 parser = ArgumentParser(description='The cli for MXXN management.')
@@ -418,5 +360,11 @@ db_revision_parser.set_defaults(func=db_revision_handler)
 
 def main() -> None:
     """CLI script entry point."""
-    args = parser.parse_args()
-    args.func(args)
+    try:
+        args = parser.parse_args()
+        args.func(args)
+
+    except Exception as e:
+        print('ERROR: ' + str(e))
+
+        sys.exit(1)

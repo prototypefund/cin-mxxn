@@ -23,3 +23,9 @@ class PathNotExistError(FileSysError):
     """Raised if the path does not exist."""
 
     pass
+
+class PathNotEmptyError(FileSysError):
+    """Raised if the path is not empty."""
+
+    pass
+

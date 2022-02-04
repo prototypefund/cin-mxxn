@@ -1,5 +1,8 @@
 """Tests for the cli module."""
 from unittest.mock import Mock
+import pytest
+from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import filesys as filesys_ex
 from mxxn import cli
 
 
@@ -17,20 +20,16 @@ class TestDbInitHandler():
         assert versions_path.is_dir()
         assert list(versions_path.glob('*add_mxnone_branch.py'))
 
-    def test_package_not_installed(self, mxxn_env, db, capfd):
+    def test_package_not_installed(self, mxxn_env, db):
         """The package to be initialized is not installed."""
         args_mock = Mock()
         args_mock.name = 'xyz'
 
-        try:
+        with pytest.raises(env_ex.PackageNotExistError):
             cli.db_init_handler(args_mock)
 
-        except SystemExit:
-            captured = capfd.readouterr()
 
-            assert 'The xyz package is not installed' in captured.out
-
-    def test_already_intialized(self, mxxn_env, db, capfd):
+    def test_already_intialized(self, mxxn_env, db):
         """The package was already initialized."""
         args_mock = Mock()
         args_mock.name = 'mxnone'
@@ -39,13 +38,8 @@ class TestDbInitHandler():
         versions_path.mkdir(parents=True)
         (versions_path/'revision.py').touch()
 
-        try:
+        with pytest.raises(filesys_ex.PathNotEmptyError):
             cli.db_init_handler(args_mock)
-
-        except SystemExit:
-            captured = capfd.readouterr()
-
-            assert 'mxnone package is not empty.' in captured.out
 
 
 class TestDbRevisionHandler():
@@ -67,12 +61,8 @@ class TestDbRevisionHandler():
         cli.db_init_handler(init_args_mock)
         cli.db_upgrade_handler(upgrade_args_mock)
 
-        try:
+        with pytest.raises(ValueError):
             cli.db_revision_handler(revision_args_mock)
-        except SystemExit:
-            captured = capfd.readouterr()
-
-            assert 'not in format <branchname>@head' in captured.out
 
     def test_correct_head_format(self, mxxn_env, db, capfd):
         """Correct format for head argument."""

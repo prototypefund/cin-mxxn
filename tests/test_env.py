@@ -8,6 +8,34 @@ from mxxn.exceptions import env as env_ex
 from mxxn.settings import Settings
 
 
+class TestIsDevelop():
+    """Tests for the is_develop function."""
+
+    def test_develop_requires_installed(self):
+        """All develop requirements are installed."""
+        with patch('mxxn.env.requires') as mock:
+            mock.return_value = ['falcon', 'alembic; extra == "develop"']
+
+            assert env.is_develop()
+
+    def test_not_all_develop_requires_installed(self):
+        """Not all develop requirements are installed."""
+        with patch('mxxn.env.requires') as mock:
+            mock.return_value = [
+                'falcon',
+                'xxxyyyzzz; extra == "develop"',
+                'alembic; extra == "develop"']
+
+            assert not env.is_develop()
+
+    def test_no_develop_extra_requires(self):
+        """No develop section in extra_require in setup.cfg."""
+        with patch('mxxn.env.requires') as mock:
+            mock.return_value = ['falcon', 'alembic']
+
+            assert not env.is_develop()
+
+
 class TestMixins():
     """Tests for the mxns function."""
 

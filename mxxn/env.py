@@ -38,11 +38,40 @@ from pkg_resources import iter_entry_points
 from typing import List, TypedDict, Type, Dict, Optional
 import inspect
 from importlib import import_module
+from importlib.metadata import metadata, requires, PackageNotFoundError
 import re
 from pathlib import Path
 from mxxn.exceptions import env as env_ex
 from mxxn.utils import modules
 from mxxn.settings import Settings
+
+
+def is_develop() -> bool:
+    """
+    Is the extra_require develop installed in environment.
+
+    Returns:
+        Returns True if installed, otherwise returns False.
+    """
+    requirenments = requires('mxxn')
+
+    if not requirenments:
+        return False
+
+    requirenments_develop = [
+        x.split(';')[0] for x in requirenments if 'extra == "develop"' in x]
+
+    if not requirenments_develop:
+        return False
+
+    try:
+        for package in requirenments_develop:
+            metadata(package)
+
+    except PackageNotFoundError:
+        return False
+
+    return True
 
 
 def mxns(settings: Optional[Settings] = None) -> List[str]:

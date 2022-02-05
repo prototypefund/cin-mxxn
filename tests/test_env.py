@@ -2,7 +2,7 @@
 import inspect
 import pytest
 from pathlib import Path
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
 from mxxn.settings import Settings
@@ -41,21 +41,21 @@ class TestMixins():
 
     def test_all_enabled_mxis_exist(self, mxxn_env):
         """Return the package names from settings if mixins are installed."""
-        settings = MagicMock()
+        settings = Mock()
         settings.enabled_mxns = ['mxnone', 'mxnthree']
 
         assert env.mxns(settings) == ['mxnone', 'mxnthree']
 
     def test_not_in_settings(self, mxxn_env):
         """Return list of installed package names if no entry in settings."""
-        settings = MagicMock()
+        settings = Mock()
         settings.enabled_mxns = None
 
         assert env.mxns(settings) == ['mxnone', 'mxntwo', 'mxnthree']
 
     def test_mixin_not_exist(self, mxxn_env):
         """Raise MixinNotExistError if mixin from settings not installed."""
-        settings = MagicMock()
+        settings = Mock()
         settings.enabled_mxns = ['mxnone', 'xyz']
 
         with pytest.raises(env_ex.MxnNotExistError):
@@ -63,14 +63,14 @@ class TestMixins():
 
     def test_empty_list_in_settings(self, mxxn_env):
         """Return a empty list if it is a empty list in settings."""
-        settings = MagicMock()
+        settings = Mock()
         settings.enabled_mxns = []
 
         assert env.mxns(settings) == []
 
     def test_no_settings_file(self, mxxn_env):
         """Return all installed mxns if no settings file given."""
-        settings = MagicMock()
+        settings = Mock()
         settings.enabled_mxns = []
 
         assert env.mxns() == ['mxnone', 'mxntwo', 'mxnthree']
@@ -340,8 +340,8 @@ class TestMixxinAppInit():
 
     def test_multiple_app(self, mxxn_env):
         """The app exists."""
-        mxnapp = MagicMock()
-        mxnapp = MagicMock()
+        mxnapp = Mock()
+        mxnapp = Mock()
         mxnapp.name = 'mxnapp'
         mxnapp.name = 'mxnapp'
 

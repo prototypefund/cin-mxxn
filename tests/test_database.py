@@ -54,7 +54,8 @@ class TestDatabaseInit():
             assert isinstance(db.session, async_scoped_session)
 
     @pytest.mark.asyncio
-    async def test_emp(self):
+    async def test_engine_bound_to_session(self):
+        """Engine was bound to the session."""
         with patch.object(
                 Settings, 'sqlalchemy_url', new_callable=PropertyMock) as mock:
             mock.return_value = 'sqlite+aiosqlite://'

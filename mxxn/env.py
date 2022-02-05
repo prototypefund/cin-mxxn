@@ -93,7 +93,6 @@ def mxns(settings: Optional[Settings] = None) -> List[str]:
         mxxn.exceptions.env.MxnNotExistError: If mixin from enabled_mxns
             section of settings file does not exist.
     """
-
     installed_mxns = [
         item.name for item in iter_entry_points(group='mxxn_mxn')]
 
@@ -321,6 +320,8 @@ class Mxn(Base):
 
 
 class TypeCoveringResources(TypedDict):
+    """Type definition for a covering resources dict."""
+
     mxxn: TypeListOfResourceDicts
     mxns: Dict[str, TypeListOfResourceDicts]
 
@@ -358,6 +359,7 @@ class MxnApp(Base):
         |-- __init__.py
         setup.cfg
     """
+
     def __init__(self) -> None:
         """Initialize the MixxinApp class."""
         installed_apps = [

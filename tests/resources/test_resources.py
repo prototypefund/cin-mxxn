@@ -1,1 +1,1 @@
-""" Tests for the resources package."""
+"""Tests for the resources package."""

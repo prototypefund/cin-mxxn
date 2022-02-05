@@ -24,8 +24,8 @@ class PathNotExistError(FileSysError):
 
     pass
 
+
 class PathNotEmptyError(FileSysError):
     """Raised if the path is not empty."""
 
     pass
-

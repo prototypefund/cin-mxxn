@@ -306,7 +306,9 @@ if is_develop():
 
     db_downgrade_parser = db_subparsers.add_parser(
             'downgrade', help='Revert to a previous version.')
-    db_downgrade_parser.add_argument('revision', help='The revision identifier.')
+    db_downgrade_parser.add_argument(
+            'revision',
+            help='The revision identifier.')
     db_downgrade_parser.add_argument(
             '--sql',
             action='store_true',
@@ -331,7 +333,8 @@ if is_develop():
     db_current_parser.set_defaults(func=db_current_handler)
 
     db_heads_parser = db_subparsers.add_parser(
-            'heads', help='Show current available heads in the script directory.')
+            'heads',
+            help='Show current available heads in the script directory.')
     db_heads_parser.add_argument(
             '-v', '--verbose',
             action='store_true',
@@ -393,8 +396,8 @@ if is_develop():
     db_revision_parser.add_argument(
             '--autogenerate',
             action='store_true',
-            help='Populate revision script with candidate migration operations, '
-            'based on comparison of database to model.')
+            help='Populate revision script with candidate migration '
+            'operations, based on comparison of database to model.')
     db_revision_parser.add_argument(
             '--sql',
             action='store_true',

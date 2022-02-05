@@ -31,6 +31,13 @@ For more information use the following command:
 
     options:
       -h, --help            show this help message and exit
+
+.. note::
+
+    To avoid errors, only a few command line options are available in
+    productive use. Only if the extra_require option develop is installed,
+    the features for managing and creating database schema revisions
+    become visible.
 """
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
@@ -38,7 +45,7 @@ from alembic import command
 from alembic.config import Config
 import sys
 import re
-from mxxn.env import mxns, Mxn
+from mxxn.env import mxns, Mxn, is_develop
 from mxxn.settings import Settings
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import filesys as filesys_ex
@@ -270,12 +277,6 @@ subparsers = parser.add_subparsers()
 db_parser = subparsers.add_parser('db', help='Database management.')
 db_subparsers = db_parser.add_subparsers()
 
-db_init_parser = db_subparsers.add_parser(
-        'init', help='Initialize the mxn or mxnapp branch.')
-db_init_parser.add_argument(
-        'name', help='The name of the mxn or mxnapp package.')
-db_init_parser.set_defaults(func=db_init_handler)
-
 db_upgrade_parser = db_subparsers.add_parser(
         'upgrade', help='Upgrade to a later version.')
 db_upgrade_parser.add_argument('revision', help='The revision identifier.')
@@ -286,108 +287,125 @@ db_upgrade_parser.add_argument(
         'instead. See docs on offline mode.')
 db_upgrade_parser.set_defaults(func=db_upgrade_handler)
 
-db_downgrade_parser = db_subparsers.add_parser(
-        'downgrade', help='Revert to a previous version.')
-db_downgrade_parser.add_argument('revision', help='The revision identifier.')
-db_downgrade_parser.add_argument(
-        '--sql',
-        action='store_true',
-        help='Don\'t emit SQL to database - dump to standard output/file '
-        'instead. See docs on offline mode.')
-db_downgrade_parser.set_defaults(func=db_downgrade_handler)
+if is_develop():
+    db_init_parser = db_subparsers.add_parser(
+            'init', help='Initialize the mxn or mxnapp branch.')
+    db_init_parser.add_argument(
+            'name', help='The name of the mxn or mxnapp package.')
+    db_init_parser.set_defaults(func=db_init_handler)
 
-db_branches_parser = db_subparsers.add_parser(
-        'branches', help='Show current branch points.')
-db_branches_parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Use more verbose output')
-db_branches_parser.set_defaults(func=db_branches_handler)
+    db_upgrade_parser = db_subparsers.add_parser(
+            'upgrade', help='Upgrade to a later version.')
+    db_upgrade_parser.add_argument('revision', help='The revision identifier.')
+    db_upgrade_parser.add_argument(
+            '--sql',
+            action='store_true',
+            help='Don\'t emit SQL to database - dump to standard output/file '
+            'instead. See docs on offline mode.')
+    db_upgrade_parser.set_defaults(func=db_upgrade_handler)
 
-db_current_parser = db_subparsers.add_parser(
-        'current', help='Display the current revision for a database.')
-db_current_parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Use more verbose output')
-db_current_parser.set_defaults(func=db_current_handler)
+    db_downgrade_parser = db_subparsers.add_parser(
+            'downgrade', help='Revert to a previous version.')
+    db_downgrade_parser.add_argument('revision', help='The revision identifier.')
+    db_downgrade_parser.add_argument(
+            '--sql',
+            action='store_true',
+            help='Don\'t emit SQL to database - dump to standard output/file '
+            'instead. See docs on offline mode.')
+    db_downgrade_parser.set_defaults(func=db_downgrade_handler)
 
-db_heads_parser = db_subparsers.add_parser(
-        'heads', help='Show current available heads in the script directory.')
-db_heads_parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Use more verbose output')
-db_heads_parser.add_argument(
-        '--resolve-dependencies',
-        action='store_true',
-        help='Treat dependency versions as down revisions')
-db_heads_parser.set_defaults(func=db_heads_handler)
+    db_branches_parser = db_subparsers.add_parser(
+            'branches', help='Show current branch points.')
+    db_branches_parser.add_argument(
+            '-v', '--verbose',
+            action='store_true',
+            help='Use more verbose output')
+    db_branches_parser.set_defaults(func=db_branches_handler)
 
-db_history_parser = db_subparsers.add_parser(
-        'history', help='List changeset scripts in chronological order.')
-db_history_parser.add_argument(
-        '-r', '--rev-range',
-        action='store',
-        help='Specify a revision range; format is [start]:[end]')
-db_history_parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Use more verbose output')
-db_history_parser.add_argument(
-        '-i', '--indicate-current',
-        action='store_true',
-        help='Indicate the current revision')
-db_history_parser.set_defaults(func=db_history_handler)
+    db_current_parser = db_subparsers.add_parser(
+            'current', help='Display the current revision for a database.')
+    db_current_parser.add_argument(
+            '-v', '--verbose',
+            action='store_true',
+            help='Use more verbose output')
+    db_current_parser.set_defaults(func=db_current_handler)
 
-db_merge_parser = db_subparsers.add_parser(
-        'merge',
-        help='Merge two revisions together. Creates a new migration file.')
-db_merge_parser.add_argument(
-        'revisions',
-        action='store',
-        help='One or more revisions, or "heads" for all heads')
-db_merge_parser.add_argument(
-        '-m', '--message',
-        action='store',
-        help='Message string to use with "revision"')
-db_merge_parser.set_defaults(func=db_merge_handler)
+    db_heads_parser = db_subparsers.add_parser(
+            'heads', help='Show current available heads in the script directory.')
+    db_heads_parser.add_argument(
+            '-v', '--verbose',
+            action='store_true',
+            help='Use more verbose output')
+    db_heads_parser.add_argument(
+            '--resolve-dependencies',
+            action='store_true',
+            help='Treat dependency versions as down revisions')
+    db_heads_parser.set_defaults(func=db_heads_handler)
 
-db_show_parser = db_subparsers.add_parser(
-        'show', help='Show the revision(s) denoted by the given symbol.')
-db_show_parser.add_argument(
-        'rev',
-        action='store',
-        help='The revision target')
-db_show_parser.set_defaults(func=db_show_handler)
+    db_history_parser = db_subparsers.add_parser(
+            'history', help='List changeset scripts in chronological order.')
+    db_history_parser.add_argument(
+            '-r', '--rev-range',
+            action='store',
+            help='Specify a revision range; format is [start]:[end]')
+    db_history_parser.add_argument(
+            '-v', '--verbose',
+            action='store_true',
+            help='Use more verbose output')
+    db_history_parser.add_argument(
+            '-i', '--indicate-current',
+            action='store_true',
+            help='Indicate the current revision')
+    db_history_parser.set_defaults(func=db_history_handler)
 
-db_revision_parser = db_subparsers.add_parser(
-        'revision', help='Create a new revision file.')
-db_revision_parser.add_argument(
-        'message',
-        action='store',
-        help='Message string to use with "revision"')
-db_revision_parser.add_argument(
-        'head',
-        action='store',
-        help='Specify head revision or <branchname>@head '
-        'to base new revision on.')
-db_revision_parser.add_argument(
-        '--autogenerate',
-        action='store_true',
-        help='Populate revision script with candidate migration operations, '
-        'based on comparison of database to model.')
-db_revision_parser.add_argument(
-        '--sql',
-        action='store_true',
-        help='Don\'t emit SQL to database - dump to standard output/file '
-        'instead. See docs on offline mode.')
-db_revision_parser.add_argument(
-        '--depends-on',
-        action='store',
-        help='Specify one or more revision identifiers which this '
-        'revision should depend on')
-db_revision_parser.set_defaults(func=db_revision_handler)
+    db_merge_parser = db_subparsers.add_parser(
+            'merge',
+            help='Merge two revisions together. Creates a new migration file.')
+    db_merge_parser.add_argument(
+            'revisions',
+            action='store',
+            help='One or more revisions, or "heads" for all heads')
+    db_merge_parser.add_argument(
+            '-m', '--message',
+            action='store',
+            help='Message string to use with "revision"')
+    db_merge_parser.set_defaults(func=db_merge_handler)
+
+    db_show_parser = db_subparsers.add_parser(
+            'show', help='Show the revision(s) denoted by the given symbol.')
+    db_show_parser.add_argument(
+            'rev',
+            action='store',
+            help='The revision target')
+    db_show_parser.set_defaults(func=db_show_handler)
+
+    db_revision_parser = db_subparsers.add_parser(
+            'revision', help='Create a new revision file.')
+    db_revision_parser.add_argument(
+            'message',
+            action='store',
+            help='Message string to use with "revision"')
+    db_revision_parser.add_argument(
+            'head',
+            action='store',
+            help='Specify head revision or <branchname>@head '
+            'to base new revision on.')
+    db_revision_parser.add_argument(
+            '--autogenerate',
+            action='store_true',
+            help='Populate revision script with candidate migration operations, '
+            'based on comparison of database to model.')
+    db_revision_parser.add_argument(
+            '--sql',
+            action='store_true',
+            help='Don\'t emit SQL to database - dump to standard output/file '
+            'instead. See docs on offline mode.')
+    db_revision_parser.add_argument(
+            '--depends-on',
+            action='store',
+            help='Specify one or more revision identifiers which this '
+            'revision should depend on')
+    db_revision_parser.set_defaults(func=db_revision_handler)
 
 
 def main() -> None:

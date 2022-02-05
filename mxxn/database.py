@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import (
         AsyncSession, async_scoped_session, create_async_engine)
 from sqlalchemy.orm import sessionmaker
 from asyncio import current_task
+from typing import Any
 from mxxn.exceptions import database as database_ex
 from mxxn.settings import Settings
 from mxxn.logging import logger
@@ -26,7 +27,7 @@ metadata = MetaData(naming_convention=naming_convention)
 
 
 @compiles(now, 'sqlite')
-def sqlite_now(element, compiler, **kw):
+def sqlite_now(element: Any, compiler: Any, **kwargs: int) -> str:
     """Overwrite the func.now() function for SQLite."""
     return "strftime('%Y-%m-%d %H:%M:%f000', 'now')"
 

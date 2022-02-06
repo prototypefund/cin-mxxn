@@ -133,12 +133,40 @@ class TestBaseConfigPath():
         assert not pkg.config_path
 
     def test_config_path_returned(self, mxxn_env):
-        """The confi path is returned."""
+        """The config path is returned."""
         config_path = mxxn_env/'mxnone/config'
         config_path.mkdir()
         pkg = env.Base('mxnone')
 
         assert pkg.config_path == config_path
+
+
+class TestBaseThemesPath():
+    """Tests for the themes_path property of the Base class."""
+
+    def test_no_config_path(self, mxxn_env):
+        """It is no config path in the package."""
+        pkg = env.Base('mxnone')
+
+        pkg.themes_path
+
+        assert not pkg.themes_path
+
+    def test_no_themes_path(self, mxxn_env):
+        """It is no themes path is returned."""
+        config_path = mxxn_env/'mxnone/config'
+        config_path.mkdir()
+        pkg = env.Base('mxnone')
+
+        assert not pkg.themes_path
+
+    def test_themes_path_returned(self, mxxn_env):
+        """The themes path is returned."""
+        themes_path = mxxn_env/'mxnone/config/themes'
+        themes_path.mkdir(parents=True)
+        pkg = env.Base('mxnone')
+
+        assert pkg.themes_path == themes_path
 
 
 class TestBaseResources():

@@ -182,6 +182,26 @@ class Base():
         return None
 
     @property
+    def themes_path(self) -> Optional[Path]:
+        """
+        Get the themes path of the package.
+
+        The themes path is always the themes folder in the config path of
+        the package.
+
+        Returns:
+            Returns the themes path if it exists, otherwise returns None.
+
+        """
+        if self.config_path:
+            path = self.config_path/'themes'
+
+            if path.is_dir():
+                return path
+
+        return None
+
+    @property
     def resources(self) -> TypeListOfResourceDicts:
         """
         Get the resources of the package.

@@ -46,10 +46,12 @@ class ConfigDir(object):
                 'The config path {} does not exist.'.format(path))
 
         self._path = path
+        self._files = [x for x in self._path.glob('*') if x.is_file()]
+        self._names = []
 
         default_count = 0
 
-        for file in self.files:
+        for file in self._files:
             if not file.name.endswith('.json'):
                 raise filesys_ex.ExtensionError(
                     'The extension of a config file "{}"'
@@ -58,6 +60,12 @@ class ConfigDir(object):
 
             if file.name.endswith('-default.json'):
                 default_count += 1
+                self._default = file.name.replace('-default.json', '')
+                self._names.append(file.name.replace('-default.json', ''))
+
+                continue
+
+            self._names.append(file.name.replace('.json', ''))
 
         if default_count == 0:
             raise config_ex.NoDefaultConfigError(
@@ -78,9 +86,7 @@ class ConfigDir(object):
             list: A list of files in the directory.
 
         """
-        files = [x for x in self._path.glob('*') if x.is_file()]
-
-        return files
+        return self._files
 
     @property
     def names(self) -> List[str]:
@@ -94,15 +100,7 @@ class ConfigDir(object):
             list: A list of names in the directory.
 
         """
-        names = []
-
-        for file in self.files:
-            if file.name.endswith('-default.json'):
-                names.append(file.name.replace('-default.json', ''))
-            else:
-                names.append(file.name.replace('.json', ''))
-
-        return names
+        return self._names
 
     @property
     def default(self) -> str:
@@ -115,6 +113,4 @@ class ConfigDir(object):
             string: The name of the default config file.
 
         """
-        for file in self.files:
-            if file.name.endswith('-default.json'):
-                return file.name.replace('-default.json', '')
+        return self._default

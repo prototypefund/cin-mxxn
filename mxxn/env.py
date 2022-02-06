@@ -163,6 +163,25 @@ class Base():
         return Path(self._package.__path__[0])
 
     @property
+    def config_path(self) -> Optional[Path]:
+        """
+        Get the config path of the package.
+
+        The config path is always the config folder in the root of
+        the package.
+
+        Returns:
+            Returns the config path if it exists, otherwise returns None.
+
+        """
+        path = self.path/'config'
+
+        if path.is_dir():
+            return path
+
+        return None
+
+    @property
     def resources(self) -> TypeListOfResourceDicts:
         """
         Get the resources of the package.

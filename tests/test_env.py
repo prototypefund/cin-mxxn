@@ -123,6 +123,24 @@ class TestPackageBasePath():
         assert pkg.path == mxxn_env/'mxnone'
 
 
+class TestBasePath():
+    """Tests for the config_path property of the Base class."""
+
+    def test_no_config_path(self, mxxn_env):
+        """It is no config path in the package."""
+        pkg = env.Base('mxnone')
+
+        assert not pkg.config_path
+
+    def test_config_path_returned(self, mxxn_env):
+        """The confi path is returned."""
+        config_path = mxxn_env/'mxnone/config'
+        config_path.mkdir()
+        pkg = env.Base('mxnone')
+
+        assert pkg.config_path == config_path
+
+
 class TestPackageBaseResources():
     """Tests for the resources property of the PackageBase class."""
 

@@ -1,3 +1,4 @@
+"""The models package of mxxn."""
 from sqlalchemy.orm import as_declarative
 from sqlalchemy import Column, Integer
 from mxxn.database import metadata

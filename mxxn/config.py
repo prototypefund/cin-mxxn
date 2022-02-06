@@ -1,5 +1,6 @@
 """This module provides functionality to work with configuration files."""
 from pathlib import Path
+from typing import List
 from mxxn.exceptions import config as config_ex
 from mxxn.exceptions import filesys as filesys_ex
 
@@ -69,7 +70,7 @@ class ConfigDir(object):
             )
 
     @property
-    def files(self) -> dict:
+    def files(self) -> List[Path]:
         """
         Get the names of the files in the directory.
 
@@ -80,3 +81,25 @@ class ConfigDir(object):
         files = [x for x in self._path.glob('*') if x.is_file()]
 
         return files
+
+    @property
+    def names(self) -> List[str]:
+        """
+        Get the names of the files in the directory.
+
+        A Name is the file name without extension and
+        without "-default" string.
+
+        Returns:
+            list: A list of names in the directory.
+
+        """
+        names = []
+
+        for file in self.files:
+            if file.name.endswith('-default.json'):
+                names.append(file.name.replace('-default.json', ''))
+            else:
+                names.append(file.name.replace('.json', ''))
+
+        return names

@@ -1,5 +1,6 @@
 """Tests for the config module."""
 import pytest
+import json
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
 from mxxn import config
@@ -9,13 +10,12 @@ class TestConfigDirInit():
     """Test for the initialization of ConfigDir."""
 
     def test_path_not_exist(self, mxxn_env):
-        """Is PathNotExistError is raised if path not exist."""
-
+        """Is PathNotExistError raised if path not exist."""
         with pytest.raises(filesys_ex.PathNotExistError):
             config.ConfigDir(mxxn_env/'mxnone/xxxyyyzzz')
 
     def test_non_json_extension(self, mxxn_env):
-        """Is ExtensionError is raised."""
+        """Is ExtensionError raised."""
         mxnone_config_dir = mxxn_env/'mxnone/config'
         mxnone_config_dir.mkdir()
         (mxnone_config_dir/'de-DE.json').touch()
@@ -26,6 +26,7 @@ class TestConfigDirInit():
             config.ConfigDir(mxnone_config_dir)
 
     def test_too_many_defaults(self, mxxn_env):
+        """Is TooManyDefaultConfigsError raised."""
         mxnone_config_dir = mxxn_env/'mxnone/config'
         mxnone_config_dir.mkdir()
         (mxnone_config_dir/'de-DE.json').touch()
@@ -91,3 +92,35 @@ class TestConfigDirDefault():
         config_dir = config.ConfigDir(mxnone_config_dir)
 
         assert config_dir.default == 'en'
+
+
+class TestConfigDirDict(object):
+    """Test for the dict method of the ConfigDir class."""
+
+    # def test_not_a_json_file(self, mxxn_env):
+    def test_tmp(self, mxxn_env):
+        """One file does not contain correct JSON data."""
+        mxnone_config_dir = mxxn_env/'mxnone/config'
+        mxnone_config_dir.mkdir()
+        (mxnone_config_dir/'de-DE.json').touch()
+        (mxnone_config_dir/'en-default.json').touch()
+
+        config_dir = config.ConfigDir(mxnone_config_dir)
+
+        with pytest.raises(filesys_ex.FileFormatError):
+            config_dir.dict('de')
+
+    def test_name_not_exist(self, mxxn_env):
+        """The default is returned if a file with the name does not exist."""
+        mxnone_config_dir = mxxn_env/'mxnone/config'
+        mxnone_config_dir.mkdir()
+
+        with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
+            json.dump({'name': 'en'}, f)
+
+        with open(mxxn_env/'mxnone/config/de.json', 'w') as f:
+            json.dump({'name': 'de'}, f)
+
+        config_dir = config.ConfigDir(mxnone_config_dir)
+
+        assert config_dir.dict('ru') == {'name': 'en'}

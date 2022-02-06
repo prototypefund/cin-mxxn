@@ -1,8 +1,10 @@
 """This module provides functionality to work with configuration files."""
 from pathlib import Path
 from typing import List
+import json
 from mxxn.exceptions import config as config_ex
 from mxxn.exceptions import filesys as filesys_ex
+from mxxn.utils import dicts
 
 
 class ConfigDir(object):
@@ -114,3 +116,49 @@ class ConfigDir(object):
 
         """
         return self._default
+
+    def dict(self, name: str) -> dict:
+        """
+        Get the config dictionary from the directory.
+
+        The default JSON configuration file is read in and merged
+        with the read-in JSON data from the file whose name was
+        passed as an argument. If a file with the name does not
+        exist, the default dictionary is returned.
+
+        Args:
+            name: The name of the config file without extension
+                and '-default" string.
+
+        Returns:
+            A merge of the json files from the directory.
+
+        Raises:
+            mxxn.exceptions.filesys.FileFormatError:
+                If one of both file does not contain correct JSON data.
+
+        """
+        default_file_name = self._path / (self.default + '-default.json')
+        file_name = self._path / (name + '.json')
+
+        with open(default_file_name, 'r') as f:
+            try:
+                default_config_data = json.load(f)
+            except json.decoder.JSONDecodeError:
+                message = 'The file "{}" does not contain a ' \
+                    'regular JSON format.'.format(default_file_name)
+
+                raise filesys_ex.FileFormatError(message)
+
+        if (not self.default == name) and (name in self.names):
+            with open(file_name, 'r') as f:
+                try:
+                    config_data = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    message = 'The file "{}" does not contain a ' \
+                        'regular JSON format.'.format(file_name)
+                    raise filesys_ex.FileFormatError(message)
+
+            dicts.merge(default_config_data, config_data)
+
+        return default_config_data

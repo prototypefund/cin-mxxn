@@ -3,6 +3,7 @@ from mxxn.utils import dicts
 
 
 class TestMerge():
+    """Tests for the merge function."""
     def test_merge(self):
         """Keys that only exist in the merge dict are ignored."""
         base_dict = {

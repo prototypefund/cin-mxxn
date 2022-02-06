@@ -1,10 +1,12 @@
 """This module contains tests for the env module."""
 import inspect
 import pytest
+import json
 from pathlib import Path
 from unittest.mock import Mock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import config as config_ex
 from mxxn.settings import Settings
 
 
@@ -167,6 +169,40 @@ class TestBaseThemesPath():
         pkg = env.Base('mxnone')
 
         assert pkg.themes_path == themes_path
+
+
+class TestBaseTheme():
+    def test_default_theme(self, mxxn_env):
+        themes_path = mxxn_env/'mxnone/config/themes'
+        themes_path.mkdir(parents=True)
+
+        with open(
+                mxxn_env/'mxnone/config/themes/light-default.json', 'w') as f:
+            json.dump({'backgroundColor': '#ff0000'}, f)
+
+        pkg = env.Base('mxnone')
+
+        assert pkg.theme('light') == {'backgroundColor': '#ff0000'}
+
+    def test_dark_theme(self, mxxn_env):
+        themes_path = mxxn_env/'mxnone/config/themes'
+        themes_path.mkdir(parents=True)
+
+        with open(
+                mxxn_env/'mxnone/config/themes/light-default.json', 'w') as f:
+            json.dump({
+                'backgroundColor': '#ff0000',
+                'shadowColor': '#0000ff'}, f)
+
+        with open(
+                mxxn_env/'mxnone/config/themes/dark.json', 'w') as f:
+            json.dump({
+                'backgroundColor': '#0000ff'}, f)
+        pkg = env.Base('mxnone')
+
+        assert pkg.theme('dark') == {
+                'backgroundColor': '#0000ff',
+                'shadowColor': '#0000ff'}
 
 
 class TestBaseStringsPath():

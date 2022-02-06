@@ -71,12 +71,14 @@ class ConfigDir(object):
 
         if default_count == 0:
             raise config_ex.NoDefaultConfigError(
-                'There is no default config file.'
+                'There is no default config file in {} path.'
+                .format(self._path)
             )
 
         if default_count > 1:
             raise config_ex.TooManyDefaultConfigsError(
-                'There are too many default config files.'
+                'There are too many default config files in {} path.'
+                .format(self._path)
             )
 
     @property

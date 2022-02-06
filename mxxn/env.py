@@ -42,8 +42,10 @@ from importlib.metadata import metadata, requires, PackageNotFoundError
 import re
 from pathlib import Path
 from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import config as config_ex
 from mxxn.utils import modules
 from mxxn.settings import Settings
+from mxxn.config import ConfigDir
 
 
 def is_develop() -> bool:
@@ -200,6 +202,20 @@ class Base():
                 return path
 
         return None
+
+    def theme(self, name: str) -> dict:
+        """
+        Get the theme dictionary.
+
+        Args:
+            name: The name of the theme.
+
+        Returns:
+            A theme dictionary.
+        """
+        themes_dir = ConfigDir(self.themes_path)
+
+        return themes_dir.dict(name)
 
     @property
     def strings_path(self) -> Optional[Path]:

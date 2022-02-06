@@ -97,8 +97,7 @@ class TestConfigDirDefault():
 class TestConfigDirDict(object):
     """Test for the dict method of the ConfigDir class."""
 
-    # def test_not_a_json_file(self, mxxn_env):
-    def test_tmp(self, mxxn_env):
+    def test_not_a_json_file(self, mxxn_env):
         """One file does not contain correct JSON data."""
         mxnone_config_dir = mxxn_env/'mxnone/config'
         mxnone_config_dir.mkdir()

@@ -202,6 +202,26 @@ class Base():
         return None
 
     @property
+    def strings_path(self) -> Optional[Path]:
+        """
+        Get the strings path of the package.
+
+        The strings path is always the strings folder in the config path of
+        the package.
+
+        Returns:
+            Returns the strings path if it exists, otherwise returns None.
+
+        """
+        if self.config_path:
+            path = self.config_path/'strings'
+
+            if path.is_dir():
+                return path
+
+        return None
+
+    @property
     def resources(self) -> TypeListOfResourceDicts:
         """
         Get the resources of the package.

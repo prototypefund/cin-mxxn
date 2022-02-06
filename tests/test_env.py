@@ -169,6 +169,34 @@ class TestBaseThemesPath():
         assert pkg.themes_path == themes_path
 
 
+class TestBaseStringsPath():
+    """Tests for the strings_path property of the Base class."""
+
+    def test_no_config_path(self, mxxn_env):
+        """It is no config path in the package."""
+        pkg = env.Base('mxnone')
+
+        pkg.strings_path
+
+        assert not pkg.strings_path
+
+    def test_no_strings_path(self, mxxn_env):
+        """It is no strings path is returned."""
+        config_path = mxxn_env/'mxnone/config'
+        config_path.mkdir()
+        pkg = env.Base('mxnone')
+
+        assert not pkg.strings_path
+
+    def test_strings_path_returned(self, mxxn_env):
+        """The strings path is returned."""
+        strings_path = mxxn_env/'mxnone/config/strings'
+        strings_path.mkdir(parents=True)
+        pkg = env.Base('mxnone')
+
+        assert pkg.strings_path == strings_path
+
+
 class TestBaseResources():
     """Tests for the resources property of the Base class."""
 

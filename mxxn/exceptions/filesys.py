@@ -35,3 +35,9 @@ class ExtensionError(FileSysError):
     """Raised if file has a wrong extension."""
 
     pass
+
+
+class FileFormatError(FileSysError):
+    """Raised if file has a wrong format."""
+
+    pass

@@ -165,9 +165,9 @@ class Base():
         return Path(self._package.__path__[0])
 
     @property
-    def config_path(self) -> Optional[Path]:
+    def configs_path(self) -> Optional[Path]:
         """
-        Get the config path of the package.
+        Get the configs path of the package.
 
         The config path is always the config folder in the root of
         the package.
@@ -176,7 +176,7 @@ class Base():
             Returns the config path if it exists, otherwise returns None.
 
         """
-        path = self.path/'config'
+        path = self.path/'configs'
 
         if path.is_dir():
             return path
@@ -195,8 +195,28 @@ class Base():
             Returns the themes path if it exists, otherwise returns None.
 
         """
-        if self.config_path:
-            path = self.config_path/'themes'
+        if self.configs_path:
+            path = self.configs_path/'themes'
+
+            if path.is_dir():
+                return path
+
+        return None
+
+    @property
+    def strings_path(self) -> Optional[Path]:
+        """
+        Get the strings path of the package.
+
+        The strings path is always the strings folder in the config path of
+        the package.
+
+        Returns:
+            Returns the strings path if it exists, otherwise returns None.
+
+        """
+        if self.configs_path:
+            path = self.configs_path/'strings'
 
             if path.is_dir():
                 return path
@@ -216,26 +236,6 @@ class Base():
         themes_dir = ConfigDir(self.themes_path)
 
         return themes_dir.dict(name)
-
-    @property
-    def strings_path(self) -> Optional[Path]:
-        """
-        Get the strings path of the package.
-
-        The strings path is always the strings folder in the config path of
-        the package.
-
-        Returns:
-            Returns the strings path if it exists, otherwise returns None.
-
-        """
-        if self.config_path:
-            path = self.config_path/'strings'
-
-            if path.is_dir():
-                return path
-
-        return None
 
     @property
     def resources(self) -> TypeListOfResourceDicts:
@@ -382,6 +382,13 @@ class Mxxn(Base):
             name: A optional name of the Mxxn package.
         """
         super().__init__(name)
+
+    @property
+    def theme_list(self) -> List[str]:
+        """Get a list of available themes."""
+        themes_dir = ConfigDir(self.themes_path)
+
+        return themes_dir.names
 
 
 class Mxn(Base):

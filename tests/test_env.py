@@ -132,15 +132,15 @@ class TestBaseConfigPath():
         """It is no config path in the package."""
         pkg = env.Base('mxnone')
 
-        assert not pkg.config_path
+        assert not pkg.configs_path
 
     def test_config_path_returned(self, mxxn_env):
         """The config path is returned."""
-        config_path = mxxn_env/'mxnone/config'
+        config_path = mxxn_env/'mxnone/configs'
         config_path.mkdir()
         pkg = env.Base('mxnone')
 
-        assert pkg.config_path == config_path
+        assert pkg.configs_path == config_path
 
 
 class TestBaseThemesPath():
@@ -156,7 +156,7 @@ class TestBaseThemesPath():
 
     def test_no_themes_path(self, mxxn_env):
         """It is no themes path is returned."""
-        config_path = mxxn_env/'mxnone/config'
+        config_path = mxxn_env/'mxnone/configs'
         config_path.mkdir()
         pkg = env.Base('mxnone')
 
@@ -164,7 +164,7 @@ class TestBaseThemesPath():
 
     def test_themes_path_returned(self, mxxn_env):
         """The themes path is returned."""
-        themes_path = mxxn_env/'mxnone/config/themes'
+        themes_path = mxxn_env/'mxnone/configs/themes'
         themes_path.mkdir(parents=True)
         pkg = env.Base('mxnone')
 
@@ -173,11 +173,11 @@ class TestBaseThemesPath():
 
 class TestBaseTheme():
     def test_default_theme(self, mxxn_env):
-        themes_path = mxxn_env/'mxnone/config/themes'
+        themes_path = mxxn_env/'mxnone/configs/themes'
         themes_path.mkdir(parents=True)
 
         with open(
-                mxxn_env/'mxnone/config/themes/light-default.json', 'w') as f:
+                mxxn_env/'mxnone/configs/themes/light-default.json', 'w') as f:
             json.dump({'backgroundColor': '#ff0000'}, f)
 
         pkg = env.Base('mxnone')
@@ -185,17 +185,17 @@ class TestBaseTheme():
         assert pkg.theme('light') == {'backgroundColor': '#ff0000'}
 
     def test_dark_theme(self, mxxn_env):
-        themes_path = mxxn_env/'mxnone/config/themes'
+        themes_path = mxxn_env/'mxnone/configs/themes'
         themes_path.mkdir(parents=True)
 
         with open(
-                mxxn_env/'mxnone/config/themes/light-default.json', 'w') as f:
+                mxxn_env/'mxnone/configs/themes/light-default.json', 'w') as f:
             json.dump({
                 'backgroundColor': '#ff0000',
                 'shadowColor': '#0000ff'}, f)
 
         with open(
-                mxxn_env/'mxnone/config/themes/dark.json', 'w') as f:
+                mxxn_env/'mxnone/configs/themes/dark.json', 'w') as f:
             json.dump({
                 'backgroundColor': '#0000ff'}, f)
         pkg = env.Base('mxnone')
@@ -218,7 +218,7 @@ class TestBaseStringsPath():
 
     def test_no_strings_path(self, mxxn_env):
         """It is no strings path is returned."""
-        config_path = mxxn_env/'mxnone/config'
+        config_path = mxxn_env/'mxnone/configs'
         config_path.mkdir()
         pkg = env.Base('mxnone')
 
@@ -226,7 +226,7 @@ class TestBaseStringsPath():
 
     def test_strings_path_returned(self, mxxn_env):
         """The strings path is returned."""
-        strings_path = mxxn_env/'mxnone/config/strings'
+        strings_path = mxxn_env/'mxnone/configs/strings'
         strings_path.mkdir(parents=True)
         pkg = env.Base('mxnone')
 
@@ -438,14 +438,23 @@ class TestBaseJsFiles():
         assert pkg.js_files == [Path('mxn.js'), Path('sub/mxn_sub.js')]
 
 
-class TestMixxinInit():
-    """Tests for the creation of the Mixxin class."""
+class TestMxxnInit():
+    """Tests for the creation of the Mxxn class."""
 
     def test_init(self):
-        """Test if Mixxin instance has a name "mixxin"."""
+        """Test if Mxxn instance has a name "mxxn"."""
         mxxn = env.Mxxn()
 
         assert mxxn.name == 'mxxn'
+
+
+class TestMxxnThemeList():
+    """Tests for the theme_list method."""
+    def test_tmp(self):
+        """All themes returned."""
+        pkg = env.Mxxn()
+
+        assert pkg.theme_list == ['dark', 'light']
 
 
 class TestMixxinAppInit():

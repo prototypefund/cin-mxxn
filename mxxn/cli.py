@@ -45,6 +45,7 @@ from alembic import command
 from alembic.config import Config
 import sys
 import re
+from copier import run_auto
 from mxxn.env import mxns, Mxn, is_develop
 from mxxn.settings import Settings
 from mxxn.exceptions import env as env_ex
@@ -259,6 +260,7 @@ def db_revision_handler(args: Namespace) -> None:
 
     Raises:
         alembic.util.exc.CommandError: If alembic command error occurs.
+
     """
     if not re.search(r'^\w+@\w+$', args.head):
         raise ValueError('head is not in format <branchname>@head.')
@@ -270,6 +272,21 @@ def db_revision_handler(args: Namespace) -> None:
     command.revision(
         alembic_cfg, message=args.message, sql=args.sql,
         autogenerate=args.autogenerate, head=args.head)
+
+
+def mxn_init_handler(args: Namespace) -> None:
+    """
+    Handle the mxn init command.
+
+    Args:
+        args: The argparse Namespace.
+
+    """
+
+    if args.path:
+        run_auto('gl:ccodein/mxxn/templates/mxn.git', args.path)
+    else:
+        run_auto('gl:ccodein/mxxn/templates/mxn.git')
 
 
 parser = ArgumentParser(description='The cli for MXXN management.')
@@ -409,6 +426,18 @@ if is_develop():
             help='Specify one or more revision identifiers which this '
             'revision should depend on')
     db_revision_parser.set_defaults(func=db_revision_handler)
+
+    mxn_parser = subparsers.add_parser('mxn', help='Mxn management.')
+    mxn_subparsers = mxn_parser.add_subparsers()
+    mxn_init_parser = mxn_subparsers.add_parser(
+            'init', help='Initialize a mxn.')
+    mxn_init_parser.add_argument(
+            '--path',
+            action='store',
+            help='The path in which the Mxn should be initialized. '
+            'If the path is not specified, the current working directory '
+            'is used.')
+    mxn_init_parser.set_defaults(func=mxn_init_handler)
 
 
 def main() -> None:

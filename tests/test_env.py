@@ -35,6 +35,21 @@ class TestIsDevelop():
 
             assert not env.is_develop()
 
+    def test_package_with_version(self):
+        """A develop package has specific version."""
+        with patch('mxxn.env.requires') as requires_mock:
+            with patch('mxxn.env.metadata') as metadata_mock:
+                requires_mock.return_value = [
+                    'falcon',
+                    'xxx_yyyzzz; extra == "develop"',
+                    'xxx_yyyzzz==0.0.1; extra == "develop"',
+                    'xxx-yyy-zzz>=0.0.1; extra == "develop"',
+                    'alembic; extra == "develop"']
+
+                metadata_mock.return_value = None
+
+                assert env.is_develop()
+
 
 class TestMixins():
     """Tests for the mxns function."""

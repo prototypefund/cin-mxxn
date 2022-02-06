@@ -66,7 +66,12 @@ def is_develop() -> bool:
 
     try:
         for package in requirenments_develop:
-            metadata(package)
+            matches = re.split(r'[^a-zA-Z0-9_-]+', package)
+
+            if not matches:
+                return False
+
+            metadata(matches[0])
 
     except PackageNotFoundError:
         return False

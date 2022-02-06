@@ -91,8 +91,8 @@ class TestMixins():
         assert env.mxns() == ['mxnone', 'mxntwo', 'mxnthree']
 
 
-class TestPackageBaseInit():
-    """Tests for the initialisation of the PackageBase class."""
+class TestBaseInit():
+    """Tests for the initialisation of the Base class."""
 
     def test_package_not_exist(self):
         """The Package does not exist."""
@@ -104,8 +104,8 @@ class TestPackageBaseInit():
         env.Base('mxnone')
 
 
-class TestPackageBaseName():
-    """Tests for the name property of the PackageBase class."""
+class TestBaseName():
+    """Tests for the name property of the Base class."""
 
     def test_name_is_returned(self, mxxn_env):
         """The name is returned."""
@@ -113,8 +113,8 @@ class TestPackageBaseName():
         assert pkg.name == 'mxnone'
 
 
-class TestPackageBasePath():
-    """Tests for the path property of the PackageBase class."""
+class TestBasePath():
+    """Tests for the path property of the Base class."""
 
     def test_path_is_returned(self, mxxn_env):
         """The path is returned."""
@@ -123,7 +123,7 @@ class TestPackageBasePath():
         assert pkg.path == mxxn_env/'mxnone'
 
 
-class TestBasePath():
+class TestBaseConfigPath():
     """Tests for the config_path property of the Base class."""
 
     def test_no_config_path(self, mxxn_env):
@@ -141,8 +141,8 @@ class TestBasePath():
         assert pkg.config_path == config_path
 
 
-class TestPackageBaseResources():
-    """Tests for the resources property of the PackageBase class."""
+class TestBaseResources():
+    """Tests for the resources property of the Base class."""
 
     def test_package_has_a_resources_module(self, mxxn_env):
         """Test if the module has a resources module."""

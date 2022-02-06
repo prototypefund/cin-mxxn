@@ -29,3 +29,9 @@ class PathNotEmptyError(FileSysError):
     """Raised if the path is not empty."""
 
     pass
+
+
+class ExtensionError(FileSysError):
+    """Raised if file has a wrong extension."""
+
+    pass

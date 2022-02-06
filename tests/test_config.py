@@ -67,7 +67,7 @@ class TestConfigDirNames():
     """Test for the names method of ConfigDir class."""
 
     def test_names_returned(self, mxxn_env):
-        """Test if the names were returned."""
+        """Are the names returned."""
         mxnone_config_dir = mxxn_env/'mxnone/config'
         mxnone_config_dir.mkdir()
         (mxnone_config_dir/'de-DE.json').touch()
@@ -76,3 +76,18 @@ class TestConfigDirNames():
         config_dir = config.ConfigDir(mxnone_config_dir)
 
         assert config_dir.names == ['en', 'de-DE']
+
+
+class TestConfigDirDefault():
+    """Test for the default method of ConfigDir class."""
+
+    def test_default_returned(self, mxxn_env):
+        """Is the default name returned."""
+        mxnone_config_dir = mxxn_env/'mxnone/config'
+        mxnone_config_dir.mkdir()
+        (mxnone_config_dir/'de-DE.json').touch()
+        (mxnone_config_dir/'en-default.json').touch()
+
+        config_dir = config.ConfigDir(mxnone_config_dir)
+
+        assert config_dir.default == 'en'

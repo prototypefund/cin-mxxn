@@ -103,3 +103,18 @@ class ConfigDir(object):
                 names.append(file.name.replace('.json', ''))
 
         return names
+
+    @property
+    def default(self) -> str:
+        """
+        Get the names of the default files in the directory.
+
+        A Name is the file name without "-default.json" string.
+
+        Returns:
+            string: The name of the default config file.
+
+        """
+        for file in self.files:
+            if file.name.endswith('-default.json'):
+                return file.name.replace('-default.json', '')

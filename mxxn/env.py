@@ -45,7 +45,7 @@ from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import config as config_ex
 from mxxn.utils import modules
 from mxxn.settings import Settings
-from mxxn.config import ConfigDir
+from mxxn.config import ConfigsDir
 
 
 def is_develop() -> bool:
@@ -223,7 +223,7 @@ class Base():
 
         return None
 
-    def theme(self, name: str) -> dict:
+    def theme(self, name: str) -> Optional[dict]:
         """
         Get the theme dictionary.
 
@@ -231,11 +231,29 @@ class Base():
             name: The name of the theme.
 
         Returns:
-            A theme dictionary.
+            Returns the theme dictionary if it exists, otherwise returns None.
         """
-        themes_dir = ConfigDir(self.themes_path)
+        if self.themes_path:
+            themes_dir = ConfigsDir(self.themes_path)
 
-        return themes_dir.dict(name)
+            return themes_dir.dict(name)
+
+        return None
+
+    @property
+    def default_theme(self) -> Optional[str]:
+        """
+        Get the default theme.
+
+        Returns:
+            The name of the default theme.
+        """
+        if self.themes_path:
+            themes_dir = ConfigsDir(self.themes_path)
+
+            return themes_dir.default
+
+        return None
 
     @property
     def resources(self) -> TypeListOfResourceDicts:
@@ -386,7 +404,7 @@ class Mxxn(Base):
     @property
     def theme_list(self) -> List[str]:
         """Get a list of available themes."""
-        themes_dir = ConfigDir(self.themes_path)
+        themes_dir = ConfigsDir(self.themes_path)
 
         return themes_dir.names
 

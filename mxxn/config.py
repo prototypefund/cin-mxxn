@@ -4,10 +4,14 @@ from typing import List
 import json
 from mxxn.exceptions import config as config_ex
 from mxxn.exceptions import filesys as filesys_ex
+from mxxn.exceptions import env as env_ex
 from mxxn.utils import dicts
+from mxxn import env
+from mxxn.settings import Settings
+from mxxn.logging import logger
 
 
-class ConfigDir(object):
+class ConfigsDir(object):
     """
     This class abstracts a configuration directory.
 
@@ -164,3 +168,63 @@ class ConfigDir(object):
             dicts.merge(default_config_data, config_data)
 
         return default_config_data
+
+
+class Theme(dict):
+    """The Theme dictionary of the framework."""
+
+    def __init__(self, name: str, settings: Settings) -> None:
+        """
+        Initialize the ConfigDir object.
+
+        Args:
+            name: The name of the theme.
+            settings: The settings object of the application.
+        """
+        log = logger('registration')
+        mxxn_pkg = env.Mxxn()
+        default_theme = mxxn_pkg.default_theme
+        self['mxxn'] = mxxn_pkg.theme(name)
+        mxn_names = env.mxns(settings)
+
+        log.debug('The theme of package mxxn was registered.')
+
+        if mxn_names:
+            self['mxns'] = {}
+
+        for mxn_name in mxn_names:
+            mxn_pkg = env.Mxn(mxn_name)
+            theme = mxn_pkg.theme(name)
+
+            if theme:
+                if mxn_pkg.default_theme != default_theme:
+                    raise config_ex.NotSameDefaults(
+                        'Package {} has not the same default theme a mxxn.'
+                        .format(mxn_pkg.name))
+
+                self['mxns'][mxn_name] = theme
+
+            log.debug(
+                'The theme of package {} was registered.'
+                .format(mxn_pkg.name)
+            )
+
+        try:
+            mxnapp_pkg = env.MxnApp()
+            theme = mxnapp_pkg.theme(name)
+
+            if theme:
+                if mxnapp_pkg.default_theme != default_theme:
+                    raise config_ex.NotSameDefaults(
+                        'Package {} has not the same default theme a mxxn.'
+                        .format(mxnapp_pkg.name))
+
+                self['mxnapp'] = mxnapp_pkg.theme(name)
+
+            log.debug(
+                'The theme of package {} was registered.'
+                .format(mxnapp_pkg.name)
+            )
+
+        except env_ex.MxnAppNotExistError:
+            pass

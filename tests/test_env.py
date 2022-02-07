@@ -150,8 +150,6 @@ class TestBaseThemesPath():
         """It is no config path in the package."""
         pkg = env.Base('mxnone')
 
-        pkg.themes_path
-
         assert not pkg.themes_path
 
     def test_no_themes_path(self, mxxn_env):
@@ -169,6 +167,16 @@ class TestBaseThemesPath():
         pkg = env.Base('mxnone')
 
         assert pkg.themes_path == themes_path
+
+
+class TestBaseDefaultThemes():
+    """Tests for the default_theme property of the Base class."""
+
+    def test_default_returned(self):
+        """The default theme returned."""
+        pkg = env.Base('mxxn')
+
+        assert pkg.default_theme == 'light'
 
 
 class TestBaseTheme():
@@ -450,7 +458,8 @@ class TestMxxnInit():
 
 class TestMxxnThemeList():
     """Tests for the theme_list method."""
-    def test_tmp(self):
+
+    def test_all_themes_returned(self):
         """All themes returned."""
         pkg = env.Mxxn()
 

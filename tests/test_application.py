@@ -192,41 +192,6 @@ class TestAppRegisterResources():
         assert response_three.status == falcon.HTTP_OK
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
 
-    # def test_temp(self, resources):
-    #     content = """
-    #         class MxnResourceTwo(object):
-    #             async def on_get(self, req, resp):
-    #                 resp.body = 'MxnResourceTwo cover'
-    #                 resp.content_type = falcon.MEDIA_HTML
-    #                 resp.status = falcon.HTTP_200
-    #
-    #     """
-    #     app = App()
-    #     client = testing.TestClient(app.asgi)
-    #
-    #     covers_mxn_one = resources/'mxnapp/covers/mxns/mxnone'
-    #     covers_mxn_two = resources/'mxnapp/covers/mxns/mxntwo'
-    #     covers_mxn_one.mkdir(parents=True)
-    #     covers_mxn_two.mkdir(parents=True)
-    #     (resources/'mxnapp/covers/mxns/mxnone/resources.py').write_text(
-    #         cleandoc(content)
-    #     )
-    #     (resources/'mxnapp/covers/mxns/mxntwo/resources.py').write_text(
-    #         cleandoc(content)
-    #     )
-    #
-    #     from mxxn import env
-    #     from mxxn.settings import Settings
-    #     app = env.MxnApp()
-    #     settings = Settings()
-
-        # print(app.covering_resources(settings))
-
-        # response_one = client.simulate_get('/mxns/one/.mxnresourcetwo')
-        # response_two = client.simulate_get('/app/.appresourcetwo')
-
-        # print(response_one.text)
-
 
 class TestStaticPaths(object):
     """Tests for the _register_static_paths method of the App class."""

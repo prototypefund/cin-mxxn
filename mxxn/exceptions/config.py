@@ -9,12 +9,18 @@ class ConfigsError(Base):
 
 
 class NoDefaultConfigError(ConfigsError):
-    """Raised when no default config was found."""
+    """Raised if no default config was found."""
 
     pass
 
 
 class TooManyDefaultConfigsError(ConfigsError):
-    """Raised when more than one default config was found."""
+    """Raised if more than one default config was found."""
+
+    pass
+
+
+class NotSameDefaults(ConfigsError):
+    """Raised if the defaults are not the same."""
 
     pass

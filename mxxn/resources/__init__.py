@@ -1,5 +1,6 @@
 """The Resource package of the Mixxin package."""
 from falcon import after, Request, Response, HTTPMovedPermanently
+import falcon
 from mxxn.hooks import render
 from mxxn.exceptions import env as env_ex
 from mxxn import env
@@ -16,7 +17,7 @@ class Root():
             req: The request object.
             resp: The response object.
         """
-        raise HTTPMovedPermanently('.app')
+        raise HTTPMovedPermanently('/app')
 
 
 class App():
@@ -58,3 +59,31 @@ class App():
                 'auth': True,
                 'js_urls': js_urls
             }
+
+
+class Themes():
+    """The Theme resource of the Mxxn package."""
+
+    async def on_get(self, req: Request, resp: Response, id) -> None:
+        """
+        Get the list of avialable themes.
+
+        Args:
+            req: The request object.
+            resp: The response object.
+        """
+        mxxn_pkg = env.Mxxn()
+        themes = mxxn_pkg.theme_list
+
+        if id in themes:
+            resp.media = mxxn_pkg.theme(id)
+            resp.status = falcon.HTTP_200
+
+            return
+
+        themes = mxxn_pkg.theme_list
+        resp.media = [
+                {'id': 0, 'name': themes[0]},
+                {'id': 1, 'name': themes[1]}]
+
+        resp.status = falcon.HTTP_200

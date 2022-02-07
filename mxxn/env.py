@@ -118,6 +118,17 @@ def mxns(settings: Optional[Settings] = None) -> List[str]:
     return installed_mxns
 
 
+class TypeRouteDict(TypedDict):
+    """The type definition of routes dict."""
+
+    url: str
+    resource: Type
+
+
+TypeListOfRoutesDicts = List[TypeRouteDict]
+"""The type definition of list of route dicts."""
+
+
 class TypeResourceDict(TypedDict):
     """The type definition of resource dict."""
 
@@ -223,23 +234,6 @@ class Base():
 
         return None
 
-    def theme(self, name: str) -> Optional[dict]:
-        """
-        Get the theme dictionary.
-
-        Args:
-            name: The name of the theme.
-
-        Returns:
-            Returns the theme dictionary if it exists, otherwise returns None.
-        """
-        if self.themes_path:
-            themes_dir = ConfigsDir(self.themes_path)
-
-            return themes_dir.dict(name)
-
-        return None
-
     @property
     def default_theme(self) -> Optional[str]:
         """
@@ -254,6 +248,16 @@ class Base():
             return themes_dir.default
 
         return None
+
+    @property
+    def routes(self) -> Optional[TypeListOfRoutesDicts]:
+        try:
+            routes_module = import_module(self.name + '.routes')
+
+            return routes_module.routes
+
+        except (ModuleNotFoundError, AttributeError):
+            return None
 
     @property
     def resources(self) -> TypeListOfResourceDicts:
@@ -387,6 +391,23 @@ class Base():
                 return js_files
 
         return []
+
+    def theme(self, name: str) -> Optional[dict]:
+        """
+        Get the theme dictionary.
+
+        Args:
+            name: The name of the theme.
+
+        Returns:
+            Returns the theme dictionary if it exists, otherwise returns None.
+        """
+        if self.themes_path:
+            themes_dir = ConfigsDir(self.themes_path)
+
+            return themes_dir.dict(name)
+
+        return None
 
 
 class Mxxn(Base):

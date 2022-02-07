@@ -9,5 +9,5 @@ are called mixins and they are normal Python packages.
 """
 from mxxn.application import App
 
-# app = App()
-# asgi = app.asgi
+app = App()
+asgi = app.asgi

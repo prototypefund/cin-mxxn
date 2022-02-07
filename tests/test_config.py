@@ -205,7 +205,7 @@ class TestThemeInit():
         with pytest.raises(config_ex.NotSameDefaults):
             config.Theme('dark', settings)
 
-    def test_tmp(self, mxxn_env):
+    def test_1tmp(self, mxxn_env):
         """Only added if the theme exists in the package."""
         settings = Mock()
         settings.enabled_mxns = ['mxnone', 'mxntwo']

@@ -241,6 +241,33 @@ class TestBaseStringsPath():
         assert pkg.strings_path == strings_path
 
 
+class TestBaseRoutes():
+    """Tests for the routes property of the Base class."""
+    def test_all_routes_returned(self):
+        """All the routes are returnd."""
+        pkg = env.Mxxn()
+        routes = pkg.routes
+
+        assert len(routes) >= 1
+
+        for route in pkg.routes:
+            assert 'url' in route
+            assert 'resource' in route
+
+    def test_no_routes_module(self, mxxn_env):
+        """No routes module in the package."""
+        pkg = env.Mxn('mxnone')
+
+        assert not pkg.routes
+
+    def test_no_resource_list(self, mxxn_env):
+        """No resource list in the package."""
+        (mxxn_env/'mxnone/routes.py').touch()
+        pkg = env.Mxn('mxnone')
+
+        assert not pkg.routes
+
+
 class TestBaseResources():
     """Tests for the resources property of the Base class."""
 

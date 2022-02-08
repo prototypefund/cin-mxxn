@@ -42,17 +42,17 @@ def mxxn_env(tmp_path, iter_entry_points):
         iter_entry_points: The iter_entry_points fixture.
 
     """
-    mixin_one = tmp_path/'mxnone'
-    mixin_two = tmp_path/'mxntwo'
-    mixin_three = tmp_path/'mxnthree'
+    mxn_one = tmp_path/'mxnone'
+    mxn_two = tmp_path/'mxntwo'
+    mxn_three = tmp_path/'mxnthree'
     mxnapp = tmp_path/'mxnapp'
-    mixin_one.mkdir()
-    mixin_two.mkdir()
-    mixin_three.mkdir()
+    mxn_one.mkdir()
+    mxn_two.mkdir()
+    mxn_three.mkdir()
     mxnapp.mkdir()
-    (mixin_one/'__init__.py').touch()
-    (mixin_two/'__init__.py').touch()
-    (mixin_three/'__init__.py').touch()
+    (mxn_one/'__init__.py').touch()
+    (mxn_two/'__init__.py').touch()
+    (mxn_three/'__init__.py').touch()
     (mxnapp/'__init__.py').touch()
     sys.path.insert(0, str(tmp_path))
 

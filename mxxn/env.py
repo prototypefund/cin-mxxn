@@ -162,8 +162,7 @@ class Base():
             self._package = import_module(name)
         except ModuleNotFoundError:
             raise env_ex.PackageNotExistError(
-                    'The environment Package {} does not exist'
-                    .format(name))
+                    f'The environment Package {name} does not exist')
 
     @property
     def name(self) -> str:

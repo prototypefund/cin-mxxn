@@ -39,8 +39,8 @@ class App(object):
                 for route in pkg.routes:
                     url = route['url']
 
-                    if url[0] != '/':
-                        url = '/' + url
+                    if url[0] == '/':
+                        url = url[1:]
 
                     url = mount + url
 
@@ -57,7 +57,7 @@ class App(object):
                 )
 
         mxxn_pkg = Mxxn()
-        add_routes(mxxn_pkg)
+        add_routes(mxxn_pkg, '/')
 
         for mxn_name in mxns(self.settings):
             mxn_pkg = Mxn(mxn_name)
@@ -110,7 +110,7 @@ class App(object):
             static_path = mxnapp.static_path
 
             if static_path:
-                self.asgi.add_static_route('/static/app', static_path)
+                self.asgi.add_static_route('/static/mxnapp', static_path)
 
                 log.debug(
                     'The static folder of the app package {} was registered.'

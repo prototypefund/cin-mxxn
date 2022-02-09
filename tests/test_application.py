@@ -234,7 +234,7 @@ class TestAppRegisterResources():
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
 
 
-class TestStaticPaths(object):
+class TestStaticPaths():
     """Tests for the _register_static_paths method of the App class."""
 
     def test_mxn_registration(self, mxxn_env):
@@ -259,5 +259,5 @@ class TestStaticPaths(object):
         app = App()
 
         assert len(app.asgi._static_routes) == 2
-        assert app.asgi._static_routes[0][0]._prefix == '/static/app/'
+        assert app.asgi._static_routes[0][0]._prefix == '/static/mxnapp/'
         assert app.asgi._static_routes[1][0]._prefix == '/static/'

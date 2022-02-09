@@ -17,7 +17,7 @@ class Root():
             req: The request object.
             resp: The response object.
         """
-        raise HTTPMovedPermanently('/app/')
+        raise HTTPMovedPermanently('/app')
 
 
 class App():
@@ -64,7 +64,7 @@ class App():
 class Themes():
     """The Theme resource of the Mxxn package."""
 
-    async def on_get(self, req: Request, resp: Response, id) -> None:
+    async def on_get(self, req: Request, resp: Response, id=None) -> None:
         """
         Get the list of avialable themes.
 

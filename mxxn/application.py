@@ -6,7 +6,6 @@ from mxxn.env import Mxxn, mxns, Mxn, MxnApp
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import capture_errors
 from mxxn.database import Database
-from mxxn.routes import routes as mxxn_routes
 
 
 class App(object):
@@ -19,119 +18,57 @@ class App(object):
         self.asgi = asgi.App()
         self.asgi.add_error_handler(Exception, capture_errors)
         self.asgi.add_middleware([settings_middleware])
-        self._register_resources()
+        self._register_routes()
         self._register_static_paths()
 
-    def _register_resources(self) -> None:
+    def _register_routes(self) -> None:
         """
-        Register all resources.
+        Register all routes of the framwork packages.
 
-        This method registers all resources available in the mixxin and
-        in installed mxns.
+        This method registers all routes available in the Mxxn, MxnApp and
+        in installed Mxn package.
 
         """
-        for route in mxxn_routes:
-            self.asgi.add_route(route['url'], route['resource']())
-
         # TODO add covers!
-        # log = logger('registration')
-        # routes_list = []
-        # mixxin = Mxxn()
-        #
-        # for resource_dict in mixxin.resources:
-        #     resource = resource_dict['resource']
-        #     routes = resource_dict['routes']
-        #
-        #     for route in routes:
-        #         if len(route) > 1:
-        #             routes_list.append([route[0], resource(), route[1]])
-        #             # self.asgi.add_route(route[0], resource(), suffix=route[1])
-        #
-        #             continue
-        #
-        #         if route[0] == '/.root':
-        #             routes_list.append(['/', resource()])
-        #             # self.asgi.add_route('/', resource())
-        #
-        #             continue
-        #
-        #         routes_list.append([route[0], resource()])
-        #         # self.asgi.add_route(route[0], resource())
-        #
-        # log.debug(
-        #     'The resources of the mxxn package were registered.'
-        # )
-        #
-        # for mixin_name in mxns(self.settings):
-        #     mixin = Mxn(mixin_name)
-        #
-        #     for resource_dict in mixin.resources:
-        #         resource = resource_dict['resource']
-        #         routes = resource_dict['routes']
-        #
-        #         for route in routes:
-        #             prefix = '/mxns/' + mixin.unprefixed_name
-        #
-        #             if len(route) > 1:
-        #                 routes_list.append([prefix + route[0], resource(), route[1]])
-        #                 # self.asgi.add_route(
-        #                 #     prefix + route[0], resource(),
-        #                 #     suffix=route[1]
-        #                 # )
-        #
-        #                 continue
-        #
-        #             routes_list.append([prefix + route[0], resource()])
-        #             # self.asgi.add_route(prefix + route[0], resource())
-        #
-        #     log.debug(
-        #         'The resources of the mxn "{}" were registered.'
-        #         .format(mixin_name)
-        #     )
-        #
-        # covering_resources = None
-        #
-        # try:
-        #     app = MxnApp()
-        #     covering_resources = app.covering_resources(self.settings)
-        #
-        #     for resource_dict in app.resources:
-        #         resource = resource_dict['resource']
-        #         routes = resource_dict['routes']
-        #
-        #         for route in routes:
-        #             prefix = '/app'
-        #
-        #             if len(route) > 1:
-        #                 routes_list.append([prefix + route[0], resource(), route[1]])
-        #                 # self.asgi.add_route(
-        #                 #     '/app'+route[0],
-        #                 #     resource(),
-        #                 #     suffix=route[1]
-        #                 # )
-        #
-        #                 continue
-        #
-        #             routes_list.append([prefix + route[0], resource()])
-        #             # self.asgi.add_route('/app'+route[0], resource())
-        #
-        #     log.debug(
-        #         'The resources of the application package {} were registered.'
-        #         .format(app.name)
-        #     )
-        #
-        # except env_ex.MxnAppNotExistError:
-        #     pass
-        #
-        # # print(covering_resources)
-        #
-        # for route in routes_list:
-        #     if len(route) == 2:
-        #         self.asgi.add_route(route[0], route[1])
-        #
-        #         continue
-        #
-        #     self.asgi.add_route(route[0], route[1], suffix=route[2])
+        log = logger('registration')
+
+        def add_routes(pkg, mount=''):
+            routes = pkg.routes
+
+            if routes:
+                for route in pkg.routes:
+                    url = route['url']
+
+                    if url[0] != '/':
+                        url = '/' + url
+
+                    url = mount + url
+
+                    if 'suffix' in route:
+                        self.asgi.add_route(
+                            url, route['resource'](), suffix=route['suffix'])
+
+                        continue
+
+                    self.asgi.add_route(url, route['resource']())
+
+                log.debug(
+                    f'The routes of the {pkg.name} package were registered.'
+                )
+
+        mxxn_pkg = Mxxn()
+        add_routes(mxxn_pkg)
+
+        for mxn_name in mxns(self.settings):
+            mxn_pkg = Mxn(mxn_name)
+            add_routes(mxn_pkg, '/app/mxns/'+mxn_pkg.unprefixed_name)
+
+        try:
+            mxnapp_pkg = MxnApp()
+            add_routes(mxnapp_pkg, '/app/mxnapp')
+
+        except env_ex.MxnAppNotExistError:
+            pass
 
     def _register_static_paths(self) -> None:
         """

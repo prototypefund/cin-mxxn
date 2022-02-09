@@ -17,7 +17,7 @@ class Root():
             req: The request object.
             resp: The response object.
         """
-        raise HTTPMovedPermanently('/app')
+        raise HTTPMovedPermanently('/app/')
 
 
 class App():

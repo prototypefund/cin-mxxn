@@ -6,7 +6,6 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
-from mxxn.exceptions import config as config_ex
 from mxxn.settings import Settings
 
 
@@ -180,7 +179,10 @@ class TestBaseDefaultThemes():
 
 
 class TestBaseTheme():
+    """Tests for the theme property of the Base class."""
+
     def test_default_theme(self, mxxn_env):
+        """Default theme returned."""
         themes_path = mxxn_env/'mxnone/configs/themes'
         themes_path.mkdir(parents=True)
 
@@ -193,6 +195,7 @@ class TestBaseTheme():
         assert pkg.theme('light') == {'backgroundColor': '#ff0000'}
 
     def test_dark_theme(self, mxxn_env):
+        """Is the dark theme."""
         themes_path = mxxn_env/'mxnone/configs/themes'
         themes_path.mkdir(parents=True)
 
@@ -243,6 +246,7 @@ class TestBaseStringsPath():
 
 class TestBaseRoutes():
     """Tests for the routes property of the Base class."""
+
     def test_all_routes_returned(self):
         """All the routes are returnd."""
         pkg = env.Mxxn()
@@ -417,9 +421,8 @@ class TestMxnAppRouteCovers():
         assert route_covers['mxxn'][0]['url'] == '/'
         assert route_covers['mxxn'][0]['resource'] == ResourceCover
 
-    def test_tmp(self, mxxn_env):
-    # def test_cover_for_a_mxxn_routes(self, mxxn_env):
-        """Cover for a mxxn routes returned."""
+    def test_cover_for_a_mxns_routes(self, mxxn_env):
+        """Cover for a mxns routes returned."""
         resources_content = """
             class ResourceCover():
                 def on_get(self, req, resp):

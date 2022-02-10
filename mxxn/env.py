@@ -35,15 +35,12 @@ automatically loaded from the packages and registered in the framework.
     * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
 """
 from pkg_resources import iter_entry_points
-from typing import List, TypedDict, Type, Dict, Optional
-import inspect
+from typing import List, TypedDict, Type, Optional
 from importlib import import_module
 from importlib.metadata import metadata, requires, PackageNotFoundError
 import re
 from pathlib import Path
 from mxxn.exceptions import env as env_ex
-from mxxn.exceptions import config as config_ex
-from mxxn.utils import modules
 from mxxn.settings import Settings
 from mxxn.config import ConfigsDir
 
@@ -133,7 +130,7 @@ class TypeResourceDict(TypedDict):
     """The type definition of resource dict."""
 
     resource: Type
-    routes: List[List[str]]
+    routes: list[list[str]]
 
 
 TypeListOfResourceDicts = List[TypeResourceDict]
@@ -250,9 +247,7 @@ class Base():
 
     @property
     def routes(self) -> Optional[TypeListOfRoutesDicts]:
-        """
-        Get the routes of the package.
-        """
+        """Get the routes of the package."""
         try:
             routes_module = import_module(self.name + '.routes')
 

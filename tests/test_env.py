@@ -268,166 +268,6 @@ class TestBaseRoutes():
         assert not pkg.routes
 
 
-class TestBaseResources():
-    """Tests for the resources property of the Base class."""
-
-    def test_package_has_a_resources_module(self, mxxn_env):
-        """Test if the module has a resources module."""
-        (mxxn_env/'mxnone/__init__.py').touch()
-        (mxxn_env/'mxnone/resources.py').touch()
-
-        pkg = env.Base('mxnone')
-
-        assert pkg.resources == []
-
-    def test_package_has_not_resource_module(self, mxxn_env):
-        """Module has a resources module."""
-        pkg = env.Base('mxnone')
-
-        assert pkg.resources == []
-
-    def test_has_resources_with_responder(self, mxxn_env):
-        """Module has resources with responders."""
-        content = """
-            class ResourceOne(object):
-                def on_get(self, req, resp):
-                    pass
-
-            class ResourceTwo(object):
-                def on_post(self, req, resp):
-                    pass
-        """
-
-        (mxxn_env/'mxnone/__init__.py').touch()
-        (mxxn_env/'mxnone/resources.py').write_text(
-            inspect.cleandoc(content))
-        pkg = env.Base('mxnone')
-        resources_list = pkg.resources
-
-        assert len(resources_list) == 2
-        assert resources_list[0]['routes'] == [['/.resourceone']]
-        assert resources_list[1]['routes'] == [['/.resourcetwo']]
-        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
-        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
-        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
-        assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
-
-    def test_has_responder_and_suffix(self, mxxn_env):
-        """Test if the module has resources with responder ans suffix."""
-        content = """
-            class ResourceOne(object):
-                def on_get(self, req, resp):
-                    pass
-
-            class ResourceTwo(object):
-                def on_post(self, req, resp):
-                    pass
-
-                def on_post_list(self, req, resp):
-                    pass
-        """
-
-        (mxxn_env/'mxnone/__init__.py').touch()
-        (mxxn_env/'mxnone/resources.py').write_text(
-            inspect.cleandoc(content))
-
-        pkg = env.Base('mxnone')
-        resources_list = pkg.resources
-
-        assert len(resources_list) == 2
-        assert resources_list[0]['routes'] == [['/.resourceone']]
-        assert resources_list[1]['routes'] == [
-            ['/.resourcetwo'], ['/.resourcetwo.list', 'list']
-        ]
-        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
-        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
-        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
-        assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
-
-    def test_resource_only_has_suffixed_responder(self, mxxn_env):
-        """Test if one resources has only suffixed responder."""
-        content = """
-            class ResourceOne(object):
-                def on_get(self, req, resp):
-                    pass
-
-            class ResourceTwo(object):
-                def on_post_list(self, req, resp):
-                    pass
-        """
-
-        (mxxn_env/'mxnone/__init__.py').touch()
-        (mxxn_env/'mxnone/resources.py').write_text(
-            inspect.cleandoc(content))
-
-        pkg = env.Base('mxnone')
-        resources_list = pkg.resources
-
-        assert len(resources_list) == 2
-        assert resources_list[0]['routes'] == [['/.resourceone']]
-        assert resources_list[1]['routes'] == [['/.resourcetwo.list', 'list']]
-        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
-        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
-        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
-        assert resources_list[1]['resource'].__module__ == 'mxnone.resources'
-
-    def test_resource_with_subpackage(self, mxxn_env):
-        """Test if one resources module has a subpackge."""
-        content = """
-            class ResourceOne(object):
-                def on_get(self, req, resp):
-                    pass
-
-            class ResourceTwo(object):
-                def on_get(self, req, resp):
-                    pass
-
-                def on_post_suffix_one(self, req, resp):
-                    pass
-
-                def on_post_suffix_two(self, req, resp):
-                    pass
-        """
-
-        (mxxn_env/'mxnone/__init__.py').touch()
-        (mxxn_env/'mxnone/resources/pkg').mkdir(parents=True)
-        (mxxn_env/'mxnone/resources/__init__.py').write_text(
-            inspect.cleandoc(content)
-        )
-        (mxxn_env/'mxnone/resources/pkg/__init__.py').touch()
-        (mxxn_env/'mxnone/resources/pkg/resources.py').write_text(
-            inspect.cleandoc(content)
-        )
-
-        pkg = env.Base('mxnone')
-        resources_list = pkg.resources
-
-        assert len(resources_list) == 4
-        assert resources_list[0]['routes'] == [['/.resourceone']]
-        assert resources_list[1]['routes'] == [
-            ['/.resourcetwo'],
-            ['/.resourcetwo.suffix_one', 'suffix_one'],
-            ['/.resourcetwo.suffix_two', 'suffix_two']
-        ]
-        assert resources_list[2]['routes'] == [['/pkg/resources/.resourceone']]
-        assert resources_list[3]['routes'] == [
-            ['/pkg/resources/.resourcetwo'],
-            ['/pkg/resources/.resourcetwo.suffix_one', 'suffix_one'],
-            ['/pkg/resources/.resourcetwo.suffix_two', 'suffix_two']
-        ]
-        assert resources_list[0]['resource'].__name__ == 'ResourceOne'
-        assert resources_list[1]['resource'].__name__ == 'ResourceTwo'
-        assert resources_list[2]['resource'].__name__ == 'ResourceOne'
-        assert resources_list[3]['resource'].__name__ == 'ResourceTwo'
-        assert resources_list[0]['resource'].__module__ == 'mxnone.resources'
-        assert resources_list[1]['resource'].__module__ \
-            == 'mxnone.resources'
-        assert resources_list[2]['resource'].__module__ \
-            == 'mxnone.resources.pkg.resources'
-        assert resources_list[3]['resource'].__module__ \
-            == 'mxnone.resources.pkg.resources'
-
-
 class TestBaseStaticPath():
     """Tests for the static_path method of the Base class."""
 
@@ -493,8 +333,24 @@ class TestMxxnThemeList():
         assert pkg.theme_list == ['dark', 'light']
 
 
-class TestMixxinAppInit():
-    """Tests for the MxxnApp initialisation."""
+class TestMxnUnprefixedName():
+    """Tests for the unprefixed_name property of Mxn class."""
+
+    def test_has_prefix(self, mxxn_env):
+        """The name has a prefix."""
+        mxnone = env.Mxn('mxnone')
+
+        assert mxnone.unprefixed_name == 'one'
+
+    def test_has_no_prefix(self, mxxn_env):
+        """The name has a prefix."""
+        mxnone = env.Mxn('mxnone')
+
+        assert mxnone.unprefixed_name == 'one'
+
+
+class TestMxnAppInit():
+    """Tests for the MxnApp initialisation."""
 
     def test_app_not_exist(self):
         """The app does not exist."""
@@ -521,90 +377,102 @@ class TestMixxinAppInit():
                 env.MxnApp()
 
 
-class TestMxnUnprefixedName():
-    """Tests for the unprefixed_name property of Mxn class."""
+class TestMxnAppRouteCovers():
+    """Tests for the route_covers property of the MxnApp class."""
 
-    def test_has_prefix(self, mxxn_env):
-        """The name has a prefix."""
-        mxnone = env.Mxn('mxnone')
-
-        assert mxnone.unprefixed_name == 'one'
-
-    def test_has_no_prefix(self, mxxn_env):
-        """The name has a prefix."""
-        mxnone = env.Mxn('mxnone')
-
-        assert mxnone.unprefixed_name == 'one'
-
-
-class TestMixxinAppCoveringResources():
-    """Tests for the covering_resources method."""
-
-    def test_cover_for_a_mixxin_resource(self, mxxn_env):
-        """Cover for a mxxn resource."""
-        content = """
-            class Resource(object):
+    def test_cover_for_a_mxxn_routes(self, mxxn_env):
+        """Cover for a mxxn routes returned."""
+        resources_content = """
+            class ResourceCover():
                 def on_get(self, req, resp):
                     pass
+                    resp.body = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
         """
-        covers_mixxin = mxxn_env/'mxnapp/covers/mxxn'
-        covers_mixxin.mkdir(parents=True)
-        (mxxn_env/'mxnapp/covers/mxxn/resources.py').write_text(
-            inspect.cleandoc(content)
+
+        routes_content = """
+            from mxnapp.covers.mxxn.resources import ResourceCover
+
+            routes = [{'url': '/', 'resource': ResourceCover}]
+
+        """
+
+        mxxn_covers = mxxn_env/'mxnapp/covers/mxxn'
+        mxxn_covers.mkdir(parents=True)
+        (mxxn_covers/'resources.py').write_text(
+            inspect.cleandoc(resources_content)
+        )
+        (mxxn_covers/'routes.py').write_text(
+            inspect.cleandoc(routes_content)
         )
 
         settings = Settings()
         app = env.MxnApp()
-        resources = app.covering_resources(settings)
+        route_covers = app.route_covers(settings)
 
-        assert len(resources['mxxn']) == 1
-        assert resources['mxxn'][0]['routes'][0] == ['/.resource']
+        from mxnapp.covers.mxxn.resources import ResourceCover
 
-    def test_cover_for_a_mxn_resource(self, mxxn_env):
-        """Cover for a mxn resource."""
-        content = """
-            class Resource(object):
+        assert len(route_covers['mxxn']) == 1
+        assert route_covers['mxxn'][0]['url'] == '/'
+        assert route_covers['mxxn'][0]['resource'] == ResourceCover
+
+    def test_tmp(self, mxxn_env):
+    # def test_cover_for_a_mxxn_routes(self, mxxn_env):
+        """Cover for a mxxn routes returned."""
+        resources_content = """
+            class ResourceCover():
                 def on_get(self, req, resp):
                     pass
+                    resp.body = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
         """
-        covers_mixxin = mxxn_env/'mxnapp/covers/mxns/mxnone'
-        covers_mixxin.mkdir(parents=True)
-        (mxxn_env/'mxnapp/covers/mxns/mxnone/resources.py').write_text(
-            inspect.cleandoc(content)
+
+        mxnone_routes_content = """
+            from mxnapp.covers.mxns.mxnone.resources import ResourceCover
+
+            routes = [{'url': '/', 'resource': ResourceCover}]
+
+        """
+
+        mxntwo_routes_content = """
+            from mxnapp.covers.mxns.mxntwo.resources import ResourceCover
+
+            routes = [{'url': '/', 'resource': ResourceCover}]
+
+        """
+        mxnone_covers = mxxn_env/'mxnapp/covers/mxns/mxnone'
+        mxntwo_covers = mxxn_env/'mxnapp/covers/mxns/mxntwo'
+        mxnone_covers.mkdir(parents=True)
+        mxntwo_covers.mkdir(parents=True)
+        (mxnone_covers/'resources.py').write_text(
+            inspect.cleandoc(resources_content)
+        )
+        (mxntwo_covers/'resources.py').write_text(
+            inspect.cleandoc(resources_content)
+        )
+        (mxnone_covers/'routes.py').write_text(
+            inspect.cleandoc(mxnone_routes_content)
+        )
+        (mxntwo_covers/'routes.py').write_text(
+            inspect.cleandoc(mxntwo_routes_content)
         )
 
         settings = Settings()
         app = env.MxnApp()
-        resources = app.covering_resources(settings)
+        route_covers = app.route_covers(settings)
 
-        assert len(resources['mxxn']) == 0
-        assert len(resources['mxns']['mxnone']) == 1
-        assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
+        print(route_covers)
 
-    def test_respects_enabled_mxns(self, mxxn_env):
-        """Respects the enabled_mxns from settings file."""
-        content = """
-            class Resource(object):
-                def on_get(self, req, resp):
-                    pass
-        """
-        covers_mxn_one = mxxn_env/'mxnapp/covers/mxns/mxnone'
-        covers_mxn_two = mxxn_env/'mxnapp/covers/mxns/mxntwo'
-        covers_mxn_one.mkdir(parents=True)
-        covers_mxn_two.mkdir(parents=True)
-        (mxxn_env/'mxnapp/covers/mxns/mxnone/resources.py').write_text(
-            inspect.cleandoc(content)
-        )
-        (mxxn_env/'mxnapp/covers/mxns/mxntwo/resources.py').write_text(
-            inspect.cleandoc(content)
-        )
+        from mxnapp.covers.mxns.mxnone import resources as mxnone_resources
+        from mxnapp.covers.mxns.mxntwo import resources as mxntwo_resources
 
-        settings = Mock()
-        settings.enabled_mxns = ['mxnone', 'mxnthree']
-
-        app = env.MxnApp()
-        resources = app.covering_resources(settings)
-
-        assert len(resources['mxxn']) == 0
-        assert len(resources['mxns']) == 1
-        assert resources['mxns']['mxnone'][0]['routes'][0] == ['/.resource']
+        assert len(route_covers['mxns']['mxnone']) == 1
+        assert len(route_covers['mxns']['mxntwo']) == 1
+        assert route_covers['mxns']['mxnone'][0]['url'] == '/'
+        assert route_covers['mxns']['mxntwo'][0]['url'] == '/'
+        assert route_covers['mxns']['mxnone'][0]['resource'] ==\
+            mxnone_resources.ResourceCover
+        assert route_covers['mxns']['mxntwo'][0]['resource'] ==\
+            mxntwo_resources.ResourceCover

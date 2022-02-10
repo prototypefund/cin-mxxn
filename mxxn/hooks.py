@@ -60,9 +60,6 @@ async def render(
     try:
         if not package_name:
             package_name = caller_package_name()
-            # package = package_name
-        # else:
-            # package = caller_package_name()
 
         env = Environment(loader=PackageLoader(
             package_name, 'templates'), enable_async=True)

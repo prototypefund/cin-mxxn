@@ -75,7 +75,7 @@ def resources(mxxn_env):
         from mxnone.resources import MxnResourceOne, MxnResourceTwo
 
         routes = [
-                {'url': '/resourceone', 'resource': MxnResourceOne},
+                {'url': '/', 'resource': MxnResourceOne},
                 {'url': '/resourcetwo', 'resource': MxnResourceTwo},
                 {
                     'url': '/resourcetwo/suffix',
@@ -87,7 +87,7 @@ def resources(mxxn_env):
         from mxntwo.resources import MxnResourceOne, MxnResourceTwo
 
         routes = [
-                {'url': '/resourceone', 'resource': MxnResourceOne},
+                {'url': '/', 'resource': MxnResourceOne},
                 {'url': '/resourcetwo', 'resource': MxnResourceTwo},
                 {
                     'url': '/resourcetwo/suffix',
@@ -120,7 +120,7 @@ def resources(mxxn_env):
         from mxnapp.resources import MxnAppResourceOne, MxnAppResourceTwo
 
         routes = [
-                {'url': '/resourceone', 'resource': MxnAppResourceOne},
+                {'url': '/', 'resource': MxnAppResourceOne},
                 {'url': '/resourcetwo', 'resource': MxnAppResourceTwo},
                 {
                     'url': '/resourcetwo/suffix',
@@ -151,9 +151,9 @@ class TestAppRegisterResources():
 
         response_root = client.simulate_get('/')
 
-        response_one = client.simulate_get('/app/resourceone/')
-        response_two = client.simulate_get('/app/resourcetwo/')
-        response_two_suffix = client.simulate_get('/app/resourcetwo/suffix/')
+        response_one = client.simulate_get('/app/resourceone')
+        response_two = client.simulate_get('/app/resourcetwo')
+        response_two_suffix = client.simulate_get('/app/resourcetwo/suffix')
 
         assert response_root.text == 'MxxnRoot'
         assert response_root.status == falcon.HTTP_OK
@@ -176,15 +176,15 @@ class TestAppRegisterResources():
         app = App()
         client = testing.TestClient(app.asgi)
 
-        mxnone_response_one = client.simulate_get('/app/mxns/one/resourceone/')
-        mxnone_response_two = client.simulate_get('/app/mxns/one/resourcetwo/')
+        mxnone_response_one = client.simulate_get('/app/mxns/one')
+        mxnone_response_two = client.simulate_get('/app/mxns/one/resourcetwo')
         mxnone_response_three = client.simulate_get(
-                '/app/mxns/one/resourcetwo/suffix/')
+                '/app/mxns/one/resourcetwo/suffix')
 
-        mxntwo_response_one = client.simulate_get('/app/mxns/two/resourceone/')
-        mxntwo_response_two = client.simulate_get('/app/mxns/two/resourcetwo/')
+        mxntwo_response_one = client.simulate_get('/app/mxns/two')
+        mxntwo_response_two = client.simulate_get('/app/mxns/two/resourcetwo')
         mxntwo_response_three = client.simulate_get(
-                '/app/mxns/two/resourcetwo/suffix/')
+                '/app/mxns/two/resourcetwo/suffix')
 
         assert mxnone_response_one.text == 'MxnResourceOne'
         assert mxnone_response_one.status == falcon.HTTP_OK
@@ -212,14 +212,14 @@ class TestAppRegisterResources():
         assert mxntwo_response_three.headers['content-type'] == \
             falcon.MEDIA_HTML
 
-    def test_app_routes_added(self, resources):
+    def test_mxnapp_routes_added(self, resources):
         """All routes of the mixxin application were added."""
         app = App()
         client = testing.TestClient(app.asgi)
 
-        response_one = client.simulate_get('/app/mxnapp/resourceone/')
-        response_two = client.simulate_get('/app/mxnapp/resourcetwo/')
-        response_three = client.simulate_get('/app/mxnapp/resourcetwo/suffix/')
+        response_one = client.simulate_get('/app/mxnapp')
+        response_two = client.simulate_get('/app/mxnapp/resourcetwo')
+        response_three = client.simulate_get('/app/mxnapp/resourcetwo/suffix')
 
         assert response_one.text == 'MxnAppResourceOne'
         assert response_one.status == falcon.HTTP_OK

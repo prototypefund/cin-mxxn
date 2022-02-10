@@ -250,6 +250,9 @@ class Base():
 
     @property
     def routes(self) -> Optional[TypeListOfRoutesDicts]:
+        """
+        Get the routes of the package.
+        """
         try:
             routes_module = import_module(self.name + '.routes')
 
@@ -257,93 +260,6 @@ class Base():
 
         except (ModuleNotFoundError, AttributeError):
             return None
-
-    @property
-    def resources(self) -> TypeListOfResourceDicts:
-        """
-        Get the resources of the package.
-
-        This method searches the *resources* module or package of the Mxxn
-        package, Mxn package or a MxnApp package for resources and returns
-        a list of the resources found. If no resource exists or there is no
-        resources module or package, then an empty list is returned. A
-        resource is a class that implements at least one responder method of
-        the form *on_*()*, where * is any one of the standard HTTP methods
-        (get, post, put, delete, patch, websocket). Classes that exclusively or
-        additionally implement methods with a suffix in the form
-        *on_*_<suffix>* are also identified as a resource and the
-        suffixes are returned with it. The returned list contains resource
-        dictionaries. A dictionary has the following format:
-
-        .. code-block:: python
-
-            {
-                'resource': <resource class>,
-                'routes': [
-                    [<route 1>, <optional suffix>],
-                    [<route n>, <optional suffix>],
-                ]
-            }
-
-        .. note::
-
-            Only resources with get, post, put, patch, delete or/and websocket
-            responder are considered.
-        """
-        try:
-            resources_list: TypeListOfResourceDicts = []
-
-            resources_module = import_module(
-                    self._package.__name__ + '.resources')
-
-            classes = modules.classes_recursively(resources_module)
-
-            for resource in classes:
-                members = inspect.getmembers(
-                    resource, predicate=inspect.isfunction
-                )
-                member_names = [member[0] for member in members]
-                r = 'on_(get|post|put|delete|patch|websocket)'
-
-                has_responder = any(
-                    i for i in member_names if re.match(r+'$', i)
-                )
-
-                suffixes: List[str] = []
-
-                for i in member_names:
-                    if re.match(r + '_[a-z0-9_]+', i):
-                        suffixes.append(re.sub(r+'_', '', i))
-
-                import_name = resource.__module__+'.'+resource.__name__
-
-                if has_responder or suffixes:
-                    route = re.sub(
-                            '^'+resources_module.__name__, '', import_name)\
-                            .replace('.', '/').lower()
-
-                    route = route[::-1].replace('/', './', 1)[::-1]
-
-                    resource_dict: TypeResourceDict = {
-                        'resource': resource,
-                        'routes': []
-                    }
-
-                    if has_responder:
-                        resource_dict['routes'].append([route])
-
-                    if suffixes:
-                        for suffix in suffixes:
-                            resource_dict['routes'].append(
-                                [route+'.'+suffix, suffix]
-                            )
-
-                    resources_list.append(resource_dict)
-
-        except ModuleNotFoundError:
-            pass
-
-        return resources_list
 
     @property
     def static_path(self) -> Optional[Path]:
@@ -444,11 +360,11 @@ class Mxn(Base):
         return self.name
 
 
-class TypeCoveringResources(TypedDict):
+class TypeRouteCovers(TypedDict):
     """Type definition for a covering resources dict."""
 
-    mxxn: TypeListOfResourceDicts
-    mxns: Dict[str, TypeListOfResourceDicts]
+    # mxxn: List[Dict]
+    # mxns: Dict[List[Dict]]
 
 
 class MxnApp(Base):
@@ -476,10 +392,12 @@ class MxnApp(Base):
         |   |   |-- __init__.py
         |   |   |-- mxntest
         |   |       |-- __init__.py
+        |   |       |-- routes.py
         |   |       |-- resources.py
         |   |
         |   |-- mxxn
         |   |   |-- __init__.py
+        |   |   |-- routes.py
         |   |   |-- resources.py
         |-- __init__.py
         setup.cfg
@@ -501,28 +419,46 @@ class MxnApp(Base):
 
         raise env_ex.MxnAppNotExistError('No application package installed')
 
-    def covering_resources(self, settings: Settings) -> TypeCoveringResources:
+    def route_covers(self, settings: Settings) -> TypeRouteCovers:
         """
-        Get the resource covers.
+        Get the route covers.
 
-        To overload a resource, the respective resource module must be created
-        in the package to be overloaded and the corresponding resource class
-        must be created in it. If only one or a few responders are to be
-        overloaded, then the resource class can be derived from the original
-        resource and the particular responder or responders can be overloaded.
+        It is possible to overload the routes of a package with new resources.
+        To do this, there must be a routes.py module with the routes to the
+        new resources in the covers folder of the respective package. These
+        routes then overload the original routes of the package with the new
+        resources.
+
+        The following listing shows the format of the returned dictionary.
+
+        .. code:: python
+
+            {
+                'mxxn': [
+                    {'url': '<url_to_cover>', '<new_resource>'}
+                ],
+                'mxns': {
+                    'mxnone': [
+                        {'url': '<url_to_cover>', '<new_resource>'}
+                    ],
+                    'mxntwo': [
+                        {'url': '<url_to_cover>', '<new_resource>'}
+                    ]
+                }
+            }
+
 
         Returns:
-            A dictionary containing the covering resources.
+            A dictionary containing the routes covers.
 
         """
-        resource_covers: TypeCoveringResources = {
+        resource_covers = {
             'mxxn': [],
             'mxns': {}
         }
-
         try:
             mxxn_covers = Mxxn(self.name + '.covers.mxxn')
-            resource_covers['mxxn'] = mxxn_covers.resources
+            resource_covers['mxxn'] = mxxn_covers.routes
 
         except env_ex.PackageNotExistError:
             pass
@@ -530,7 +466,7 @@ class MxnApp(Base):
         for mxn_name in mxns(settings):
             try:
                 mxn = Mxn(self.name + '.covers.mxns.' + mxn_name)
-                resource_covers['mxns'][mxn_name] = mxn.resources
+                resource_covers['mxns'][mxn_name] = mxn.routes
 
             except env_ex.PackageNotExistError:
                 pass

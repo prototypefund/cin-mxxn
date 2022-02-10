@@ -39,7 +39,7 @@ class App(object):
                 for route in pkg.routes:
                     url = route['url']
 
-                    if url[0] == '/':
+                    if mount and len(url) == 1:
                         url = url[1:]
 
                     url = mount + url
@@ -57,7 +57,7 @@ class App(object):
                 )
 
         mxxn_pkg = Mxxn()
-        add_routes(mxxn_pkg, '/')
+        add_routes(mxxn_pkg)
 
         for mxn_name in mxns(self.settings):
             mxn_pkg = Mxn(mxn_name)

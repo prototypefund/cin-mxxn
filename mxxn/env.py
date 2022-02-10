@@ -338,11 +338,14 @@ class Mxxn(Base):
         super().__init__(name)
 
     @property
-    def theme_list(self) -> List[str]:
+    def theme_list(self) -> Optional[List[str]]:
         """Get a list of available themes."""
-        themes_dir = ConfigsDir(self.themes_path)
+        if self.themes_path:
+            themes_dir = ConfigsDir(self.themes_path)
 
-        return themes_dir.names
+            return themes_dir.names
+
+        return None
 
 
 class Mxn(Base):
@@ -361,10 +364,10 @@ class Mxn(Base):
 
 
 class TypeRouteCovers(TypedDict):
-    """Type definition for a covering resources dict."""
+    """Type definition for the route covers dict."""
 
-    # mxxn: List[Dict]
-    # mxns: Dict[List[Dict]]
+    mxxn: list[TypeRouteDict]
+    mxns: dict[str, list[TypeRouteDict]]
 
 
 class MxnApp(Base):
@@ -452,13 +455,16 @@ class MxnApp(Base):
             A dictionary containing the routes covers.
 
         """
-        resource_covers = {
+        resource_covers: TypeRouteCovers = {
             'mxxn': [],
             'mxns': {}
         }
+
         try:
             mxxn_covers = Mxxn(self.name + '.covers.mxxn')
-            resource_covers['mxxn'] = mxxn_covers.routes
+
+            if mxxn_covers.routes:
+                resource_covers['mxxn'] = mxxn_covers.routes
 
         except env_ex.PackageNotExistError:
             pass
@@ -466,7 +472,9 @@ class MxnApp(Base):
         for mxn_name in mxns(settings):
             try:
                 mxn = Mxn(self.name + '.covers.mxns.' + mxn_name)
-                resource_covers['mxns'][mxn_name] = mxn.routes
+
+                if mxn.routes:
+                    resource_covers['mxns'][mxn_name] = mxn.routes
 
             except env_ex.PackageNotExistError:
                 pass

@@ -463,8 +463,6 @@ class TestMxnAppRouteCovers():
         app = env.MxnApp()
         route_covers = app.route_covers(settings)
 
-        print(route_covers)
-
         from mxnapp.covers.mxns.mxnone import resources as mxnone_resources
         from mxnapp.covers.mxns.mxntwo import resources as mxntwo_resources
 

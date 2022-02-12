@@ -247,7 +247,29 @@ class Base():
 
     @property
     def routes(self) -> Optional[TypeListOfRoutesDicts]:
-        """Get the routes of the package."""
+        """
+        Get the routes of the package.
+
+        The routes of the package must be defined in the *routes* variable
+        of the *routes* modules. They must be defined as a list of
+        dictionaries. Each dictionary corresponds to a route and contains
+        the URL, the resource and, if available, the respective suffix of
+        the resource.
+
+        .. code:: python
+
+            from mxxn.resources import Root, SomeResource
+
+            routes = [
+                    {'url': '/', 'resource': Root},
+                    {'url': '/some_route', 'resource': SomeResource},
+                    {'url': '/some_route/{id}', 'resource': SomeResource},
+                    {
+                        'url': '/some_route/suffix',
+                        'resource': SomeResource},
+                        'suffix': 'suffix'
+                    }]
+        """
         try:
             routes_module = import_module(self.name + '.routes')
 
@@ -373,8 +395,8 @@ class MxnApp(Base):
     the Mxxn framework. This can include resources, static files, etc. For
     this purpose, the covers package must be created in the application
     package. All overloads of the Mxxn framework are in the sub-package
-    mxxn, those of the mxns are in the sub-folder mxns. A sub-package
-    must exist for each mxn for which elements will be overloaded.
+    mxxn, those of the Mxns are in the sub-folder mxns. A sub-package
+    must exist for each Mxn for which elements will be overloaded.
     The folder structure of the overloads is exactly the same as in the
     package that is to be overloaded.
 
@@ -433,14 +455,17 @@ class MxnApp(Base):
 
             {
                 'mxxn': [
-                    {'url': '<url_to_cover>', '<new_resource>'}
+                    {'url': '<url_to_cover>', 'resource': '<new_resource>'}
                 ],
                 'mxns': {
                     'mxnone': [
-                        {'url': '<url_to_cover>', '<new_resource>'}
+                        {'url': '<url_to_cover>', 'resource': '<new_resource>'}
                     ],
                     'mxntwo': [
-                        {'url': '<url_to_cover>', '<new_resource>'}
+                        {
+                            'url': '<url_to_cover>',
+                            'resource': '<new_resource>',
+                            'suffix': 'some_suffix'}
                     ]
                 }
             }
@@ -460,8 +485,6 @@ class MxnApp(Base):
 
             if mxxn_covers.routes:
                 resource_covers['mxxn'] = mxxn_covers.routes
-
-            # print(mxxn_covers.routes)
 
         except env_ex.PackageNotExistError:
             pass

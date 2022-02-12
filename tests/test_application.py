@@ -135,9 +135,7 @@ def resources(mxxn_env):
     (mxxn_env/'mxntwo/routes.py').write_text(cleandoc(mxntwo_routes))
     (mxxn_env/'mxnapp/routes.py').write_text(cleandoc(mxnapp_routes))
 
-    with patch('mxxn.env.Mxxn.routes', new_callable=PropertyMock) as mock:
-        mock.return_value = mxxn_routes_mock
-
+    with patch('mxxn.routes.routes', mxxn_routes_mock):
         yield mxxn_env
 
 
@@ -232,6 +230,350 @@ class TestAppRegisterResources():
         assert response_three.text == 'MxnAppResourceTwoSuffix'
         assert response_three.status == falcon.HTTP_OK
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxxn_route_cover(self, resources):
+        """A mxxn route was covered."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxxn.resources import ResourceCover
+
+            routes = [{'url': '/app/resourceone', 'resource': ResourceCover}]
+
+        """
+        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers.mkdir(parents=True)
+        (mxxn_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxxn_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/resourceone')
+        response_two = client.simulate_get('/app/resourcetwo')
+        response_two_suffix = client.simulate_get('/app/resourcetwo/suffix')
+
+        assert response_root.text == 'MxxnRoot'
+        assert response_root.status == falcon.HTTP_OK
+        assert response_root.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_one.text == 'ResourceCover'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'MxxnResourceTwoSuffix'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxxn_suffix_route_cover(self, resources):
+        """A mxxn route with suffix was covered."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get_suffix(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxxn.resources import ResourceCover
+
+            routes = [{'url': '/app/resourcetwo/suffix',
+                'resource': ResourceCover, 'suffix':'suffix'}]
+
+        """
+        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers.mkdir(parents=True)
+        (mxxn_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxxn_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/resourceone')
+        response_two = client.simulate_get('/app/resourcetwo')
+        response_two_suffix = client.simulate_get('/app/resourcetwo/suffix')
+
+        assert response_root.text == 'MxxnRoot'
+        assert response_root.status == falcon.HTTP_OK
+        assert response_root.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_one.text == 'MxxnResourceOne'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'ResourceCover'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxxn_wrong_suffix_route_cover(self, resources):
+        """The cover resource has wrong suffix."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get_suffix(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxxn.resources import ResourceCover
+
+            routes = [{'url': '/app/resourcetwo/suffix',
+                'resource': ResourceCover, 'suffix':'wrong_suffix'}]
+
+        """
+        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers.mkdir(parents=True)
+        (mxxn_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxxn_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/resourceone')
+        response_two = client.simulate_get('/app/resourcetwo')
+        response_two_suffix = client.simulate_get('/app/resourcetwo/suffix')
+
+        assert response_root.text == 'MxxnRoot'
+        assert response_root.status == falcon.HTTP_OK
+        assert response_root.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_one.text == 'MxxnResourceOne'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'MxxnResourceTwoSuffix'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxxn_root_route_cover(self, resources):
+        """A mxxn root route was covered."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxxn.resources import ResourceCover
+
+            routes = [{'url': '/', 'resource': ResourceCover}]
+
+        """
+        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers.mkdir(parents=True)
+        (mxxn_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxxn_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/resourceone')
+        response_two = client.simulate_get('/app/resourcetwo')
+        response_two_suffix = client.simulate_get('/app/resourcetwo/suffix')
+
+        assert response_root.text == 'ResourceCover'
+        assert response_root.status == falcon.HTTP_OK
+        assert response_root.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_one.text == 'MxxnResourceOne'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'MxxnResourceTwoSuffix'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxn_route_cover(self, resources):
+        """A mxn route was covered."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxns.mxnone.resources import ResourceCover
+
+            routes = [{'url': '/', 'resource': ResourceCover}]
+
+        """
+        mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
+        mxnone_covers.mkdir(parents=True)
+        (mxnone_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxnone_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_one = client.simulate_get('/app/mxns/one')
+        response_two = client.simulate_get('/app/mxns/one/resourcetwo')
+        response_two_suffix = client.simulate_get(
+                '/app/mxns/one/resourcetwo/suffix')
+
+        assert response_one.text == 'ResourceCover'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'MxnResourceTwoSuffix'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxn_suffix_route_cover(self, resources):
+        """A mxn route with suffix was covered."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get_suffix(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxns.mxnone.resources import ResourceCover
+
+            routes = [{'url': '/resourcetwo/suffix',
+                'resource': ResourceCover,
+                'suffix': 'suffix'}]
+
+        """
+        mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
+        mxnone_covers.mkdir(parents=True)
+        (mxnone_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxnone_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_one = client.simulate_get('/app/mxns/one')
+        response_two = client.simulate_get('/app/mxns/one/resourcetwo')
+        response_two_suffix = client.simulate_get(
+                '/app/mxns/one/resourcetwo/suffix')
+
+        assert response_one.text == 'MxnResourceOne'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'ResourceCover'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_mxn_wrong_suffix_route_cover(self, resources):
+        """The Mxn cover resource has wrong suffix."""
+        resources_content = """
+            import falcon
+
+            class ResourceCover():
+                async def on_get_suffix(self, req, resp):
+                    resp.text = 'ResourceCover'
+                    resp.content_type = falcon.MEDIA_HTML
+                    resp.status = falcon.HTTP_200
+        """
+
+        routes_content = """
+            from mxnapp.covers.mxns.mxnone.resources import ResourceCover
+
+            routes = [{'url': '/resourcetwo/suffix',
+                'resource': ResourceCover,
+                'suffix': 'wrong_suffix'}]
+
+        """
+        mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
+        mxnone_covers.mkdir(parents=True)
+        (mxnone_covers/'resources.py').write_text(
+            cleandoc(resources_content)
+        )
+        (mxnone_covers/'routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        response_one = client.simulate_get('/app/mxns/one')
+        response_two = client.simulate_get('/app/mxns/one/resourcetwo')
+        response_two_suffix = client.simulate_get(
+                '/app/mxns/one/resourcetwo/suffix')
+
+        assert response_one.text == 'MxnResourceOne'
+        assert response_one.status == falcon.HTTP_OK
+        assert response_one.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two.text == 'MxnResourceTwo'
+        assert response_two.status == falcon.HTTP_OK
+        assert response_two.headers['content-type'] == falcon.MEDIA_HTML
+
+        assert response_two_suffix.text == 'MxnResourceTwoSuffix'
+        assert response_two_suffix.status == falcon.HTTP_OK
+        assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
 
 class TestStaticPaths():

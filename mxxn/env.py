@@ -461,6 +461,8 @@ class MxnApp(Base):
             if mxxn_covers.routes:
                 resource_covers['mxxn'] = mxxn_covers.routes
 
+            # print(mxxn_covers.routes)
+
         except env_ex.PackageNotExistError:
             pass
 

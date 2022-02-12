@@ -29,14 +29,11 @@ class App(object):
         in installed Mxn package.
 
         """
-        # TODO add covers!
         log = logger('registration')
 
-        def add_routes(pkg, mount=''):
-            routes = pkg.routes
-
+        def add_routes(routes, pkg_name, mount=''):
             if routes:
-                for route in pkg.routes:
+                for route in routes:
                     url = route['url']
 
                     if mount and len(url) == 1:
@@ -53,22 +50,53 @@ class App(object):
                     self.asgi.add_route(url, route['resource']())
 
                 log.debug(
-                    f'The routes of the {pkg.name} package were registered.'
+                    f'The routes of the {pkg_name} package were registered.'
                 )
 
-        mxxn_pkg = Mxxn()
-        add_routes(mxxn_pkg)
+        def cover(routes, cover_routes):
+            if routes:
+                for cover_route in cover_routes:
+                    for route in routes:
+                        if cover_route['url'] == route['url']:
+                            if len(cover_route) == 3  \
+                                    and len(route) == 3 \
+                                    and cover_route['suffix'] != \
+                                    route['suffix']:
 
-        for mxn_name in mxns(self.settings):
-            mxn_pkg = Mxn(mxn_name)
-            add_routes(mxn_pkg, '/app/mxns/'+mxn_pkg.unprefixed_name)
+                                continue
+
+                            route['resource'] = cover_route['resource']
+
+            return routes
+
+        route_covers = None
 
         try:
             mxnapp_pkg = MxnApp()
-            add_routes(mxnapp_pkg, '/app/mxnapp')
+            route_covers = mxnapp_pkg.route_covers(self.settings)
+            add_routes(mxnapp_pkg.routes, mxnapp_pkg.name, '/app/mxnapp')
 
         except env_ex.MxnAppNotExistError:
             pass
+
+        mxxn_pkg = Mxxn()
+        routes = mxxn_pkg.routes
+
+        if route_covers:
+            routes = cover(routes, route_covers['mxxn'])
+
+        add_routes(routes, mxxn_pkg.name)
+
+        for mxn_name in mxns(self.settings):
+            mxn_pkg = Mxn(mxn_name)
+            routes = mxn_pkg.routes
+
+            if route_covers and mxn_name in route_covers['mxns']:
+                routes = cover(routes, route_covers['mxns'][mxn_name])
+
+            add_routes(
+                    mxn_pkg.routes, mxn_pkg.name,
+                    '/app/mxns/'+mxn_pkg.unprefixed_name)
 
     def _register_static_paths(self) -> None:
         """

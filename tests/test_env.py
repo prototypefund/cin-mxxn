@@ -264,8 +264,8 @@ class TestBaseRoutes():
 
         assert not pkg.routes
 
-    def test_no_resource_list(self, mxxn_env):
-        """No resource list in the package."""
+    def test_no_routes_list(self, mxxn_env):
+        """No routes list in the package."""
         (mxxn_env/'mxnone/routes.py').touch()
         pkg = env.Mxn('mxnone')
 
@@ -416,6 +416,7 @@ class TestMxnAppRouteCovers():
         route_covers = app.route_covers(settings)
 
         from mxnapp.covers.mxxn.resources import ResourceCover
+        print(route_covers)
 
         assert len(route_covers['mxxn']) == 1
         assert route_covers['mxxn'][0]['url'] == '/'

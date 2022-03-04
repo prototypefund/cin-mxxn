@@ -9,6 +9,32 @@ from mxxn.exceptions import env as env_ex
 from mxxn.settings import Settings
 
 
+@pytest.fixture
+def static_pathes(mxxn_env):
+    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+
+    for mxn in mxns:
+        static_path = mxxn_env/(mxn + '/frontend/static')
+        static_path.mkdir(parents=True)
+
+    return mxxn_env
+
+
+@pytest.fixture
+def static_files(static_pathes):
+    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+
+    for mxn in mxns:
+        js_path = static_pathes/(mxn + '/frontend/static/js')
+        js_path.mkdir()
+        js_file = js_path/'mxn.js'
+        js_file.touch()
+        index_file = static_pathes/(mxn + '/frontend/static/index.html')
+        index_file.touch()
+
+    return static_pathes
+
+
 class TestIsDevelop():
     """Tests for the is_develop function."""
 
@@ -281,13 +307,15 @@ class TestBaseStaticPath():
 
         assert not pkg.static_path
 
-    def test_has_a_static_folder(self, mxxn_env):
+    def test_has_a_static_folder(self, static_pathes):
         """The static_path function returns the path."""
-        static_path = mxxn_env/'mxnone/frontend/static'
-        static_path.mkdir(parents=True)
-        pkg = env.Base('mxnone')
+        mxnone = env.Base('mxnone')
+        mxntwo = env.Base('mxntwo')
+        mxnthree = env.Base('mxnthree')
 
-        assert pkg.static_path == mxxn_env/'mxnone/frontend/static'
+        assert mxnone.static_path == static_pathes/'mxnone/frontend/static'
+        assert mxntwo.static_path == static_pathes/'mxntwo/frontend/static'
+        assert mxnthree.static_path == static_pathes/'mxnthree/frontend/static'
 
 
 class TestBaseStaticFiles():
@@ -299,27 +327,24 @@ class TestBaseStaticFiles():
 
         assert not pkg.static_files
 
-    def test_no_file_in_static_dir(self, mxxn_env):
+    def test_no_file_in_static_dir(self, static_pathes):
         """It is no file in static directory."""
-        static_path = mxxn_env/'mxnone/frontend/static'
-        static_path.mkdir(parents=True)
-        pkg = env.Base('mxnone')
+        mxnone = env.Base('mxnone')
+        mxntwo = env.Base('mxntwo')
+        mxnthree = env.Base('mxnthree')
 
-        assert pkg.static_files == []
+        assert mxnone.static_files == []
+        assert mxntwo.static_files == []
+        assert mxnthree.static_files == []
 
-    def test_all_files_found(self, mxxn_env):
+    def test_all_files_found(self, static_files):
         """All files was found."""
-        static_path = mxxn_env/'mxnone/frontend/static'
-        static_path.mkdir(parents=True)
-        (static_path/'js').mkdir()
-        js_file = static_path/'js/mxn.js'
-        js_file.touch()
-        index_file = static_path/'index.html'
-        index_file.touch()
-
         pkg = env.Base('mxnone')
 
-        assert pkg.static_files == [index_file, js_file]
+        assert pkg.static_files == [
+                pkg.static_path/'index.html',
+                pkg.static_path/'js/mxn.js'
+                ]
 
 
 class TestBaseJsFiles():

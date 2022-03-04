@@ -283,11 +283,43 @@ class TestBaseStaticPath():
 
     def test_has_a_static_folder(self, mxxn_env):
         """The static_path function returns the path."""
-        patch = mxxn_env/'mxnone/frontend/static'
-        patch.mkdir(parents=True)
+        static_path = mxxn_env/'mxnone/frontend/static'
+        static_path.mkdir(parents=True)
         pkg = env.Base('mxnone')
 
         assert pkg.static_path == mxxn_env/'mxnone/frontend/static'
+
+
+class TestBaseStaticFiles():
+    """Tests for the static_files method of the Base class."""
+
+    def test_no_static_dir(self, mxxn_env):
+        """It is no in static directory."""
+        pkg = env.Base('mxnone')
+
+        assert not pkg.static_files
+
+    def test_no_file_in_static_dir(self, mxxn_env):
+        """It is no file in static directory."""
+        static_path = mxxn_env/'mxnone/frontend/static'
+        static_path.mkdir(parents=True)
+        pkg = env.Base('mxnone')
+
+        assert pkg.static_files == []
+
+    def test_all_files_found(self, mxxn_env):
+        """All files was found."""
+        static_path = mxxn_env/'mxnone/frontend/static'
+        static_path.mkdir(parents=True)
+        (static_path/'js').mkdir()
+        js_file = static_path/'js/mxn.js'
+        js_file.touch()
+        index_file = static_path/'index.html'
+        index_file.touch()
+
+        pkg = env.Base('mxnone')
+
+        assert pkg.static_files == [index_file, js_file]
 
 
 class TestBaseJsFiles():
@@ -416,7 +448,6 @@ class TestMxnAppRouteCovers():
         route_covers = app.route_covers(settings)
 
         from mxnapp.covers.mxxn.resources import ResourceCover
-        print(route_covers)
 
         assert len(route_covers['mxxn']) == 1
         assert route_covers['mxxn'][0]['url'] == '/'

@@ -300,6 +300,27 @@ class Base():
         return None
 
     @property
+    def static_files(self) -> Optional[list[Path]]:
+        """
+        Get a list of all files in the static folder recursively.
+
+        If a framework package contains the folder *frontend/static*,
+        all contained files and those of the subfolders are returned.
+        If the static folder does not exist, the function returns None.
+
+        Return:
+            The the absolute path, if it exists,
+            otherwise None.
+
+        """
+        static_path = self.static_path
+
+        if static_path:
+            return [f for f in static_path.glob('**/*') if f.is_file()]
+
+        return None
+
+    @property
     def js_files(self) -> List[Path]:
         """
         Get the static JavaScript files, if they exist in the package.

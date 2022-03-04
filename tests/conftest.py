@@ -65,6 +65,32 @@ def mxxn_env(tmp_path, iter_entry_points):
 
 
 @pytest.fixture
+def static_pathes(mxxn_env):
+    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+
+    for mxn in mxns:
+        static_path = mxxn_env/(mxn + '/frontend/static')
+        static_path.mkdir(parents=True)
+
+    return mxxn_env
+
+
+@pytest.fixture
+def static_files(static_pathes):
+    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+
+    for mxn in mxns:
+        js_path = static_pathes/(mxn + '/frontend/static/js')
+        js_path.mkdir()
+        js_file = js_path/'mxn.js'
+        js_file.touch()
+        index_file = static_pathes/(mxn + '/frontend/static/index.html')
+        index_file.touch()
+
+    return static_pathes
+
+
+@pytest.fixture
 def db(tmp_path):
     """
     Get an initialzed database test environment.

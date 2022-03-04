@@ -9,32 +9,6 @@ from mxxn.exceptions import env as env_ex
 from mxxn.settings import Settings
 
 
-@pytest.fixture
-def static_pathes(mxxn_env):
-    mxns = ['mxnone', 'mxntwo', 'mxnthree']
-
-    for mxn in mxns:
-        static_path = mxxn_env/(mxn + '/frontend/static')
-        static_path.mkdir(parents=True)
-
-    return mxxn_env
-
-
-@pytest.fixture
-def static_files(static_pathes):
-    mxns = ['mxnone', 'mxntwo', 'mxnthree']
-
-    for mxn in mxns:
-        js_path = static_pathes/(mxn + '/frontend/static/js')
-        js_path.mkdir()
-        js_file = js_path/'mxn.js'
-        js_file.touch()
-        index_file = static_pathes/(mxn + '/frontend/static/index.html')
-        index_file.touch()
-
-    return static_pathes
-
-
 class TestIsDevelop():
     """Tests for the is_develop function."""
 
@@ -534,3 +508,11 @@ class TestMxnAppRouteCovers():
             mxnone_resources.ResourceCover
         assert route_covers['mxns']['mxntwo'][0]['resource'] ==\
             mxntwo_resources.ResourceCover
+
+
+class TestStaticRouteCovers():
+    def test_tmp(self, mxxn_env):
+        settings = Settings()
+        app = env.MxnApp()
+
+        print(app.static_route_covers(settings))

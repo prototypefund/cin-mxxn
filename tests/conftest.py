@@ -91,6 +91,32 @@ def static_files(static_pathes):
 
 
 @pytest.fixture
+def static_file_covers(static_files):
+    static_cover_path = \
+        static_files/('mxnapp/covers/mxxn/frontend/static')
+    static_cover_path.mkdir(parents=True)
+
+    js_cover_path = static_cover_path/'js'
+    js_cover_path.mkdir()
+
+    (js_cover_path/'mxxn.js').touch()
+
+    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+
+    for mxn in mxns:
+        static_cover_path = \
+            static_files/('mxnapp/covers/mxns/' + mxn + '/frontend/static')
+        static_cover_path.mkdir(parents=True)
+
+        js_cover_path = static_cover_path/'js'
+        js_cover_path.mkdir()
+
+        (js_cover_path/'mxn.js').touch()
+
+    return static_files
+
+
+@pytest.fixture
 def db(tmp_path):
     """
     Get an initialzed database test environment.

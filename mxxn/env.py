@@ -408,6 +408,13 @@ class TypeRouteCovers(TypedDict):
     mxns: dict[str, list[TypeRouteDict]]
 
 
+class TypeStaticFileCovers(TypedDict):
+    """Type definition for the static file covers dict."""
+
+    mxxn: list[Path]
+    mxns: dict[str, list[Path]]
+
+
 class MxnApp(Base):
     """
     With this class elements of a MxnApp package can be accessed.
@@ -522,7 +529,7 @@ class MxnApp(Base):
 
         return resource_covers
 
-    def static_file_covers(self, settings: Settings):
+    def static_file_covers(self, settings: Settings) -> TypeStaticFileCovers:
         """
         Get the static file covers.
 
@@ -548,7 +555,7 @@ class MxnApp(Base):
             A dictionary containing the lists of static file covers.
 
         """
-        covers = {
+        covers: TypeStaticFileCovers = {
             'mxxn': [],
             'mxns': {}
             }
@@ -556,11 +563,12 @@ class MxnApp(Base):
         try:
             mxxn_covers = Mxxn(self.name + '.covers.mxxn')
             static_files = mxxn_covers.static_files
+            static_path = mxxn_covers.static_path
 
-            for i, file in enumerate(static_files):
-                static_files[i] = file.relative_to(mxxn_covers.static_path)
+            if static_files and static_path:
+                for i, file in enumerate(static_files):
+                    static_files[i] = file.relative_to(static_path)
 
-            if static_files:
                 covers['mxxn'] = static_files
 
         except env_ex.PackageNotExistError:
@@ -568,13 +576,14 @@ class MxnApp(Base):
 
         for mxn_name in mxns(settings):
             try:
-                mxn = Mxn(self.name + '.covers.mxns.' + mxn_name)
-                static_files = mxn.static_files
+                mxn_covers = Mxn(self.name + '.covers.mxns.' + mxn_name)
+                static_files = mxn_covers.static_files
+                static_path = mxn_covers.static_path
 
-                for i, file in enumerate(static_files):
-                    static_files[i] = file.relative_to(mxn.static_path)
+                if static_files and static_path:
+                    for i, file in enumerate(static_files):
+                        static_files[i] = file.relative_to(static_path)
 
-                if static_files:
                     covers['mxns'][mxn_name] = static_files
 
             except env_ex.PackageNotExistError:

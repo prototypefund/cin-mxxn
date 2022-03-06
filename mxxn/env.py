@@ -499,7 +499,7 @@ class MxnApp(Base):
         resource_covers: TypeRouteCovers = {
             'mxxn': [],
             'mxns': {}
-        }
+            }
 
         try:
             mxxn_covers = Mxxn(self.name + '.covers.mxxn')
@@ -521,3 +521,63 @@ class MxnApp(Base):
                 pass
 
         return resource_covers
+
+    def static_file_covers(self, settings: Settings):
+        """
+        Get the static file covers.
+
+        It is possible to overload the static files of a package with new
+        static files. This function returns a list of overloaded files for
+        each package. The files are passed as a path relative to the
+        package's static folder.
+
+        The following listing shows the format of the returned dictionary.
+
+        .. code:: python
+
+            {
+                'mxxn': [<list of pathes>],
+                'mxns': {
+                    'mxnone': [<list of pathes>],
+                    'mxntwo': [<list of pathes>]
+                }
+            }
+
+
+        Returns:
+            A dictionary containing the lists of static file covers.
+
+        """
+        covers = {
+            'mxxn': [],
+            'mxns': {}
+            }
+
+        try:
+            mxxn_covers = Mxxn(self.name + '.covers.mxxn')
+            static_files = mxxn_covers.static_files
+
+            for i, file in enumerate(static_files):
+                static_files[i] = file.relative_to(mxxn_covers.static_path)
+
+            if static_files:
+                covers['mxxn'] = static_files
+
+        except env_ex.PackageNotExistError:
+            pass
+
+        for mxn_name in mxns(settings):
+            try:
+                mxn = Mxn(self.name + '.covers.mxns.' + mxn_name)
+                static_files = mxn.static_files
+
+                for i, file in enumerate(static_files):
+                    static_files[i] = file.relative_to(mxn.static_path)
+
+                if static_files:
+                    covers['mxns'][mxn_name] = static_files
+
+            except env_ex.PackageNotExistError:
+                pass
+
+        return covers

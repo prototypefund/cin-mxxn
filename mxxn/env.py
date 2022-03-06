@@ -273,7 +273,7 @@ class Base():
         try:
             routes_module = import_module(self.name + '.routes')
 
-            return routes_module.routes
+            return routes_module.ROUTES
 
         except (ModuleNotFoundError, AttributeError):
             return None

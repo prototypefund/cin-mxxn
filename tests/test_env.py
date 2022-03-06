@@ -429,7 +429,7 @@ class TestMxnAppRouteCovers():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            routes = [{'url': '/', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
 
@@ -466,14 +466,14 @@ class TestMxnAppRouteCovers():
         mxnone_routes_content = """
             from mxnapp.covers.mxns.mxnone.resources import ResourceCover
 
-            routes = [{'url': '/', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
 
         mxntwo_routes_content = """
             from mxnapp.covers.mxns.mxntwo.resources import ResourceCover
 
-            routes = [{'url': '/', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
         mxnone_covers = mxxn_env/'mxnapp/covers/mxns/mxnone'

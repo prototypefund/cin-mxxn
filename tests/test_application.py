@@ -74,7 +74,7 @@ def resources(mxxn_env):
     mxnone_routes = """
         from mxnone.resources import MxnResourceOne, MxnResourceTwo
 
-        routes = [
+        ROUTES = [
                 {'url': '/', 'resource': MxnResourceOne},
                 {'url': '/resourcetwo', 'resource': MxnResourceTwo},
                 {
@@ -86,7 +86,7 @@ def resources(mxxn_env):
     mxntwo_routes = """
         from mxntwo.resources import MxnResourceOne, MxnResourceTwo
 
-        routes = [
+        ROUTES = [
                 {'url': '/', 'resource': MxnResourceOne},
                 {'url': '/resourcetwo', 'resource': MxnResourceTwo},
                 {
@@ -119,7 +119,7 @@ def resources(mxxn_env):
     mxnapp_routes = """
         from mxnapp.resources import MxnAppResourceOne, MxnAppResourceTwo
 
-        routes = [
+        ROUTES = [
                 {'url': '/', 'resource': MxnAppResourceOne},
                 {'url': '/resourcetwo', 'resource': MxnAppResourceTwo},
                 {
@@ -135,7 +135,7 @@ def resources(mxxn_env):
     (mxxn_env/'mxntwo/routes.py').write_text(cleandoc(mxntwo_routes))
     (mxxn_env/'mxnapp/routes.py').write_text(cleandoc(mxnapp_routes))
 
-    with patch('mxxn.routes.routes', mxxn_routes_mock):
+    with patch('mxxn.routes.ROUTES', mxxn_routes_mock):
         yield mxxn_env
 
 
@@ -246,7 +246,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            routes = [{'url': '/app/resourceone', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/app/resourceone', 'resource': ResourceCover}]
 
         """
         mxxn_covers = resources/'mxnapp/covers/mxxn'
@@ -296,7 +296,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            routes = [{'url': '/app/resourcetwo/suffix',
+            ROUTES = [{'url': '/app/resourcetwo/suffix',
                 'resource': ResourceCover, 'suffix':'suffix'}]
 
         """
@@ -347,7 +347,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            routes = [{'url': '/app/resourcetwo/suffix',
+            ROUTES = [{'url': '/app/resourcetwo/suffix',
                 'resource': ResourceCover, 'suffix':'wrong_suffix'}]
 
         """
@@ -398,7 +398,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            routes = [{'url': '/', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
         mxxn_covers = resources/'mxnapp/covers/mxxn'
@@ -448,7 +448,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxns.mxnone.resources import ResourceCover
 
-            routes = [{'url': '/', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
         mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
@@ -494,7 +494,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxns.mxnone.resources import ResourceCover
 
-            routes = [{'url': '/resourcetwo/suffix',
+            ROUTES = [{'url': '/resourcetwo/suffix',
                 'resource': ResourceCover,
                 'suffix': 'suffix'}]
 
@@ -542,7 +542,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxns.mxnone.resources import ResourceCover
 
-            routes = [{'url': '/resourcetwo/suffix',
+            ROUTES = [{'url': '/resourcetwo/suffix',
                 'resource': ResourceCover,
                 'suffix': 'wrong_suffix'}]
 
@@ -576,7 +576,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
 
-class TestStaticPaths():
+class TestRegisterStaticPaths():
     """Tests for the _register_static_paths method of the App class."""
 
     def test_mxn_registration(self, mxxn_env):
@@ -587,6 +587,8 @@ class TestStaticPaths():
         mxntwo_static_path.mkdir(parents=True)
 
         app = App()
+
+        print(app.asgi._static_routes[2][0]._prefix)
 
         assert len(app.asgi._static_routes) == 3
         assert app.asgi._static_routes[0][0]._prefix == '/static/mxns/two/'

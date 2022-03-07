@@ -1,6 +1,7 @@
 """The app module."""
 from falcon import asgi
 from mxxn.settings import Settings, SettingsMiddleware
+from mxxn.routes import StaticRoutesMiddleware
 from mxxn.logging import logger
 from mxxn.env import Mxxn, mxns, Mxn, MxnApp
 from mxxn.exceptions import env as env_ex
@@ -15,9 +16,11 @@ class App(object):
         self.settings = Settings()
         self.database = Database(self.settings)
         settings_middleware = SettingsMiddleware(self.settings)
+        static_routes_middleware = StaticRoutesMiddleware(self.settings)
         self.asgi = asgi.App()
         self.asgi.add_error_handler(Exception, capture_errors)
-        self.asgi.add_middleware([settings_middleware])
+        self.asgi.add_middleware([
+            settings_middleware, static_routes_middleware])
         self._register_routes()
         self._register_static_paths()
 
@@ -102,10 +105,6 @@ class App(object):
         """
         Register the static folder of the framework packages.
 
-        If the folder ``/frontend/static`` exists in the package,
-        it will be accessible under the URL
-        ``<domain>/static/<package_name>``.
-
         """
         log = logger('registration')
         mxxn = Mxxn()
@@ -136,6 +135,7 @@ class App(object):
             mxnapp = MxnApp()
 
             static_path = mxnapp.static_path
+            static_file_covers = mxnapp.static_file_covers(self.settings)
 
             if static_path:
                 self.asgi.add_static_route('/static/mxnapp', static_path)
@@ -144,6 +144,20 @@ class App(object):
                     'The static folder of the app package {} was registered.'
                     .format(mxnapp.name)
                 )
+
+            if static_file_covers['mxxn']:
+                self.asgi.add_static_route(
+                        '/static/covers/mxxn',
+                        mxnapp.path/'covers/mxxn/frontend/static')
+
+            for mxn_name, pathes in static_file_covers['mxns'].items():
+                if pathes:
+                    mxn = Mxn(mxn_name)
+
+                    self.asgi.add_static_route(
+                        '/static/covers/mxns/' + mxn.unprefixed_name,
+                        mxnapp.path/(
+                            'covers/mxns/' + mxn_name + '/frontend/static'))
 
         except env_ex.MxnAppNotExistError:
             pass

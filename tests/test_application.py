@@ -605,3 +605,41 @@ class TestRegisterStaticPaths():
         assert len(app.asgi._static_routes) == 2
         assert app.asgi._static_routes[0][0]._prefix == '/static/mxnapp/'
         assert app.asgi._static_routes[1][0]._prefix == '/static/'
+
+    def test_mxxn_covers_added(self, mxxn_env):
+        """The mxxn covers were added."""
+        (mxxn_env/'mxnapp/covers/mxxn/frontend/static/js').mkdir(parents=True)
+        (mxxn_env/'mxnapp/covers/mxxn/frontend/static/js/mxxn.js').touch()
+        (mxxn_env/'mxnapp/covers/mxxn/frontend/static/index.html').touch()
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        result = client.simulate_get('/static/covers/mxxn/index.html')
+
+        assert result.status_code == 200
+
+    def test_tmp(self, mxxn_env):
+        mxns_cover_path = mxxn_env/'mxnapp/covers/mxns/'
+
+        (mxns_cover_path/'mxnone/frontend/static/js').mkdir(parents=True)
+        (mxns_cover_path/'mxntwo/frontend/static/js').mkdir(parents=True)
+        (mxns_cover_path/'mxnone/frontend/static/js/mxn.js').touch()
+        (mxns_cover_path/'mxnone/frontend/static/index.html').touch()
+        (mxns_cover_path/'mxntwo/frontend/static/js/mxn.js').touch()
+        (mxns_cover_path/'mxntwo/frontend/static/index.html').touch()
+
+        app = App()
+        client = testing.TestClient(app.asgi)
+        mxnone_result_index = client.simulate_get(
+                '/static/covers/mxns/one/index.html')
+        mxnone_result_js = client.simulate_get(
+                '/static/covers/mxns/one/js/mxn.js')
+        mxntwo_result_index = client.simulate_get(
+                '/static/covers/mxns/two/index.html')
+        mxntwo_result_js = client.simulate_get(
+                '/static/covers/mxns/two/js/mxn.js')
+
+        assert mxnone_result_index.status_code == 200
+        assert mxnone_result_js.status_code == 200
+        assert mxntwo_result_index.status_code == 200
+        assert mxntwo_result_js.status_code == 200

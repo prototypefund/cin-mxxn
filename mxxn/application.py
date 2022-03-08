@@ -112,7 +112,7 @@ class App(object):
         static_path = mxxn.static_path
 
         if static_path:
-            self.asgi.add_static_route('/static', static_path)
+            self.asgi.add_static_route('/static/mxxn', static_path)
 
             log.debug(
                 'The static folder of the mxxn package was registered.')
@@ -123,7 +123,7 @@ class App(object):
 
             if static_path:
                 self.asgi.add_static_route(
-                    '/static/mxns/'+mxn.unprefixed_name, static_path
+                    '/static/mxns/' + mxn.unprefixed_name, static_path
                 )
 
                 log.debug(
@@ -153,7 +153,6 @@ class App(object):
             for mxn_name, pathes in static_file_covers['mxns'].items():
                 if pathes:
                     mxn = Mxn(mxn_name)
-
                     self.asgi.add_static_route(
                         '/static/covers/mxns/' + mxn.unprefixed_name,
                         mxnapp.path/(

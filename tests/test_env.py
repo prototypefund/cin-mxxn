@@ -281,15 +281,18 @@ class TestBaseStaticPath():
 
         assert not pkg.static_path
 
-    def test_has_a_static_folder(self, static_pathes):
+    def test_has_a_static_folder(self, mxxn_static_pathes_env):
         """The static_path function returns the path."""
         mxnone = env.Base('mxnone')
         mxntwo = env.Base('mxntwo')
         mxnthree = env.Base('mxnthree')
 
-        assert mxnone.static_path == static_pathes/'mxnone/frontend/static'
-        assert mxntwo.static_path == static_pathes/'mxntwo/frontend/static'
-        assert mxnthree.static_path == static_pathes/'mxnthree/frontend/static'
+        assert mxnone.static_path == \
+            mxxn_static_pathes_env/'mxnone/frontend/static'
+        assert mxntwo.static_path == \
+            mxxn_static_pathes_env/'mxntwo/frontend/static'
+        assert mxnthree.static_path == \
+            mxxn_static_pathes_env/'mxnthree/frontend/static'
 
 
 class TestBaseStaticFiles():
@@ -301,7 +304,7 @@ class TestBaseStaticFiles():
 
         assert not pkg.static_files
 
-    def test_no_file_in_static_dir(self, static_pathes):
+    def test_no_file_in_static_dir(self, mxxn_static_pathes_env):
         """It is no file in static directory."""
         mxnone = env.Base('mxnone')
         mxntwo = env.Base('mxntwo')
@@ -311,13 +314,13 @@ class TestBaseStaticFiles():
         assert mxntwo.static_files == []
         assert mxnthree.static_files == []
 
-    def test_all_files_found(self, static_files):
+    def test_all_files_found(self, mxxn_static_files_env):
         """All files was found."""
         pkg = env.Base('mxnone')
 
         assert pkg.static_files == [
                 pkg.static_path/'index.html',
-                pkg.static_path/'js/mxn.js'
+                pkg.static_path/'js/javascript.js'
                 ]
 
 
@@ -512,7 +515,7 @@ class TestMxnAppRouteCovers():
 
 class TestStaticRouteCovers():
     """Tests for the static_file_covers property of MxnApp."""
-    def test_mxxn_covers(self, static_file_covers):
+    def test_mxxn_covers(self, mxxn_static_file_covers_env):
         """All covers for Mxxn package found."""
         settings = Settings()
         app = env.MxnApp()
@@ -526,17 +529,19 @@ class TestStaticRouteCovers():
 
         assert app.static_file_covers(settings)['mxxn'] == []
 
-    def test_mxn_covers(self, static_file_covers):
+    def test_mxn_covers(self, mxxn_static_file_covers_env):
         """All covers for Mxn packages found."""
         settings = Settings()
         app = env.MxnApp()
 
+        print(app.static_file_covers(settings))
+
         assert app.static_file_covers(settings)['mxns']['mxnone'] ==\
-            [Path('js/mxn.js')]
+            [Path('js/javascript.js')]
         assert app.static_file_covers(settings)['mxns']['mxntwo'] ==\
-            [Path('js/mxn.js')]
+            [Path('js/javascript.js')]
         assert app.static_file_covers(settings)['mxns']['mxnthree'] ==\
-            [Path('js/mxn.js')]
+            [Path('js/javascript.js')]
 
     def test_no_mxn_cover(self, mxxn_env):
         """No cover for Mxn packages found."""

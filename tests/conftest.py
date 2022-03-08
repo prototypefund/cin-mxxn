@@ -65,55 +65,57 @@ def mxxn_env(tmp_path, iter_entry_points):
 
 
 @pytest.fixture
-def static_pathes(mxxn_env):
-    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+def mxxn_static_pathes_env(mxxn_env):
+    pkgs = ['mxnone', 'mxntwo', 'mxnthree', 'mxnapp']
 
-    for mxn in mxns:
-        static_path = mxxn_env/(mxn + '/frontend/static')
+    for pkg in pkgs:
+        static_path = mxxn_env/(pkg + '/frontend/static')
         static_path.mkdir(parents=True)
 
     return mxxn_env
 
 
 @pytest.fixture
-def static_files(static_pathes):
-    mxns = ['mxnone', 'mxntwo', 'mxnthree']
+def mxxn_static_files_env(mxxn_static_pathes_env):
+    pkgs = ['mxnone', 'mxntwo', 'mxnthree', 'mxnapp']
 
-    for mxn in mxns:
-        js_path = static_pathes/(mxn + '/frontend/static/js')
+    for pkg in pkgs:
+        js_path = mxxn_static_pathes_env/(pkg + '/frontend/static/js')
         js_path.mkdir()
-        js_file = js_path/'mxn.js'
-        js_file.touch()
-        index_file = static_pathes/(mxn + '/frontend/static/index.html')
-        index_file.touch()
+        js_file = js_path/'javascript.js'
+        js_file.write_text(pkg + ' file')
+        index_file = mxxn_static_pathes_env/(
+                pkg + '/frontend/static/index.html')
+        index_file.write_text(pkg + ' html file')
 
-    return static_pathes
+    return mxxn_static_pathes_env
 
 
 @pytest.fixture
-def static_file_covers(static_files):
+def mxxn_static_file_covers_env(mxxn_static_files_env):
     static_cover_path = \
-        static_files/('mxnapp/covers/mxxn/frontend/static')
+        mxxn_static_files_env/('mxnapp/covers/mxxn/frontend/static')
     static_cover_path.mkdir(parents=True)
 
     js_cover_path = static_cover_path/'js'
     js_cover_path.mkdir()
 
-    (js_cover_path/'mxxn.js').touch()
+    (js_cover_path/'mxxn.js').write_text('mxxn cover')
 
     mxns = ['mxnone', 'mxntwo', 'mxnthree']
 
     for mxn in mxns:
         static_cover_path = \
-            static_files/('mxnapp/covers/mxns/' + mxn + '/frontend/static')
+            mxxn_static_files_env/(
+                    'mxnapp/covers/mxns/' + mxn + '/frontend/static')
         static_cover_path.mkdir(parents=True)
 
         js_cover_path = static_cover_path/'js'
         js_cover_path.mkdir()
 
-        (js_cover_path/'mxn.js').touch()
+        (js_cover_path/'javascript.js').write_text(mxn + ' cover')
 
-    return static_files
+    return mxxn_static_files_env
 
 
 @pytest.fixture

@@ -1,7 +1,7 @@
 """This module contains tests for the app module."""
 from inspect import cleandoc
 import pytest
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch
 import falcon
 from falcon.testing import TestClient
 from mxxn.application import App
@@ -9,7 +9,7 @@ from mxxn import env
 
 
 @pytest.fixture()
-def resources(mxxn_env):
+def mxxn_resources_env(mxxn_env):
     """
     Create test resources.
 
@@ -142,7 +142,7 @@ def resources(mxxn_env):
 class TestAppRegisterResources():
     """Tests for the _register_resources method of the App class."""
 
-    def test_mxxn_routes_added(self, resources):
+    def test_mxxn_routes_added(self, mxxn_resources_env):
         """All routes of the mxxn were added."""
         app = App()
         client = TestClient(app.asgi)
@@ -169,7 +169,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxn_routes_added(self, resources):
+    def test_mxn_routes_added(self, mxxn_resources_env):
         """All routes of the mxns were added."""
         app = App()
         client = TestClient(app.asgi)
@@ -210,7 +210,7 @@ class TestAppRegisterResources():
         assert mxntwo_response_three.headers['content-type'] == \
             falcon.MEDIA_HTML
 
-    def test_mxnapp_routes_added(self, resources):
+    def test_mxnapp_routes_added(self, mxxn_resources_env):
         """All routes of the mixxin application were added."""
         app = App()
         client = TestClient(app.asgi)
@@ -231,7 +231,7 @@ class TestAppRegisterResources():
         assert response_three.status == falcon.HTTP_OK
         assert response_three.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxxn_route_cover(self, resources):
+    def test_mxxn_route_cover(self, mxxn_resources_env):
         """A mxxn route was covered."""
         resources_content = """
             import falcon
@@ -249,7 +249,7 @@ class TestAppRegisterResources():
             ROUTES = [{'url': '/app/resourceone', 'resource': ResourceCover}]
 
         """
-        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
         mxxn_covers.mkdir(parents=True)
         (mxxn_covers/'resources.py').write_text(
             cleandoc(resources_content)
@@ -281,7 +281,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxxn_suffix_route_cover(self, resources):
+    def test_mxxn_suffix_route_cover(self, mxxn_resources_env):
         """A mxxn route with suffix was covered."""
         resources_content = """
             import falcon
@@ -300,7 +300,7 @@ class TestAppRegisterResources():
                 'resource': ResourceCover, 'suffix':'suffix'}]
 
         """
-        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
         mxxn_covers.mkdir(parents=True)
         (mxxn_covers/'resources.py').write_text(
             cleandoc(resources_content)
@@ -332,7 +332,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxxn_wrong_suffix_route_cover(self, resources):
+    def test_mxxn_wrong_suffix_route_cover(self, mxxn_resources_env):
         """The cover resource has wrong suffix."""
         resources_content = """
             import falcon
@@ -351,7 +351,7 @@ class TestAppRegisterResources():
                 'resource': ResourceCover, 'suffix':'wrong_suffix'}]
 
         """
-        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
         mxxn_covers.mkdir(parents=True)
         (mxxn_covers/'resources.py').write_text(
             cleandoc(resources_content)
@@ -383,7 +383,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxxn_root_route_cover(self, resources):
+    def test_mxxn_root_route_cover(self, mxxn_resources_env):
         """A mxxn root route was covered."""
         resources_content = """
             import falcon
@@ -401,7 +401,7 @@ class TestAppRegisterResources():
             ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
-        mxxn_covers = resources/'mxnapp/covers/mxxn'
+        mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
         mxxn_covers.mkdir(parents=True)
         (mxxn_covers/'resources.py').write_text(
             cleandoc(resources_content)
@@ -433,7 +433,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxn_route_cover(self, resources):
+    def test_mxn_route_cover(self, mxxn_resources_env):
         """A mxn route was covered."""
         resources_content = """
             import falcon
@@ -451,7 +451,7 @@ class TestAppRegisterResources():
             ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
-        mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
+        mxnone_covers = mxxn_resources_env/'mxnapp/covers/mxns/mxnone'
         mxnone_covers.mkdir(parents=True)
         (mxnone_covers/'resources.py').write_text(
             cleandoc(resources_content)
@@ -479,7 +479,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxn_suffix_route_cover(self, resources):
+    def test_mxn_suffix_route_cover(self, mxxn_resources_env):
         """A mxn route with suffix was covered."""
         resources_content = """
             import falcon
@@ -499,7 +499,7 @@ class TestAppRegisterResources():
                 'suffix': 'suffix'}]
 
         """
-        mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
+        mxnone_covers = mxxn_resources_env/'mxnapp/covers/mxns/mxnone'
         mxnone_covers.mkdir(parents=True)
         (mxnone_covers/'resources.py').write_text(
             cleandoc(resources_content)
@@ -527,7 +527,7 @@ class TestAppRegisterResources():
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
-    def test_mxn_wrong_suffix_route_cover(self, resources):
+    def test_mxn_wrong_suffix_route_cover(self, mxxn_resources_env):
         """The Mxn cover resource has wrong suffix."""
         resources_content = """
             import falcon
@@ -547,7 +547,7 @@ class TestAppRegisterResources():
                 'suffix': 'wrong_suffix'}]
 
         """
-        mxnone_covers = resources/'mxnapp/covers/mxns/mxnone'
+        mxnone_covers = mxxn_resources_env/'mxnapp/covers/mxns/mxnone'
         mxnone_covers.mkdir(parents=True)
         (mxnone_covers/'resources.py').write_text(
             cleandoc(resources_content)

@@ -37,7 +37,7 @@ class App():
         mxxn = env.Mxxn()
 
         for js_file in mxxn.js_files:
-            js_urls.append('static/js'/js_file)
+            js_urls.append('static/mxxn/js'/js_file)
 
         for mxn_name in env.mxns(req.context.settings):
             mxn = env.Mxn(mxn_name)

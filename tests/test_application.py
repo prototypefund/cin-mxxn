@@ -616,7 +616,7 @@ class TestRegisterStaticPaths():
         result = client.simulate_get('/static/covers/mxxn/js/mxxn.js')
 
         assert result.status_code == 200
-        assert result.text == 'mxxn cover'
+        assert result.text == 'mxxn js cover'
 
     @pytest.mark.parametrize('mxn_name', ['mxnone', 'mxntwo', 'mxnthree'])
     def test_mxn_covers_added(self, mxxn_static_file_covers_env, mxn_name):
@@ -629,4 +629,4 @@ class TestRegisterStaticPaths():
                 '/static/covers/mxns/'+mxn.unprefixed_name+'/js/javascript.js')
 
         assert results.status_code == 200
-        assert results.text == mxn_name + ' cover'
+        assert results.text == mxn_name + ' js cover'

@@ -83,7 +83,7 @@ def mxxn_static_files_env(mxxn_static_pathes_env):
         js_path = mxxn_static_pathes_env/(pkg + '/frontend/static/js')
         js_path.mkdir()
         js_file = js_path/'javascript.js'
-        js_file.write_text(pkg + ' file')
+        js_file.write_text(pkg + ' js file')
         index_file = mxxn_static_pathes_env/(
                 pkg + '/frontend/static/index.html')
         index_file.write_text(pkg + ' html file')
@@ -100,7 +100,7 @@ def mxxn_static_file_covers_env(mxxn_static_files_env):
     js_cover_path = static_cover_path/'js'
     js_cover_path.mkdir()
 
-    (js_cover_path/'mxxn.js').write_text('mxxn cover')
+    (js_cover_path/'mxxn.js').write_text('mxxn js cover')
 
     mxns = ['mxnone', 'mxntwo', 'mxnthree']
 
@@ -113,7 +113,7 @@ def mxxn_static_file_covers_env(mxxn_static_files_env):
         js_cover_path = static_cover_path/'js'
         js_cover_path.mkdir()
 
-        (js_cover_path/'javascript.js').write_text(mxn + ' cover')
+        (js_cover_path/'javascript.js').write_text(mxn + ' js cover')
 
     return mxxn_static_files_env
 

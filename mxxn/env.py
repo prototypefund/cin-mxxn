@@ -455,7 +455,7 @@ class MxnApp(Base):
     def __init__(self) -> None:
         """Initialize the MixxinApp class."""
         installed_apps = [
-            item.name for item in iter_entry_points(group='mxxn_app')]
+            item.name for item in iter_entry_points(group='mxxn_mxnapp')]
 
         if installed_apps:
             if len(installed_apps) > 1:

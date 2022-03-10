@@ -20,7 +20,7 @@ def iter_entry_points():
         if group == 'mxxn_mxn':
             return [mxnone, mxntwo, mxnthree]
 
-        if group == 'mxxn_app':
+        if group == 'mxxn_mxnapp':
             return [mxnapp]
 
     with patch('mxxn.env.iter_entry_points', new=mock_iter_entry_points):

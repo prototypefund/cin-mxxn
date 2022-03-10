@@ -115,25 +115,26 @@ def mxns(settings: Optional[Settings] = None) -> List[str]:
     return installed_mxns
 
 
-class TypeRouteDict(TypedDict):
+class TypeRoute(TypedDict):
     """The type definition of routes dict."""
 
     url: str
     resource: Type
+    suffix: str
 
 
-TypeListOfRoutesDicts = List[TypeRouteDict]
+TypeRoutes = List[TypeRoute]
 """The type definition of list of route dicts."""
 
 
-class TypeResourceDict(TypedDict):
+class TypeResource(TypedDict):
     """The type definition of resource dict."""
 
     resource: Type
     routes: list[list[str]]
 
 
-TypeListOfResourceDicts = List[TypeResourceDict]
+TypeResources = List[TypeResource]
 """The type definition of lsit on resource dicts."""
 
 
@@ -246,7 +247,7 @@ class Base():
         return None
 
     @property
-    def routes(self) -> Optional[TypeListOfRoutesDicts]:
+    def routes(self) -> Optional[TypeRoutes]:
         """
         Get the routes of the package.
 
@@ -404,8 +405,8 @@ class Mxn(Base):
 class TypeRouteCovers(TypedDict):
     """Type definition for the route covers dict."""
 
-    mxxn: list[TypeRouteDict]
-    mxns: dict[str, list[TypeRouteDict]]
+    mxxn: list[TypeRoute]
+    mxns: dict[str, list[TypeRoute]]
 
 
 class TypeStaticFileCovers(TypedDict):

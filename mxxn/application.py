@@ -1,9 +1,10 @@
 """The app module."""
 from falcon import asgi
+from typing import Optional
 from mxxn.settings import Settings, SettingsMiddleware
 from mxxn.routes import StaticRoutesMiddleware
 from mxxn.logging import logger
-from mxxn.env import Mxxn, mxns, Mxn, MxnApp
+from mxxn.env import Mxxn, mxns, Mxn, MxnApp, TypeRoutes
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import capture_errors
 from mxxn.database import Database
@@ -34,7 +35,10 @@ class App(object):
         """
         log = logger('registration')
 
-        def add_routes(routes, pkg_name, mount=''):
+        def add_routes(
+                routes: Optional[TypeRoutes],
+                pkg_name: str, mount: str = ''
+                ) -> None:
             if routes:
                 for route in routes:
                     url = route['url']
@@ -56,7 +60,10 @@ class App(object):
                     f'The routes of the {pkg_name} package were registered.'
                 )
 
-        def cover(routes, cover_routes):
+        def cover(
+                routes: Optional[TypeRoutes],
+                cover_routes: TypeRoutes
+                ) -> Optional[TypeRoutes]:
             if routes:
                 for cover_route in cover_routes:
                     for route in routes:

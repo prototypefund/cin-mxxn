@@ -1,5 +1,6 @@
 """Tests for the database module."""
 from unittest.mock import patch, PropertyMock
+from falcon import runs_sync
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.ext.asyncio.scoping import async_scoped_session
 import pytest
@@ -53,7 +54,7 @@ class TestDatabaseInit():
 
             assert isinstance(db.session, async_scoped_session)
 
-    @pytest.mark.asyncio
+    @runs_sync
     async def test_engine_bound_to_session(self):
         """Engine was bound to the session."""
         with patch.object(

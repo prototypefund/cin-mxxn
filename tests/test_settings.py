@@ -2,7 +2,7 @@
 import pytest
 from os import chdir, environ
 from falcon import asgi
-from falcon.testing import TestClient
+from falcon.testing import TestClient as Client
 from unittest.mock import patch
 from mxxn.settings import Settings, SettingsMiddleware
 from mxxn.exceptions import settings as settings_ex
@@ -354,7 +354,7 @@ class TestSettingsMiddleware():
         app.add_middleware(settings_middleware)
         app.add_route('/', Resource())
 
-        client = TestClient(app)
+        client = Client(app)
         resp = client.simulate_get('/')
 
         assert resp.status_code == 200

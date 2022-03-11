@@ -1,5 +1,5 @@
 """Tests for the routes module."""
-from falcon.testing import TestClient
+from falcon.testing import TestClient as Client
 import pytest
 from mxxn.application import App
 from mxxn import env
@@ -16,7 +16,7 @@ class TestStaticRoutesMiddlewareInit():
     def test_mxxn_file_covered(self, mxxn_static_file_covers_env):
         """The static file form mxxn package was covered."""
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         result = client.simulate_get(
                 '/static/mxxn/js/mxxn.js')
 
@@ -29,7 +29,7 @@ class TestStaticRoutesMiddlewareInit():
         mxn = env.Mxn(mxn_name)
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         result_covered_js = client.simulate_get(
                 '/static/mxns/' + mxn.unprefixed_name + '/js/javascript.js')
 
@@ -47,7 +47,7 @@ class TestStaticRoutesMiddlewareInit():
         mxn = env.Mxn(mxn_name)
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         result_covered_js = client.simulate_get(
                 '/static/mxns/' + mxn.unprefixed_name + '/js/javascript.js')
 

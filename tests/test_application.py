@@ -3,7 +3,7 @@ from inspect import cleandoc
 import pytest
 from unittest.mock import patch
 import falcon
-from falcon.testing import TestClient
+from falcon.testing import TestClient as Client
 from mxxn.application import App
 from mxxn import env
 
@@ -22,24 +22,24 @@ def mxxn_resources_env(mxxn_env):
     """
     class MxxnRoot():
         async def on_get(self, req, resp):
-            resp.body = 'MxxnRoot'
+            resp.text = 'MxxnRoot'
             resp.content_type = falcon.MEDIA_HTML
             resp.status = falcon.HTTP_200
 
     class MxxnResourceOne():
         async def on_get(self, req, resp):
-            resp.body = 'MxxnResourceOne'
+            resp.text = 'MxxnResourceOne'
             resp.content_type = falcon.MEDIA_HTML
             resp.status = falcon.HTTP_200
 
     class MxxnResourceTwo():
         async def on_get(self, req, resp):
-            resp.body = 'MxxnResourceTwo'
+            resp.text = 'MxxnResourceTwo'
             resp.content_type = falcon.MEDIA_HTML
             resp.status = falcon.HTTP_200
 
         async def on_get_suffix(self, req, resp):
-            resp.body = 'MxxnResourceTwoSuffix'
+            resp.text = 'MxxnResourceTwoSuffix'
             resp.content_type = falcon.MEDIA_HTML
             resp.status = falcon.HTTP_200
 
@@ -55,18 +55,18 @@ def mxxn_resources_env(mxxn_env):
 
         class MxnResourceOne(object):
             async def on_get(self, req, resp):
-                resp.body = 'MxnResourceOne'
+                resp.text = 'MxnResourceOne'
                 resp.content_type = falcon.MEDIA_HTML
                 resp.status = falcon.HTTP_200
 
         class MxnResourceTwo(object):
             async def on_get(self, req, resp):
-                resp.body = 'MxnResourceTwo'
+                resp.text = 'MxnResourceTwo'
                 resp.content_type = falcon.MEDIA_HTML
                 resp.status = falcon.HTTP_200
 
             async def on_get_suffix(self, req, resp):
-                resp.body = 'MxnResourceTwoSuffix'
+                resp.text = 'MxnResourceTwoSuffix'
                 resp.content_type = falcon.MEDIA_HTML
                 resp.status = falcon.HTTP_200
         """
@@ -100,18 +100,18 @@ def mxxn_resources_env(mxxn_env):
 
         class MxnAppResourceOne(object):
             async def on_get(self, req, resp):
-                resp.body = 'MxnAppResourceOne'
+                resp.text = 'MxnAppResourceOne'
                 resp.content_type = falcon.MEDIA_HTML
                 resp.status = falcon.HTTP_200
 
         class MxnAppResourceTwo(object):
             async def on_get(self, req, resp):
-                resp.body = 'MxnAppResourceTwo'
+                resp.text = 'MxnAppResourceTwo'
                 resp.content_type = falcon.MEDIA_HTML
                 resp.status = falcon.HTTP_200
 
             async def on_get_suffix(self, req, resp):
-                resp.body = 'MxnAppResourceTwoSuffix'
+                resp.text = 'MxnAppResourceTwoSuffix'
                 resp.content_type = falcon.MEDIA_HTML
                 resp.status = falcon.HTTP_200
         """
@@ -145,7 +145,7 @@ class TestAppRegisterResources():
     def test_mxxn_routes_added(self, mxxn_resources_env):
         """All routes of the mxxn were added."""
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
 
         response_root = client.simulate_get('/')
 
@@ -172,7 +172,7 @@ class TestAppRegisterResources():
     def test_mxn_routes_added(self, mxxn_resources_env):
         """All routes of the mxns were added."""
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
 
         mxnone_response_one = client.simulate_get('/app/mxns/one')
         mxnone_response_two = client.simulate_get('/app/mxns/one/resourcetwo')
@@ -213,7 +213,7 @@ class TestAppRegisterResources():
     def test_mxnapp_routes_added(self, mxxn_resources_env):
         """All routes of the mixxin application were added."""
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
 
         response_one = client.simulate_get('/app/mxnapp')
         response_two = client.simulate_get('/app/mxnapp/resourcetwo')
@@ -259,7 +259,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_root = client.simulate_get('/')
         response_one = client.simulate_get('/app/resourceone')
         response_two = client.simulate_get('/app/resourcetwo')
@@ -310,7 +310,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_root = client.simulate_get('/')
         response_one = client.simulate_get('/app/resourceone')
         response_two = client.simulate_get('/app/resourcetwo')
@@ -361,7 +361,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_root = client.simulate_get('/')
         response_one = client.simulate_get('/app/resourceone')
         response_two = client.simulate_get('/app/resourcetwo')
@@ -411,7 +411,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_root = client.simulate_get('/')
         response_one = client.simulate_get('/app/resourceone')
         response_two = client.simulate_get('/app/resourcetwo')
@@ -461,7 +461,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_one = client.simulate_get('/app/mxns/one')
         response_two = client.simulate_get('/app/mxns/one/resourcetwo')
         response_two_suffix = client.simulate_get(
@@ -509,7 +509,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_one = client.simulate_get('/app/mxns/one')
         response_two = client.simulate_get('/app/mxns/one/resourcetwo')
         response_two_suffix = client.simulate_get(
@@ -557,7 +557,7 @@ class TestAppRegisterResources():
         )
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         response_one = client.simulate_get('/app/mxns/one')
         response_two = client.simulate_get('/app/mxns/one/resourcetwo')
         response_two_suffix = client.simulate_get(
@@ -585,7 +585,7 @@ class TestRegisterStaticPaths():
         mxn = env.Mxn(mxn_name)
         app = App()
 
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         result_mxnone_js = client.simulate_get(
                 '/static/mxns/' + mxn.unprefixed_name + '/js/javascript.js')
 
@@ -599,7 +599,7 @@ class TestRegisterStaticPaths():
         """The static folder of mxnapp has been registered."""
         app = App()
 
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         result_mxnone_js = client.simulate_get(
                 '/static/mxnapp/js/javascript.js')
 
@@ -612,7 +612,7 @@ class TestRegisterStaticPaths():
     def test_mxxn_covers_added(self, mxxn_static_file_covers_env):
         """The mxxn covers were added."""
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         result = client.simulate_get('/static/covers/mxxn/js/mxxn.js')
 
         assert result.status_code == 200
@@ -624,7 +624,7 @@ class TestRegisterStaticPaths():
         mxn = env.Mxn(mxn_name)
 
         app = App()
-        client = TestClient(app.asgi)
+        client = Client(app.asgi)
         results = client.simulate_get(
                 '/static/covers/mxns/'+mxn.unprefixed_name+'/js/javascript.js')
 

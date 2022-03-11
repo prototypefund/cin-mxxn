@@ -5,6 +5,7 @@
 .vimspector.json
 
 # Python files
+.coverage
 *.egg
 *.egg-info
 *cache

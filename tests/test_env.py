@@ -534,8 +534,6 @@ class TestStaticRouteCovers():
         settings = Settings()
         app = env.MxnApp()
 
-        print(app.static_file_covers(settings))
-
         assert app.static_file_covers(settings)['mxns']['mxnone'] ==\
             [Path('js/javascript.js')]
         assert app.static_file_covers(settings)['mxns']['mxntwo'] ==\

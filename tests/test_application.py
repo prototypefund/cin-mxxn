@@ -601,10 +601,10 @@ class TestRegisterStaticPaths():
 
         client = Client(app.asgi)
         result_mxnone_js = client.simulate_get(
-                '/static/mxnapp/js/javascript.js')
+                '/static/js/javascript.js')
 
         result_mxnone_html = client.simulate_get(
-                '/static/mxnapp/index.html')
+                '/static/index.html')
 
         assert result_mxnone_js.status_code == 200
         assert result_mxnone_html.status_code == 200

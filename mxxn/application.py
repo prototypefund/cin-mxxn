@@ -84,7 +84,7 @@ class App(object):
         try:
             mxnapp_pkg = MxnApp()
             route_covers = mxnapp_pkg.route_covers(self.settings)
-            add_routes(mxnapp_pkg.routes, mxnapp_pkg.name, '/app/mxnapp')
+            add_routes(mxnapp_pkg.routes, mxnapp_pkg.name, '/app')
 
         except env_ex.MxnAppNotExistError:
             pass
@@ -95,7 +95,7 @@ class App(object):
         if route_covers:
             routes = cover(routes, route_covers['mxxn'])
 
-        add_routes(routes, mxxn_pkg.name)
+        add_routes(routes, mxxn_pkg.name, '/app/mxxn')
 
         for mxn_name in mxns(self.settings):
             mxn_pkg = Mxn(mxn_name)
@@ -128,29 +128,6 @@ class App(object):
                     .format(mxnapp.name)
                 )
 
-            mxxn = Mxxn()
-            static_path = mxxn.static_path
-
-            if static_path:
-                self.asgi.add_static_route('/static/mxxn', static_path)
-
-                log.debug(
-                    'The static folder of the mxxn package was registered.')
-
-            for mxn_name in mxns(self.settings):
-                mxn = Mxn(mxn_name)
-                static_path = mxn.static_path
-
-                if static_path:
-                    self.asgi.add_static_route(
-                        '/static/mxns/' + mxn.unprefixed_name, static_path
-                    )
-
-                    log.debug(
-                        'The static folder of the {} package was registered.'
-                        .format(mxn.name)
-                    )
-
             static_file_covers = mxnapp.static_file_covers(self.settings)
 
             if static_file_covers['mxxn']:
@@ -168,3 +145,26 @@ class App(object):
 
         except env_ex.MxnAppNotExistError:
             pass
+
+        mxxn = Mxxn()
+        static_path = mxxn.static_path
+
+        if static_path:
+            self.asgi.add_static_route('/static/mxxn', static_path)
+
+            log.debug(
+                'The static folder of the mxxn package was registered.')
+
+        for mxn_name in mxns(self.settings):
+            mxn = Mxn(mxn_name)
+            static_path = mxn.static_path
+
+            if static_path:
+                self.asgi.add_static_route(
+                    '/static/mxns/' + mxn.unprefixed_name, static_path
+                )
+
+                log.debug(
+                    'The static folder of the {} package was registered.'
+                    .format(mxn.name)
+                )

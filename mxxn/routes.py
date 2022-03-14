@@ -8,10 +8,10 @@ from mxxn.exceptions.env import MxnAppNotExistError
 
 
 ROUTES = [
-        {'url': '/', 'resource': Root},
-        {'url': '/app', 'resource': App},
-        {'url': '/app/themes', 'resource': Themes},
-        {'url': '/app/themes/{id}', 'resource': Themes}]
+        # {'url': '/', 'resource': Root},
+        {'url': '/', 'resource': App},
+        {'url': '/themes', 'resource': Themes},
+        {'url': '/themes/{id}', 'resource': Themes}]
 
 
 class StaticRoutesMiddleware():

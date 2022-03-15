@@ -17,7 +17,7 @@ class Root():
             req: The request object.
             resp: The response object.
         """
-        raise HTTPMovedPermanently('/app')
+        raise HTTPMovedPermanently('/app/mxxn')
 
 
 class App():
@@ -56,6 +56,7 @@ class App():
             pass
 
         resp.context.render = {
+                'base_url': req.prefix,
                 'auth': True,
                 'js_urls': js_urls
             }

@@ -7,6 +7,7 @@ from mxxn.logging import logger
 from mxxn.env import Mxxn, mxns, Mxn, MxnApp, TypeRoutes
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import capture_errors
+from mxxn.exceptions import routing as routing_ex
 from mxxn.database import Database
 
 
@@ -35,22 +36,36 @@ class App(object):
         """
         log = logger('registration')
 
-        def add_routes(
-                routes: Optional[TypeRoutes],
-                pkg_name: str, mount: str = ''
-                ) -> None:
+        def add_routes(routes: Optional[TypeRoutes], pkg_name: str) -> None:
             if routes:
+                match pkg_name:
+                    case 'mxxn':
+                        mount = '/app/mxxn'
+                    case 'mxnapp':
+                        mount = '/app'
+                    case _:
+                        mount = '/app/mxns/' + pkg_name
+
                 for route in routes:
                     url = route['url']
+                    resource = route['resource']
 
-                    if mount and len(url) == 1:
-                        url = url[1:]
+                    match url:
+                        case '/':
+                            url = mount
+                        case 'ROOT':
+                            if pkg_name != 'mxxn':
+                                raise routing_ex.RootRouteError(
+                                    'The ROOT keyword is only allowed in '
+                                    'routes of the Mxxn package.')
 
-                    url = mount + url
+                            url = '/'
+                        case _:
+                            url = mount + url
 
                     if 'suffix' in route:
                         self.asgi.add_route(
-                            url, route['resource'](), suffix=route['suffix'])
+                            url, resource(), suffix=route['suffix'])
 
                         continue
 
@@ -84,7 +99,7 @@ class App(object):
         try:
             mxnapp_pkg = MxnApp()
             route_covers = mxnapp_pkg.route_covers(self.settings)
-            add_routes(mxnapp_pkg.routes, mxnapp_pkg.name, '/app')
+            add_routes(mxnapp_pkg.routes, 'mxnapp')
 
         except env_ex.MxnAppNotExistError:
             pass
@@ -95,7 +110,7 @@ class App(object):
         if route_covers:
             routes = cover(routes, route_covers['mxxn'])
 
-        add_routes(routes, mxxn_pkg.name, '/app/mxxn')
+        add_routes(routes, 'mxxn')
 
         for mxn_name in mxns(self.settings):
             mxn_pkg = Mxn(mxn_name)
@@ -104,9 +119,7 @@ class App(object):
             if route_covers and mxn_name in route_covers['mxns']:
                 routes = cover(routes, route_covers['mxns'][mxn_name])
 
-            add_routes(
-                    mxn_pkg.routes, mxn_pkg.name,
-                    '/app/mxns/'+mxn_pkg.unprefixed_name)
+            add_routes(mxn_pkg.routes, mxn_pkg.unprefixed_name)
 
     def _register_static_paths(self) -> None:
         """

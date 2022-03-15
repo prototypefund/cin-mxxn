@@ -6,6 +6,7 @@ import falcon
 from falcon.testing import TestClient as Client
 from mxxn.application import App
 from mxxn import env
+from mxxn.exceptions import routing as routing_ex
 
 
 @pytest.fixture()
@@ -44,8 +45,8 @@ def mxxn_resources_env(mxxn_env):
             resp.status = falcon.HTTP_200
 
     mxxn_routes_mock = [
-            {'url': '/', 'resource': MxxnRoot},
-            {'url': '/resourceone', 'resource': MxxnResourceOne},
+            {'url': 'ROOT', 'resource': MxxnRoot},
+            {'url': '/', 'resource': MxxnResourceOne},
             {'url': '/resourcetwo', 'resource': MxxnResourceTwo},
             {'url': '/resourcetwo/suffix', 'resource': MxxnResourceTwo,
                 'suffix': 'suffix'}]
@@ -147,11 +148,12 @@ class TestAppRegisterResources():
         app = App()
         client = Client(app.asgi)
 
-        response_root = client.simulate_get('/app/mxxn')
+        response_root = client.simulate_get('/')
 
-        response_one = client.simulate_get('/app/mxxn/resourceone')
+        response_one = client.simulate_get('/app/mxxn')
         response_two = client.simulate_get('/app/mxxn/resourcetwo')
-        response_two_suffix = client.simulate_get('/app/mxxn/resourcetwo/suffix')
+        response_two_suffix = client.simulate_get(
+                '/app/mxxn/resourcetwo/suffix')
 
         assert response_root.text == 'MxxnRoot'
         assert response_root.status == falcon.HTTP_OK
@@ -211,7 +213,7 @@ class TestAppRegisterResources():
             falcon.MEDIA_HTML
 
     def test_mxnapp_routes_added(self, mxxn_resources_env):
-        """All routes of the mixxin application were added."""
+        """All routes of the mxxn application were added."""
         app = App()
         client = Client(app.asgi)
 
@@ -246,7 +248,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            ROUTES = [{'url': '/resourceone', 'resource': ResourceCover}]
+            ROUTES = [{'url': '/', 'resource': ResourceCover}]
 
         """
         mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
@@ -260,8 +262,8 @@ class TestAppRegisterResources():
 
         app = App()
         client = Client(app.asgi)
-        response_root = client.simulate_get('/app/mxxn')
-        response_one = client.simulate_get('/app/mxxn/resourceone')
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/mxxn')
         response_two = client.simulate_get('/app/mxxn/resourcetwo')
         response_two_suffix = client.simulate_get('/app/mxxn/resourcetwo/suffix')
 
@@ -311,8 +313,8 @@ class TestAppRegisterResources():
 
         app = App()
         client = Client(app.asgi)
-        response_root = client.simulate_get('/app/mxxn')
-        response_one = client.simulate_get('/app/mxxn/resourceone')
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/mxxn')
         response_two = client.simulate_get('/app/mxxn/resourcetwo')
         response_two_suffix = client.simulate_get('/app/mxxn/resourcetwo/suffix')
 
@@ -362,8 +364,8 @@ class TestAppRegisterResources():
 
         app = App()
         client = Client(app.asgi)
-        response_root = client.simulate_get('/app/mxxn')
-        response_one = client.simulate_get('/app/mxxn/resourceone')
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/mxxn')
         response_two = client.simulate_get('/app/mxxn/resourcetwo')
         response_two_suffix = client.simulate_get('/app/mxxn/resourcetwo/suffix')
 
@@ -398,7 +400,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            ROUTES = [{'url': '/', 'resource': ResourceCover}]
+            ROUTES = [{'url': 'ROOT', 'resource': ResourceCover}]
 
         """
         mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
@@ -412,8 +414,8 @@ class TestAppRegisterResources():
 
         app = App()
         client = Client(app.asgi)
-        response_root = client.simulate_get('/app/mxxn')
-        response_one = client.simulate_get('/app/mxxn/resourceone')
+        response_root = client.simulate_get('/')
+        response_one = client.simulate_get('/app/mxxn')
         response_two = client.simulate_get('/app/mxxn/resourcetwo')
         response_two_suffix = client.simulate_get('/app/mxxn/resourcetwo/suffix')
 
@@ -574,6 +576,36 @@ class TestAppRegisterResources():
         assert response_two_suffix.text == 'MxnResourceTwoSuffix'
         assert response_two_suffix.status == falcon.HTTP_OK
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
+
+    def test_root_not_allowed_in_mxn(self, mxxn_resources_env):
+        """The ROOT key is not allowed in the Mxn package."""
+        routes_content = """
+            from mxnone.resources import MxnResourceOne
+
+            ROUTES = [{'url': 'ROOT', 'resource': MxnResourceOne}]
+
+        """
+        (mxxn_resources_env/'mxnone/routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        with pytest.raises(routing_ex.RootRouteError):
+            App()
+
+    def test_root_not_allowed_in_mxnapp(self, mxxn_resources_env):
+        """The ROOT key is not allowed in the MxnApp package."""
+        routes_content = """
+            from mxnapp.resources import MxnAppResourceOne
+
+            ROUTES = [{'url': 'ROOT', 'resource': MxnAppResourceOne}]
+
+        """
+        (mxxn_resources_env/'mxnapp/routes.py').write_text(
+            cleandoc(routes_content)
+        )
+
+        with pytest.raises(routing_ex.RootRouteError):
+            App()
 
 
 class TestRegisterStaticPaths():

@@ -1,8 +1,8 @@
 """This module contains exceptions for routing."""
-from mxxn import exceptions
+from mxxn.exceptions import Base
 
 
-class RoutingError(exceptions):
+class RoutingError(Base):
     """Base class for all Routing exceptions."""
     pass
 

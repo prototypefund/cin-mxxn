@@ -1,4 +1,19 @@
-"""The route module."""
+"""
+The routes module.
+
+In the Mxxn framework there are two types of routes, the routes
+to resources and the routes to static file. Both are defined
+differently, but the way is identical in all framework packages
+(Mxxn, Mxn and MxnApp). During the initialization of the
+application, routes are searched for in the respective packets
+and they are registered automatically.
+
+**Routes to resources**
+
+
+**Routes to static files**
+
+"""
 from pathlib import Path
 from falcon import Request, Response
 from mxxn.resources import Root, App, Themes
@@ -12,6 +27,7 @@ ROUTES = [
         {'url': '/', 'resource': App},
         {'url': '/themes', 'resource': Themes},
         {'url': '/themes/{id}', 'resource': Themes}]
+"""The routes definition of the mxxn package."""
 
 
 class StaticRoutesMiddleware():

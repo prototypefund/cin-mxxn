@@ -53,7 +53,7 @@ class App(object):
                     match url:
                         case '/':
                             url = mount
-                        case 'ROOT':
+                        case 'APP_ROOT':
                             if pkg_name != 'mxxn':
                                 raise routing_ex.RootRouteError(
                                     'The ROOT keyword is only allowed in '

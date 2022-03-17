@@ -45,7 +45,7 @@ def mxxn_resources_env(mxxn_env):
             resp.status = falcon.HTTP_200
 
     mxxn_routes_mock = [
-            {'url': 'ROOT', 'resource': MxxnRoot},
+            {'url': 'APP_ROOT', 'resource': MxxnRoot},
             {'url': '/', 'resource': MxxnResourceOne},
             {'url': '/resourcetwo', 'resource': MxxnResourceTwo},
             {'url': '/resourcetwo/suffix', 'resource': MxxnResourceTwo,
@@ -400,7 +400,7 @@ class TestAppRegisterResources():
         routes_content = """
             from mxnapp.covers.mxxn.resources import ResourceCover
 
-            ROUTES = [{'url': 'ROOT', 'resource': ResourceCover}]
+            ROUTES = [{'url': 'APP_ROOT', 'resource': ResourceCover}]
 
         """
         mxxn_covers = mxxn_resources_env/'mxnapp/covers/mxxn'
@@ -578,11 +578,11 @@ class TestAppRegisterResources():
         assert response_two_suffix.headers['content-type'] == falcon.MEDIA_HTML
 
     def test_root_not_allowed_in_mxn(self, mxxn_resources_env):
-        """The ROOT key is not allowed in the Mxn package."""
+        """The APP_ROOT key is not allowed in the Mxn package."""
         routes_content = """
             from mxnone.resources import MxnResourceOne
 
-            ROUTES = [{'url': 'ROOT', 'resource': MxnResourceOne}]
+            ROUTES = [{'url': 'APP_ROOT', 'resource': MxnResourceOne}]
 
         """
         (mxxn_resources_env/'mxnone/routes.py').write_text(
@@ -593,11 +593,11 @@ class TestAppRegisterResources():
             App()
 
     def test_root_not_allowed_in_mxnapp(self, mxxn_resources_env):
-        """The ROOT key is not allowed in the MxnApp package."""
+        """The APP_ROOT key is not allowed in the MxnApp package."""
         routes_content = """
             from mxnapp.resources import MxnAppResourceOne
 
-            ROUTES = [{'url': 'ROOT', 'resource': MxnAppResourceOne}]
+            ROUTES = [{'url': 'APP_ROOT', 'resource': MxnAppResourceOne}]
 
         """
         (mxxn_resources_env/'mxnapp/routes.py').write_text(

@@ -80,6 +80,37 @@ But please notice the warning below.
         be overloaded in route covers of this package. If it is done in
         other packages, the *RootRouteError* exception is raised.
 
+**Resource route covers**
+
+It is possible to change the resources of specific routes. For this purpose,
+these routes are covered in the MxnApp package. To achieve this, a routes.py
+module is created in the respective cover package of the MxnApp package and
+the URL to be covered and the corresponding resource are defined in it.
+For example, if the Tasks resource of an *mxntodo* package should be covered,
+the following folder structure must be created in the MxnApp package.
+
+.. code-block:: bash
+
+    mxnapp
+    |-- covers
+    |   |-- __init__.py
+    |   |-- mxns
+    |   |   |-- __init__.py
+    |   |   |-- mxntodo
+    |   |       |-- __init__.py
+    |   |       |-- routes.py
+    |   |       |-- resources.py
+    |-- __init__.py
+    setup.cfg
+
+In the routes.py module, the route is then defined as follows.
+
+.. code:: python
+
+    ROUTES: Routes = [{'url': '/tasks', 'resource': Tasks}]
+
+The new Tasks resource should be defined in resource module or in the
+respective module of the resource package.
 
 **Routes to static files**
 

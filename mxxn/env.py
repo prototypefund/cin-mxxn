@@ -23,16 +23,16 @@ All three package types have essentially the same structure. On the
 basis of this structure, when the application starts, elements are
 automatically loaded from the packages and registered in the framework.
 
-.. warning::
-    To avoid conflicts with other Python packages installed in the virtual
-    environment, the following naming should be used.
+    .. warning::
+        To avoid conflicts with other Python packages installed in the virtual
+        environment, the following naming should be used.
 
-    * The name of the Mixin packages should always start with *mxn*. For
-      example, *mxntodo* or *mxnchat*.
+        * The name of the Mixin packages should always start with *mxn*. For
+          example, *mxntodo* or *mxnchat*.
 
-    * The name of the Mixxin framework package is *mxxn*.
+        * The name of the Mixxin framework package is *mxxn*.
 
-    * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
+        * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
 """
 from pkg_resources import iter_entry_points
 from typing import List, TypedDict, Type, Optional
@@ -434,7 +434,7 @@ class MxnApp(Base):
 
     .. code-block:: bash
 
-        mxxnapp
+        mxnapp
         |-- covers
         |   |-- __init__.py
         |   |-- mxns

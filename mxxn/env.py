@@ -1,23 +1,23 @@
 """
-Module for using components of the mixxin environment.
+Module for using components of the mxxn environment.
 
-Mixxin applications are always based on a Python virtual environment.
+Mxxn applications are always based on a Python virtual environment.
 A separate environment must be used for each application, because
-only one MixxinApp package is accepted per environment.
+only one MxnApp package is accepted per environment.
 
-The mixxin environment has the three basic package types
-Mixxin, Mixin and MixxinApp. The Mixxin package it self is the
+The mxxn environment has the three basic package types
+Mxxn, Mxn and MxnApp. The Mxxn package it self is the
 framework package containing the framework functionality.
-Mixins are plugins that can be installed in the environment and
+Mxns are plugins that can be installed in the environment and
 automatically detected by the framework. These plugins extend
-the functionality of the application. The MixxinApp brings together
-all the required Mixins and the Mixxin framework and packages it.
+the functionality of the application. The MxnApp brings together
+all the required Mixins and the Mxxn framework and packages it.
 In addition, overloads for components of the Mixins and for the
-framework can be defined in the MixxinApp.
-For package management the setuptools are used. Each Mixxin package
+framework can be defined in the MxnApp.
+For package management the setuptools are used. Each Mxxn package
 is standalone Python package and can be installed into the environment
 using pip. However, it is recommended to manage the dependence on
-other Mixxin packages in the setup file of the MixxinApp package.
+other Mxxn packages in the setup file of the MxnApp package.
 
 All three package types have essentially the same structure. On the
 basis of this structure, when the application starts, elements are
@@ -27,12 +27,10 @@ automatically loaded from the packages and registered in the framework.
         To avoid conflicts with other Python packages installed in the virtual
         environment, the following naming should be used.
 
-        * The name of the Mixin packages should always start with *mxn*. For
+        * The name of the Mxn packages should always start with *mxn*. For
           example, *mxntodo* or *mxnchat*.
 
-        * The name of the Mixxin framework package is *mxxn*.
-
-        * All MixxinApp packages should always start with *mxxn* (e.g. *mxxnapp*).
+        * The name of the Mxxn framework package is *mxxn*.
 """
 from pkg_resources import iter_entry_points
 from typing import List, TypedDict, Type, Optional

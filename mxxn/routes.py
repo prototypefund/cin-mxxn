@@ -196,6 +196,7 @@ ROUTES: Routes = [
 
 class StaticRoutesMiddleware():
     """The middleware for static routes."""
+
     def __init__(self, settings: Settings) -> None:
         """
         Initialize the StaticRoutesMiddleware instance.

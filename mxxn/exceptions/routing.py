@@ -4,6 +4,7 @@ from mxxn.exceptions import Base
 
 class RoutingError(Base):
     """Base class for all Routing exceptions."""
+
     pass
 
 

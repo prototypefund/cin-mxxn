@@ -97,9 +97,9 @@ the following folder structure must be created in the MxnApp package.
     |   |-- mxns
     |   |   |-- __init__.py
     |   |   |-- mxntodo
-    |   |       |-- __init__.py
-    |   |       |-- routes.py
-    |   |       |-- resources.py
+    |   |   |   |-- __init__.py
+    |   |   |   |-- routes.py
+    |   |   |   |-- resources.py
     |-- __init__.py
     setup.cfg
 
@@ -112,8 +112,57 @@ In the routes.py module, the route is then defined as follows.
 The new Tasks resource should be defined in resource module or in the
 respective module of the resource package.
 
-**Routes to static files**
 
+**Routes to static files**
+To register static files, the folder *frontend/static* must be created in
+the respective framework package (Mxxn, Mxn or MxnApp).
+
+.. code-block:: bash
+
+    mxntodo
+    |-- __init__.py
+    |-- frontend
+    |   |-- static
+    |   |   |-- js
+    |   |   |   |-- mxn.js
+    setup.cfg
+
+All files of the folder and its subfolders are then accessible via the
+following URLs.
+
+.. list-table::
+   :header-rows: 1
+
+   * - Mount point
+     - Framework package
+   * - /static/app
+     - The static folder of the MxnApp package
+   * - /staic/app/mxxn
+     - The static folder of the Mxxn Framework
+   * - /static/app/mxns/<unprefixed name of Mxn package>
+     - The static of the respective Mxn packages
+
+**Static file covers**
+
+To cover the static file, the new file with the same name must be in the
+same location in the *frontend/static* folder of the cover package of the
+specific framework package.
+
+.. code-block:: bash
+
+    mxnapp
+    |-- covers
+    |   |-- __init__.py
+    |   |-- mxns
+    |   |   |-- __init__.py
+    |   |   |-- mxntodo
+    |   |   |   |-- __init__.py
+    |   |   |   |-- frontend
+    |   |   |   |   |-- static
+    |   |   |   |   |   |-- js
+    |   |   |   |   |   |   |-- mxn.js
+    |-- __init__.py
+    setup.cfg
 """
 from typing import TypedDict
 from typing_extensions import NotRequired

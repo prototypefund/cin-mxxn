@@ -440,10 +440,9 @@ class MxnApp(Base):
         |   |-- mxns
         |   |   |-- __init__.py
         |   |   |-- mxntest
-        |   |       |-- __init__.py
-        |   |       |-- routes.py
-        |   |       |-- resources.py
-        |   |
+        |   |   |   |-- __init__.py
+        |   |   |   |-- routes.py
+        |   |   |   |-- resources.py
         |   |-- mxxn
         |   |   |-- __init__.py
         |   |   |-- routes.py

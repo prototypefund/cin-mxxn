@@ -2325,7 +2325,7 @@ var mxxn = (function (exports) {
     };
   }
 
-  var MxxnApp = {
+  var MxxnToolbar = {
     css: null,
     exports: null,
 
@@ -2335,11 +2335,97 @@ var mxxn = (function (exports) {
       bindingTypes,
       getComponent
     ) => template(
-      '\n\tMXXN-app\n',
+      '\n\tToolbar\n',
       []
     ),
 
-    name: 'app'
+    name: 'mxxn-toolbar'
+  };
+
+  var MxxnNavbar = {
+    css: null,
+    exports: null,
+
+    template: (
+      template,
+      expressionTypes,
+      bindingTypes,
+      getComponent
+    ) => template(
+      '\nNavbar\n',
+      []
+    ),
+
+    name: 'mxxn-navbar'
+  };
+
+  var MxxnPages = {
+    css: null,
+    exports: null,
+
+    template: (
+      template,
+      expressionTypes,
+      bindingTypes,
+      getComponent
+    ) => template(
+      '\n\ttest\n\t<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>\n\ttest\n\n',
+      []
+    ),
+
+    name: 'mxxn-pages'
+  };
+
+  var MxxnApp = {
+    css: `mxxn-app,[is="mxxn-app"]{ margin: 0; padding: 0; } mxxn-app .app-grid,[is="mxxn-app"] .app-grid{ height: 100vh; width: 100vw; display: grid; grid-template-rows: 1fr; grid-template-columns: auto 1fr; } mxxn-app .toolbar-pages-grid,[is="mxxn-app"] .toolbar-pages-grid{ display: grid; overflow: hidden; grid-template-columns: 1fr; grid-template-rows: 40px 1fr; } mxxn-app mxxn-toolbar,[is="mxxn-app"] mxxn-toolbar{ background-color: #ffffff; box-shadow: 0px -3px 6px #000000; } mxxn-app mxxn-navbar,[is="mxxn-app"] mxxn-navbar{ background-color: #3c0f60; box-shadow: -3px 0px 6px #000000; } mxxn-app mxxn-pages,[is="mxxn-app"] mxxn-pages{ overflow-y: scroll; padding: 20px; }`,
+
+    exports: {
+      components: {
+  				MxxnToolbar,
+  				MxxnNavbar,
+  				MxxnPages
+      }
+    },
+
+    template: (
+      template,
+      expressionTypes,
+      bindingTypes,
+      getComponent
+    ) => template(
+      '<div class="app-grid"><mxxn-navbar expr60="expr60"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr61="expr61"></mxxn-toolbar><mxxn-pages expr62="expr62"></mxxn-pages></div></div>',
+      [
+        {
+          type: bindingTypes.TAG,
+          getComponent: getComponent,
+          evaluate: _scope => 'mxxn-navbar',
+          slots: [],
+          attributes: [],
+          redundantAttribute: 'expr60',
+          selector: '[expr60]'
+        },
+        {
+          type: bindingTypes.TAG,
+          getComponent: getComponent,
+          evaluate: _scope => 'mxxn-toolbar',
+          slots: [],
+          attributes: [],
+          redundantAttribute: 'expr61',
+          selector: '[expr61]'
+        },
+        {
+          type: bindingTypes.TAG,
+          getComponent: getComponent,
+          evaluate: _scope => 'mxxn-pages',
+          slots: [],
+          attributes: [],
+          redundantAttribute: 'expr62',
+          selector: '[expr62]'
+        }
+      ]
+    ),
+
+    name: 'mxxn-app'
   };
 
   var MxxnLogin = {
@@ -2356,7 +2442,7 @@ var mxxn = (function (exports) {
       []
     ),
 
-    name: 'login'
+    name: 'mxxn-login'
   };
 
   function app() {

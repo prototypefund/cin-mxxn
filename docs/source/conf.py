@@ -15,6 +15,7 @@ release = '0.1.0'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinxcontrib.httpdomain'
 ]
 
 autodoc_member_order = 'bysource'

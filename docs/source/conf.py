@@ -51,4 +51,3 @@ html_theme_options = {
     'logo_only': True
 }
 
-

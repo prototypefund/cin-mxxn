@@ -2393,7 +2393,7 @@ var mxxn = (function (exports) {
       bindingTypes,
       getComponent
     ) => template(
-      '<div class="app-grid"><mxxn-navbar expr60="expr60"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr61="expr61"></mxxn-toolbar><mxxn-pages expr62="expr62"></mxxn-pages></div></div>',
+      '<div class="app-grid"><mxxn-navbar expr0="expr0"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr1="expr1"></mxxn-toolbar><mxxn-pages expr2="expr2"></mxxn-pages></div></div>',
       [
         {
           type: bindingTypes.TAG,
@@ -2401,8 +2401,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-navbar',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr60',
-          selector: '[expr60]'
+          redundantAttribute: 'expr0',
+          selector: '[expr0]'
         },
         {
           type: bindingTypes.TAG,
@@ -2410,8 +2410,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-toolbar',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr61',
-          selector: '[expr61]'
+          redundantAttribute: 'expr1',
+          selector: '[expr1]'
         },
         {
           type: bindingTypes.TAG,
@@ -2419,8 +2419,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-pages',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr62',
-          selector: '[expr62]'
+          redundantAttribute: 'expr2',
+          selector: '[expr2]'
         }
       ]
     ),

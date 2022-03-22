@@ -1,6 +1,10 @@
 {
+  "ts-node": {
+    "files": true
+  },
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "target": "es6"
   },
   "include": ["src/**/*"]
 }

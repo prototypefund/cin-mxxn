@@ -1,7 +1,7 @@
 var mxxn = (function (exports) {
   'use strict';
 
-  /* Riot v6.1.1, @license MIT */
+  /* Riot v6.1.2, @license MIT */
   /**
    * Convert a string from camel case to dash-case
    * @param   {string} string - probably a component tag name
@@ -229,46 +229,6 @@ var mxxn = (function (exports) {
       if (!source[key]) source[key] = value;
     });
     return source;
-  }
-
-  /**
-   * Get the current <template> fragment children located in between the head and tail comments
-   * @param {Comment} head - head comment node
-   * @param {Comment} tail - tail comment node
-   * @return {Array[]} children list of the nodes found in this template fragment
-   */
-
-  function getFragmentChildren(_ref) {
-    let {
-      head,
-      tail
-    } = _ref;
-    const nodes = walkNodes([head], head.nextSibling, n => n === tail, false);
-    nodes.push(tail);
-    return nodes;
-  }
-  /**
-   * Recursive function to walk all the <template> children nodes
-   * @param {Array[]} children - children nodes collection
-   * @param {ChildNode} node - current node
-   * @param {Function} check - exit function check
-   * @param {boolean} isFilterActive - filter flag to skip nodes managed by other bindings
-   * @returns {Array[]} children list of the nodes found in this template fragment
-   */
-
-  function walkNodes(children, node, check, isFilterActive) {
-    const {
-      nextSibling
-    } = node; // filter tail and head nodes together with all the nodes in between
-    // this is needed only to fix a really ugly edge case https://github.com/riot/riot/issues/2892
-
-    if (!isFilterActive && !node[HEAD_SYMBOL] && !node[TAIL_SYMBOL]) {
-      children.push(node);
-    }
-
-    if (!nextSibling || check(node)) return children;
-    return walkNodes(children, nextSibling, check, // activate the filters to skip nodes between <template> fragments that will be managed by other bindings
-    isFilterActive && !node[TAIL_SYMBOL] || nextSibling[HEAD_SYMBOL]);
   }
 
   /**
@@ -520,9 +480,7 @@ var mxxn = (function (exports) {
       batches.forEach(fn => fn()); // update the children map
 
       this.childrenMap = newChildrenMap;
-      this.nodes = futureNodes; // make sure that the loop edge nodes are marked
-
-      markEdgeNodes(this.nodes);
+      this.nodes = futureNodes;
       return this;
     },
 
@@ -602,19 +560,6 @@ var mxxn = (function (exports) {
     return scope;
   }
   /**
-   * Mark the first and last nodes in order to ignore them in case we need to retrieve the <template> fragment nodes
-   * @param {Array[]} nodes - each binding nodes list
-   * @returns {undefined} void function
-   */
-
-
-  function markEdgeNodes(nodes) {
-    const first = nodes[0];
-    const last = nodes[nodes.length - 1];
-    if (first) first[HEAD_SYMBOL] = true;
-    if (last) last[TAIL_SYMBOL] = true;
-  }
-  /**
    * Loop the current template items
    * @param   {Array} items - expression collection value
    * @param   {*} scope - template scope
@@ -670,7 +615,7 @@ var mxxn = (function (exports) {
 
 
       if (isTemplateTag) {
-        nodes.push(...(mustMount ? meta.children : getFragmentChildren(meta)));
+        nodes.push(...meta.children);
       } else {
         nodes.push(el);
       } // delete the old item from the children map
@@ -2325,9 +2270,19 @@ var mxxn = (function (exports) {
     };
   }
 
-  var MxxnToolbar = {
+  var MxxnIcon = {
     css: null,
-    exports: null,
+
+    exports: {
+      onMounted() {
+        this.setName(this.props.name);
+      },
+
+      setName(name) {
+                  name = 'static/mxxn/icons/' + name +'.svg';
+                  this.update({name: name});
+      }
+    },
 
     template: (
       template,
@@ -2335,8 +2290,53 @@ var mxxn = (function (exports) {
       bindingTypes,
       getComponent
     ) => template(
-      '\n\tToolbar\n',
-      []
+      '<img expr4="expr4" alt/>',
+      [
+        {
+          redundantAttribute: 'expr4',
+          selector: '[expr4]',
+
+          expressions: [
+            {
+              type: expressionTypes.ATTRIBUTE,
+              name: 'src',
+              evaluate: _scope => _scope.state.name
+            }
+          ]
+        }
+      ]
+    ),
+
+    name: 'mxxn-icon'
+  };
+
+  var MxxnToolbar = {
+    css: null,
+
+    exports: {
+      components: {
+  				MxxnIcon
+      }
+    },
+
+    template: (
+      template,
+      expressionTypes,
+      bindingTypes,
+      getComponent
+    ) => template(
+      '<mxxn-icon expr3="expr3" name="menu"></mxxn-icon>',
+      [
+        {
+          type: bindingTypes.TAG,
+          getComponent: getComponent,
+          evaluate: _scope => 'mxxn-icon',
+          slots: [],
+          attributes: [],
+          redundantAttribute: 'expr3',
+          selector: '[expr3]'
+        }
+      ]
     ),
 
     name: 'mxxn-toolbar'
@@ -2446,11 +2446,11 @@ var mxxn = (function (exports) {
   };
 
   function app() {
-      var mountApp = component(MxxnApp);
+      const mountApp = component(MxxnApp);
       mountApp(document.body);
   }
   function login() {
-      var mountLogin = component(MxxnLogin);
+      const mountLogin = component(MxxnLogin);
       mountLogin(document.body);
   }
 

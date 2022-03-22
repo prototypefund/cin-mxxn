@@ -1,0 +1,16 @@
+<mxxn-icon>
+	<img src={state.name} alt="">
+
+  <script>
+    export default {
+      onMounted() {
+        this.setName(this.props.name)
+      },
+
+			setName(name) {
+						name = 'static/mxxn/icons/' + name +'.svg'
+						this.update({name: name})
+			}
+    }
+  </script>
+</mxxn-icon>

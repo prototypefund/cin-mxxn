@@ -2271,16 +2271,23 @@ var mxxn = (function (exports) {
   }
 
   var MxxnIcon = {
-    css: null,
+    css: `mxxn-icon #SVGDoc,[is="mxxn-icon"] #SVGDoc{ fill: #ff0000; }`,
 
     exports: {
       onMounted() {
         this.setName(this.props.name);
+
+                // console.log(document.getElementById("SVGDoc").getSVGDocument())
+                console.log(document.getElementById("SVGDoc"));
       },
 
       setName(name) {
                   name = 'static/mxxn/icons/' + name +'.svg';
                   this.update({name: name});
+      },
+
+      setColor() {
+  				document.getElementById("SVGDoc").contentDocument.querySelector('path').setAttribute("fill", "red");
       }
     },
 
@@ -2290,28 +2297,15 @@ var mxxn = (function (exports) {
       bindingTypes,
       getComponent
     ) => template(
-      '<img expr4="expr4" alt/>',
-      [
-        {
-          redundantAttribute: 'expr4',
-          selector: '[expr4]',
-
-          expressions: [
-            {
-              type: expressionTypes.ATTRIBUTE,
-              name: 'src',
-              evaluate: _scope => _scope.state.name
-            }
-          ]
-        }
-      ]
+      '<div>test</div>',
+      []
     ),
 
     name: 'mxxn-icon'
   };
 
   var MxxnToolbar = {
-    css: null,
+    css: `mxxn-toolbar mxxn-icon,[is="mxxn-toolbar"] mxxn-icon{ }`,
 
     exports: {
       components: {
@@ -2325,7 +2319,7 @@ var mxxn = (function (exports) {
       bindingTypes,
       getComponent
     ) => template(
-      '<mxxn-icon expr3="expr3" name="menu"></mxxn-icon>',
+      '<mxxn-icon expr41="expr41" name="menu"></mxxn-icon>',
       [
         {
           type: bindingTypes.TAG,
@@ -2333,8 +2327,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-icon',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr3',
-          selector: '[expr3]'
+          redundantAttribute: 'expr41',
+          selector: '[expr41]'
         }
       ]
     ),
@@ -2377,7 +2371,7 @@ var mxxn = (function (exports) {
   };
 
   var MxxnApp = {
-    css: `mxxn-app,[is="mxxn-app"]{ margin: 0; padding: 0; } mxxn-app .app-grid,[is="mxxn-app"] .app-grid{ height: 100vh; width: 100vw; display: grid; grid-template-rows: 1fr; grid-template-columns: auto 1fr; } mxxn-app .toolbar-pages-grid,[is="mxxn-app"] .toolbar-pages-grid{ display: grid; overflow: hidden; grid-template-columns: 1fr; grid-template-rows: 40px 1fr; } mxxn-app mxxn-toolbar,[is="mxxn-app"] mxxn-toolbar{ background-color: #ffffff; box-shadow: 0px -3px 6px #000000; } mxxn-app mxxn-navbar,[is="mxxn-app"] mxxn-navbar{ background-color: #3c0f60; box-shadow: -3px 0px 6px #000000; } mxxn-app mxxn-pages,[is="mxxn-app"] mxxn-pages{ overflow-y: scroll; padding: 20px; }`,
+    css: `mxxn-app,[is="mxxn-app"]{ --mxxn-toolbar-backgound-color: #ffffff; --mxxn-toolbar-shadow-color: #000000; --mxxn-navbar-backgound-color: #3c0f60; --mxxn-navbar-shadow-color: #000000; margin: 0; padding: 0; } mxxn-app .app-grid,[is="mxxn-app"] .app-grid{ height: 100vh; width: 100vw; display: grid; grid-template-rows: 1fr; grid-template-columns: auto 1fr; } mxxn-app .toolbar-pages-grid,[is="mxxn-app"] .toolbar-pages-grid{ display: grid; overflow: hidden; grid-template-columns: 1fr; grid-template-rows: 40px 1fr; } mxxn-app mxxn-toolbar,[is="mxxn-app"] mxxn-toolbar{ background-color: var(--mxxn-toolbar-backgound-color); box-shadow: 0px -3px 6px var(--mxxn-toolbar-shadow-color); } mxxn-app mxxn-navbar,[is="mxxn-app"] mxxn-navbar{ background-color: var(--mxxn-navbar-backgound-color); box-shadow: -3px 0px 6px var(--mxxn-navbar-shadow-color); } mxxn-app mxxn-pages,[is="mxxn-app"] mxxn-pages{ overflow-y: scroll; padding: 20px; }`,
 
     exports: {
       components: {
@@ -2393,7 +2387,7 @@ var mxxn = (function (exports) {
       bindingTypes,
       getComponent
     ) => template(
-      '<div class="app-grid"><mxxn-navbar expr0="expr0"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr1="expr1"></mxxn-toolbar><mxxn-pages expr2="expr2"></mxxn-pages></div></div>',
+      '<div class="app-grid"><mxxn-navbar expr156="expr156"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr157="expr157"></mxxn-toolbar><mxxn-pages expr158="expr158"></mxxn-pages></div></div>',
       [
         {
           type: bindingTypes.TAG,
@@ -2401,8 +2395,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-navbar',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr0',
-          selector: '[expr0]'
+          redundantAttribute: 'expr156',
+          selector: '[expr156]'
         },
         {
           type: bindingTypes.TAG,
@@ -2410,8 +2404,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-toolbar',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr1',
-          selector: '[expr1]'
+          redundantAttribute: 'expr157',
+          selector: '[expr157]'
         },
         {
           type: bindingTypes.TAG,
@@ -2419,8 +2413,8 @@ var mxxn = (function (exports) {
           evaluate: _scope => 'mxxn-pages',
           slots: [],
           attributes: [],
-          redundantAttribute: 'expr2',
-          selector: '[expr2]'
+          redundantAttribute: 'expr158',
+          selector: '[expr158]'
         }
       ]
     ),

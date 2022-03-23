@@ -12,6 +12,10 @@
 	</div>
 	<style>
 		:host{
+			--mxxn-toolbar-backgound-color: #ffffff;
+			--mxxn-toolbar-shadow-color: #000000;
+			--mxxn-navbar-backgound-color: #3c0f60;
+			--mxxn-navbar-shadow-color: #000000;
 			margin: 0;
 			padding: 0;
 		}
@@ -32,13 +36,13 @@
 		}
 
 		mxxn-toolbar{
-			background-color: #ffffff;
-			box-shadow: 0px -3px 6px #000000;
+			background-color: var(--mxxn-toolbar-backgound-color);
+			box-shadow: 0px -3px 6px var(--mxxn-toolbar-shadow-color);
 		}
 
 		mxxn-navbar{
-			background-color: #3c0f60;
-			box-shadow: -3px 0px 6px #000000;
+			background-color: var(--mxxn-navbar-backgound-color);
+			box-shadow: -3px 0px 6px var(--mxxn-navbar-shadow-color);
 		}
 
 		mxxn-pages{

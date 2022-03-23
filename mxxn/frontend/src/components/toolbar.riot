@@ -1,5 +1,6 @@
 <mxxn-toolbar>
-	<mxxn-icon name="menu"></mxxn-icon>
+	<!-- <mxxn-icon onclick={click} name="menu"></mxxn-icon> -->
+	<div onclick={click}>sdsdsd</div>
 
 	<style>
 		mxxn-icon {
@@ -12,6 +13,10 @@
 		export default {
 			components: {
 				MxxnIcon
+			},
+
+			click() {
+				document.body.style.setProperty('--mxxn-navbar-background-color', '#ff0000')
 			}
 		}
 	</script>

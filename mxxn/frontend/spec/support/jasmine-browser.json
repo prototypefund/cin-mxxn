@@ -9,6 +9,7 @@
   ],
   "helpers": [
   ],
+  "browser": "headlessChrome",
   "env": {
     "random": true
   }

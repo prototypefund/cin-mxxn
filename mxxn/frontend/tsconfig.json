@@ -5,6 +5,5 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es6"
-  },
-  "include": ["src/**/*"]
+  }
 }

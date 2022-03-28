@@ -1,5 +1,5 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
 import riot from 'rollup-plugin-riot'
 
 
@@ -11,8 +11,11 @@ export default {
     		format: 'iife'
   	},
 	plugins: [
-        riot(),
-		typescript(),
-		nodeResolve()
+		nodeResolve(),
+		riot(),
+		typescript({
+			include: ['src/**/*.ts+(|x)', 'src/**/*.ts+(|x)', 'src/**/*.riot']
+		}),
 	]
 };
+

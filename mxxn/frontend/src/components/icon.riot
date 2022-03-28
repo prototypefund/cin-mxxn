@@ -1,16 +1,62 @@
 <mxxn-icon>
-	<img src={state.name} alt="">
+	<svg></svg>
 
-  <script>
-    export default {
-      onMounted() {
-        this.setName(this.props.name)
+	<style>
+		svg {
+			fill: var(--mxxn-icon-color);
+		}
+	</style>
+
+  <script lang="ts">
+		import {RiotComponent, withTypes} from 'riot'
+		import {IconLoadError} from '../ts/exceptions'
+
+
+    interface Props {
+      name: string
+    }
+
+    interface State {
+      isReady: boolean
+    }
+
+    export interface Icon extends RiotComponent<Props, State> {
+      change: (string) => void
+    }
+
+	export default withTypes<Icon>({
+      onBeforeMount() {
+				this.change(this.props.name)
       },
 
-			setName(name) {
-						name = 'static/mxxn/icons/' + name +'.svg'
-						this.update({name: name})
+			change(name) {
+				this.state.isReady = false
+				const url = 'static/mxxn/icons/' + name +'.svg'
+
+				fetch(url)
+					.then((response) => {
+						if (response.ok) {
+							return response.text();
+						}
+
+					throw new Error()
+					})
+					.then (svgFile => {
+						const parser = new window.DOMParser()
+						const parsed = parser.parseFromString(svgFile, 'text/html')
+						const svg = parsed.querySelector('svg')
+
+						if (svg !== null) {
+							this.$('svg').replaceWith(svg)
+							this.state.isReady = true
+						 }
+  				})
+					.catch((ex) => {
+						throw new IconLoadError(
+							'The icon "'+ url + '" file could not be loaded.'
+						)
+					});
 			}
-    }
+    })
   </script>
 </mxxn-icon>

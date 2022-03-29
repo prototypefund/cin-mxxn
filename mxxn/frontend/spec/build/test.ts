@@ -1,2 +1,6 @@
+import Icon from '../../src/components/icon.riot'
 
-export const test = '1234'
+
+export namespace Components {
+  export const test = Icon
+}

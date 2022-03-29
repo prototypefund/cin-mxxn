@@ -14,7 +14,11 @@ export default {
 		nodeResolve(),
 		riot(),
 		typescript({
-			include: ['src/**/*.ts+(|x)', 'src/**/*.ts+(|x)', 'src/**/*.riot']
+			include: [
+				'src/**/*.ts+(|x)',
+				'src/**/*.ts+(|x)',
+				'src/**/*.riot'
+			]
 		}),
 	]
 };

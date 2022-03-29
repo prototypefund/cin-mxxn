@@ -7,7 +7,11 @@
 describe('Tests_for_Icon_component',function() {
   it('Initialization_with_existing_icon', function () {
     console.log('############## 1234')
-    console.log('')
+    // expect(mxxn.test).toBe('1234');
+  })
+
+  fit('with_existing_icon', function () {
+    console.log('############## 1234')
     // expect(mxxn.test).toBe('1234');
   })
 });

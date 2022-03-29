@@ -3,7 +3,7 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -w -c",
-    "test": "echo test"
+    "test": "jasmine-browser-runner"
   },
   "devDependencies": {
     "riot": "^6.1.2",

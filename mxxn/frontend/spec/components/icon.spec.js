@@ -6,7 +6,8 @@
 //
 describe('Tests_for_Icon_component',function() {
   it('Initialization_with_existing_icon', function () {
-    console.log('browser test')
+    console.log('############## 1234')
+    expect(mxxn.test).toBe('1234');
   })
 });
 

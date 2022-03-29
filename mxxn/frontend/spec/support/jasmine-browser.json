@@ -1,7 +1,7 @@
 {
-  "srcDir": "src",
+  "srcDir": "spec",
   "srcFiles": [
-    "**/*.?(m)js"
+    "build/bundle.js"
   ],
   "specDir": "spec",
   "specFiles": [

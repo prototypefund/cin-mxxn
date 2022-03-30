@@ -15,8 +15,9 @@
 docs/build
 
 # Frontend
-**/node_modules
-**/package-lock.json
+mxxn/frontend/node_modules
+mxxn/frontend/package-lock.json
+mxxn/frontend/tests/build
 
 # Develop file
 data

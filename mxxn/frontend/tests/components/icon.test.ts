@@ -1,17 +1,12 @@
 
 // import {dom} from '../components'
 // import * as riot from 'riot'
-// import Icon from '../../src/components/icon.riot'
-//
-//
+import Icon from '../../src/components/icon.riot'
+
+
 describe('Tests_for_Icon_component',function() {
   it('Initialization_with_existing_icon', function () {
-    console.log('############## 1234')
-    // expect(mxxn.test).toBe('1234');
-  })
-
-  fit('with_existing_icon', function () {
-    console.log('############## 1234')
+    console.log(Icon)
     // expect(mxxn.test).toBe('1234');
   })
 });

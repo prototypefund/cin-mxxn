@@ -1,10 +1,15 @@
 import * as riot from 'riot'
 import MxxnApp from '../components/app.riot'
 import MxxnLogin from '../components/login.riot'
+import {request} from '../ts/request'
+
+const url = '/app/mxxn/themes'
 
 
-export function app(){
+export async function app(){
   const mountApp = riot.component(MxxnApp)
+  console.log(await request(url))
+  // console.log('#############')
   mountApp(document.body)
 }
 

@@ -1,9 +1,6 @@
 {
-  "ts-node": {
-    "files": true
-  },
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "target": "es6",
     "moduleResolution": "node"
   }

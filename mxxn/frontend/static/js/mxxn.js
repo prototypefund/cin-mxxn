@@ -2287,6 +2287,9 @@ var mxxn = (function (exports) {
   var MxxnIcon = {
       css: `mxxn-icon svg,[is="mxxn-icon"] svg{ fill: var(--mxxn-icon-color); }`,
       exports: withTypes({
+          state: {
+              isReady: false,
+          },
           onBeforeMount() {
               this.change(this.props.name);
           },
@@ -2329,7 +2332,7 @@ var mxxn = (function (exports) {
               document.body.style.setProperty('--mxxn-icon-color', '#ff00ff');
           }
       },
-      template: (template, expressionTypes, bindingTypes, getComponent) => template('<mxxn-icon expr48="expr48" name="menu"></mxxn-icon><div expr49="expr49">sdsdsd</div>', [
+      template: (template, expressionTypes, bindingTypes, getComponent) => template('<mxxn-icon expr3="expr3" name="menu"></mxxn-icon><div expr4="expr4">sdsdsd</div>', [
           {
               type: bindingTypes.TAG,
               getComponent: getComponent,
@@ -2342,12 +2345,12 @@ var mxxn = (function (exports) {
                       evaluate: _scope => _scope.click
                   }
               ],
-              redundantAttribute: 'expr48',
-              selector: '[expr48]'
+              redundantAttribute: 'expr3',
+              selector: '[expr3]'
           },
           {
-              redundantAttribute: 'expr49',
-              selector: '[expr49]',
+              redundantAttribute: 'expr4',
+              selector: '[expr4]',
               expressions: [
                   {
                       type: expressionTypes.EVENT,
@@ -2383,15 +2386,15 @@ var mxxn = (function (exports) {
               MxxnPages
           }
       },
-      template: (template, expressionTypes, bindingTypes, getComponent) => template('<div class="app-grid"><mxxn-navbar expr45="expr45"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr46="expr46"></mxxn-toolbar><mxxn-pages expr47="expr47"></mxxn-pages></div></div>', [
+      template: (template, expressionTypes, bindingTypes, getComponent) => template('<div class="app-grid"><mxxn-navbar expr0="expr0"></mxxn-navbar><div class="toolbar-pages-grid"><mxxn-toolbar expr1="expr1"></mxxn-toolbar><mxxn-pages expr2="expr2"></mxxn-pages></div></div>', [
           {
               type: bindingTypes.TAG,
               getComponent: getComponent,
               evaluate: _scope => 'mxxn-navbar',
               slots: [],
               attributes: [],
-              redundantAttribute: 'expr45',
-              selector: '[expr45]'
+              redundantAttribute: 'expr0',
+              selector: '[expr0]'
           },
           {
               type: bindingTypes.TAG,
@@ -2399,8 +2402,8 @@ var mxxn = (function (exports) {
               evaluate: _scope => 'mxxn-toolbar',
               slots: [],
               attributes: [],
-              redundantAttribute: 'expr46',
-              selector: '[expr46]'
+              redundantAttribute: 'expr1',
+              selector: '[expr1]'
           },
           {
               type: bindingTypes.TAG,
@@ -2408,8 +2411,8 @@ var mxxn = (function (exports) {
               evaluate: _scope => 'mxxn-pages',
               slots: [],
               attributes: [],
-              redundantAttribute: 'expr47',
-              selector: '[expr47]'
+              redundantAttribute: 'expr2',
+              selector: '[expr2]'
           }
       ]),
       name: 'mxxn-app'

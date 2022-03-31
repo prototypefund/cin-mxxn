@@ -4,7 +4,7 @@ import riot from 'rollup-plugin-riot'
 
 
 export default {
-	input: 'src/ts/mxxn.ts',
+	input: 'src/ts/index.ts',
   	output: {
 		name: 'mxxn',
     		file: 'static/js/mxxn.js',

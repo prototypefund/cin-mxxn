@@ -24,10 +24,14 @@
       change: (string) => void
     }
 
-	export default withTypes<Icon>({
+		export default withTypes<Icon>({
+			state: {
+        isReady: false,
+      },
+
       onBeforeMount() {
 				this.change(this.props.name)
-      },
+     },
 
 			change(name) {
 				this.state.isReady = false

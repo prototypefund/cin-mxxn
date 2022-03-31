@@ -1,9 +1,9 @@
 import * as riot from 'riot'
-import MxxnApp from '../components/app.riot'
-import MxxnLogin from '../components/login.riot'
-import {request} from '../ts/request'
+import MxxnApp from './components/app.riot'
+import MxxnLogin from './components/login.riot'
+import {request} from './request'
 
-const url = '/app/mxxn/themes'
+const url = '/app/mxxn/themesdd'
 
 
 export async function app(){

@@ -2302,6 +2302,12 @@ var mxxn = (function (exports) {
 
     const withTypes = component => component;
 
+    class RequestError extends Error {
+        constructor(message) {
+            super(message);
+            this.name = 'RequestError';
+        }
+    }
     class IconLoadError extends Error {
         constructor(message) {
             super(message);
@@ -2450,42 +2456,26 @@ var mxxn = (function (exports) {
         name: 'mxxn-login'
     };
 
-    function request(url, method = 'GET') {
+    function request(url, method = 'GET', data = '', contentType = 'application/json') {
         return __awaiter(this, void 0, void 0, function* () {
-            const response = yield fetch(url.toString());
-            const data = yield response.text();
-            return data;
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': contentType
+                },
+            };
+            if (method !== 'GET') {
+                options.body = typeof data === 'string' ? data : JSON.stringify(data);
+            }
+            const response = yield fetch(url.toString(), options);
+            if (response.ok) {
+                return response.text();
+            }
+            throw new RequestError('##');
         });
     }
-    // export {
-    // request
-    // }
-    // fetch(url)
-    //   .then((response) => {
-    //     if (response.ok) {
-    //       return response.text();
-    //     }
-    //
-    //   throw new Error()
-    //   })
-    //   .then (svgFile => {
-    //     const parser = new window.DOMParser()
-    //     const parsed = parser.parseFromString(svgFile, 'text/html')
-    //     const svg = parsed.querySelector('svg')
-    //
-    //     if (svg !== null) {
-    //       this.$('svg').replaceWith(svg)
-    //       this.state.isReady = true
-    //      }
-    //   })
-    //   .catch((ex) => {
-    //     throw new IconLoadError(
-    //       'The icon "'+ url + '" file could not be loaded.'
-    //     )
-    //   });
-    //
 
-    const url = '/app/mxxn/themes';
+    const url = '/app/mxxn/themesdd';
     function app() {
         return __awaiter(this, void 0, void 0, function* () {
             const mountApp = component(MxxnApp);

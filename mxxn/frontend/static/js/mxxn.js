@@ -2302,12 +2302,6 @@ var mxxn = (function (exports) {
 
     const withTypes = component => component;
 
-    class RequestError extends Error {
-        constructor(message) {
-            super(message);
-            this.name = 'RequestError';
-        }
-    }
     class IconLoadError extends Error {
         constructor(message) {
             super(message);
@@ -2328,12 +2322,7 @@ var mxxn = (function (exports) {
                 this.state.isReady = false;
                 const url = 'static/mxxn/icons/' + name + '.svg';
                 fetch(url)
-                    .then((response) => {
-                    if (response.ok) {
-                        return response.text();
-                    }
-                    throw new Error();
-                })
+                    .then((response) => response.text())
                     .then(svgFile => {
                     const parser = new window.DOMParser();
                     const parsed = parser.parseFromString(svgFile, 'text/html');
@@ -2456,31 +2445,9 @@ var mxxn = (function (exports) {
         name: 'mxxn-login'
     };
 
-    function request(url, method = 'GET', data = '', contentType = 'application/json') {
-        return __awaiter(this, void 0, void 0, function* () {
-            const options = {
-                method: method,
-                headers: {
-                    'Content-Type': contentType
-                },
-            };
-            if (method !== 'GET') {
-                options.body = typeof data === 'string' ? data : JSON.stringify(data);
-            }
-            const response = yield fetch(url.toString(), options);
-            if (response.ok) {
-                return response.text();
-            }
-            throw new RequestError('##');
-        });
-    }
-
-    const url = '/app/mxxn/themesdd';
     function app() {
         return __awaiter(this, void 0, void 0, function* () {
             const mountApp = component(MxxnApp);
-            console.log(yield request(url));
-            // console.log('#############')
             mountApp(document.body);
         });
     }

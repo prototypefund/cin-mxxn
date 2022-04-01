@@ -38,7 +38,7 @@
 				this.state.isReady = false
 				const url = 'static/mxxn/icons/' + name +'.svg'
 
-				fetch(url)
+				request(url)
 					.then((response) => response.text())
 					.then (svgFile => {
 						const parser = new window.DOMParser()

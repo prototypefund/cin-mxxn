@@ -2302,11 +2302,53 @@ var mxxn = (function (exports) {
 
     const withTypes = component => component;
 
+    class RequestError extends Error {
+        constructor(message) {
+            super(message);
+            this.name = 'RequestError';
+        }
+    }
     class IconLoadError extends Error {
         constructor(message) {
             super(message);
             this.name = 'IconLoadError';
         }
+    }
+
+    /**
+     * Send an HTTP request to the given URL.
+     *
+     * The request function is essentially a mapper for fetch with some
+     * default options. The options are set to match the most API calls.
+     * The function also implements error handling and throws an
+     * exception if an error occurs.
+     *
+     * @param url The URL of the request
+     * @param options A options object merged into the default options
+     * @returns Promise resolved with a Response, rejected with RequestError
+     */
+    function request(url, options = {}) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const defaultOptions = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+            };
+            const usedOptions = Object.assign(Object.assign({}, defaultOptions), options);
+            const response = yield fetch(url, usedOptions);
+            const status = response.status;
+            console.log(status);
+            if (status === 200 || status === 201) {
+                return response;
+            }
+            const message = `
+    An error occurred during the call of the URL ${url}.
+    Status: ${status} ${response.statusText}
+    `;
+            throw new RequestError(message);
+        });
     }
 
     var MxxnIcon = {
@@ -2321,7 +2363,7 @@ var mxxn = (function (exports) {
             change(name) {
                 this.state.isReady = false;
                 const url = 'static/mxxn/icons/' + name + '.svg';
-                fetch(url)
+                request(url)
                     .then((response) => response.text())
                     .then(svgFile => {
                     const parser = new window.DOMParser();

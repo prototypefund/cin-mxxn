@@ -29,7 +29,6 @@ async function request(url: string, options: RequestInit = {}): Promise<Response
 
   const response = await fetch(url, usedOptions);
   const status = response.status
-  console.log(status)
 
   if (status === 200 || status === 201) {
     return response;

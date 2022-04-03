@@ -2362,7 +2362,6 @@ var mxxn = (function (exports) {
           change(name) {
               this.state.isReady = false;
               const url = 'static/mxxn/icons/' + name + '.svg';
-              // console.log(request)
               // @ts-ignore
               mxxn.request(url)
                   .then((response) => response.text())

@@ -14,8 +14,8 @@ export default {
 		nodeResolve(),
 		riot(),
 		typescript({
+			useTsconfigDeclarationDir: true,
 			include: [
-				'src/**/*.ts+(|x)',
 				'src/**/*.ts+(|x)',
 				'src/**/*.riot'
 			]

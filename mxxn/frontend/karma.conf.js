@@ -14,6 +14,11 @@ module.exports = function(config) {
         pattern: 'tests/**/*.test.ts',
         watched: false ,
         type: 'js'
+      },
+      {
+        pattern: 'src/index.ts',
+        watched: false ,
+        type: 'js'
       }
     ],
 

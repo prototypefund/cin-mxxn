@@ -16,8 +16,12 @@ function login(){
   mountLogin(document.body)
 }
 
+namespace components {
+}
+
 export {
   request,
   app,
-  login
+  login,
+  components
 }

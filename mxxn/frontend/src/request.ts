@@ -42,5 +42,7 @@ async function request(url: string, options: RequestInit = {}): Promise<Response
 }
 
 
-export default request
+export {
+  request
+}
 

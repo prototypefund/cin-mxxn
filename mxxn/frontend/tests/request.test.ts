@@ -1,4 +1,4 @@
-import request from '../src/request'
+import {request} from '../src/request'
 import {RequestError} from '../src/exceptions'
 
 
@@ -35,7 +35,7 @@ describe('tests_for_request_function',function() {
   /**
    * The HTTP status code is 404 and error occurred.
    */
-  fit('status_is_404', async function () {
+  it('status_is_404', async function () {
     const response = {status: 404, statusText: 'Not Found'}
     window.fetch = jasmine.createSpy('fetch').and.resolveTo(response)
     const url = '/app/mxxn/theme'

@@ -36,7 +36,6 @@ module.exports = function(config) {
           typescript({
 			include: [
 				'src/**/*.ts+(|x)',
-				'src/**/*.ts+(|x)',
 				'src/**/*.riot'
 			]
           })

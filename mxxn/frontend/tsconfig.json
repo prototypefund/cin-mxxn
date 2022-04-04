@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "target": "es6",
-    "moduleResolution": "node",
-    "declaration": true,
-    "declarationDir": "types",
+    "moduleResolution": "node"
   },
+  "import": [
+    "mxxn.d.ts"
+  ],
   "exclude": [
-    "tests",
-    "types"
   ]
 }

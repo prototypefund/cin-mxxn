@@ -19,5 +19,8 @@
     "rollup-plugin-riot": "~6.0.0",
     "rollup-plugin-typescript2": "~0.31.2",
     "typescript": "~4.6.3"
+  },
+  "dependencies": {
+    "dts-bundle": "^0.7.3"
   }
 }

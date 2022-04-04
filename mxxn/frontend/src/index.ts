@@ -3,8 +3,6 @@ import {request} from './request'
 import MxxnApp from './components/app.riot'
 import MxxnLogin from './components/login.riot'
 
-const url = '/app/mxxn/themes'
-
 
 function app(){
   const mountApp = riot.component(MxxnApp)

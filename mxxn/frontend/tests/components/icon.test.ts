@@ -2,7 +2,13 @@ import * as riot from 'riot'
 import Icon from '../../src/components/icon.riot'
 
 
+/**
+ * Tests Icon component.
+ */
 describe('Tests_for_Icon_component',function() {
+  /**
+   * Init with existing SVG icon.
+   */
   it('Initialization_with_existing_icon', async function () {
     const svg = `
       <svg>

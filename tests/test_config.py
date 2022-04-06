@@ -5,6 +5,7 @@ import json
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
 from mxxn import config
+from mxxn import env
 
 
 class TestConfigDirInit():
@@ -95,7 +96,7 @@ class TestConfigDirDefault():
         assert config_dir.default == 'en'
 
 
-class TestConfigDirDict(object):
+class TestConfigDirDict:
     """Test for the dict method of the ConfigDir class."""
 
     def test_not_a_json_file(self, mxxn_env):
@@ -108,27 +109,41 @@ class TestConfigDirDict(object):
         config_dir = config.ConfigsDir(mxnone_config_dir)
 
         with pytest.raises(filesys_ex.FileFormatError):
-            config_dir.dict('de')
+            config_dir.dict('en')
 
     def test_name_not_exist(self, mxxn_env):
-        """The default is returned if a file with the name does not exist."""
+        """ValueError raised if a file with the name does not exist."""
         mxnone_config_dir = mxxn_env/'mxnone/config'
         mxnone_config_dir.mkdir()
 
         with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
-            json.dump({'name': 'en'}, f)
+            json.dump({}, f)
 
         with open(mxxn_env/'mxnone/config/de.json', 'w') as f:
-            json.dump({'name': 'de'}, f)
+            json.dump({}, f)
 
         config_dir = config.ConfigsDir(mxnone_config_dir)
 
-        assert config_dir.dict('ru') == {'name': 'en'}
+        with pytest.raises(ValueError):
+            config_dir.dict('uk')
+
+    def test_correct_dict(self, mxxn_env):
+        """Return a correct dict."""
+        mxnone_config_dir = mxxn_env/'mxnone/config'
+        mxnone_config_dir.mkdir()
+
+        with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
+            json.dump({'test': 123}, f)
+
+        config_dir = config.ConfigsDir(mxnone_config_dir)
+
+        assert config_dir.dict('en') == {'test': 123}
 
 
 class TestThemeInit():
     """Tests for the initialization of the Theme class."""
-    def test_all_theme_added(self, mxxn_env):
+    # def test_all_theme_added(self, mxxn_env):
+    def test_2tmp(self, mxxn_env):
         """All package themes were added."""
         settings = Mock()
         settings.enabled_mxns = ['mxnone', 'mxntwo']
@@ -140,34 +155,36 @@ class TestThemeInit():
         mxntwo_themes_dir.mkdir(parents=True)
         mxnapp_themes_dir.mkdir(parents=True)
 
-        with open(mxnone_themes_dir/'light-default.json', 'w') as f:
-            json.dump({'theme_mxnone': 'light'}, f)
+        # with open(mxnone_themes_dir/'light-default.json', 'w') as f:
+        #     json.dump({'theme_mxnone': 'light'}, f)
+        #
+        # with open(mxnone_themes_dir/'dark.json', 'w') as f:
+        #     json.dump({'theme_mxnone': 'dark'}, f)
+        #
+        # with open(mxntwo_themes_dir/'light-default.json', 'w') as f:
+        #     json.dump({'theme_mxntwo': 'light'}, f)
+        #
+        # with open(mxntwo_themes_dir/'dark.json', 'w') as f:
+        #     json.dump({'theme_mxntwo': 'dark'}, f)
+        #
+        # with open(mxnapp_themes_dir/'light-default.json', 'w') as f:
+        #     json.dump({'theme_mxnapp': 'light'}, f)
+        #
+        # with open(mxnapp_themes_dir/'dark.json', 'w') as f:
+        #     json.dump({'theme_mxnapp': 'dark'}, f)
 
-        with open(mxnone_themes_dir/'dark.json', 'w') as f:
-            json.dump({'theme_mxnone': 'dark'}, f)
+        theme = config.Theme('light', settings)
 
-        with open(mxntwo_themes_dir/'light-default.json', 'w') as f:
-            json.dump({'theme_mxntwo': 'light'}, f)
+        print(theme)
 
-        with open(mxntwo_themes_dir/'dark.json', 'w') as f:
-            json.dump({'theme_mxntwo': 'dark'}, f)
-
-        with open(mxnapp_themes_dir/'light-default.json', 'w') as f:
-            json.dump({'theme_mxnapp': 'light'}, f)
-
-        with open(mxnapp_themes_dir/'dark.json', 'w') as f:
-            json.dump({'theme_mxnapp': 'dark'}, f)
-
-        theme = config.Theme('dark', settings)
-
-        assert theme['mxns'] == {
-                'mxnone': {'theme_mxnone': 'dark'},
-                'mxntwo': {'theme_mxntwo': 'dark'}}
-
-        assert theme['mxnapp'] == {'theme_mxnapp': 'dark'}
-
-        assert 'mxxn' in theme
-
+        # assert theme['mxns'] == {
+        #         'mxnone': {'theme_mxnone': 'dark'},
+        #         'mxntwo': {'theme_mxntwo': 'dark'}}
+        #
+        # assert theme['mxnapp'] == {'theme_mxnapp': 'dark'}
+        #
+        # assert 'mxxn' in theme
+        #
     def test_only_added_if_theme_exists(self, mxxn_env):
         """Only added if the theme exists in the package."""
         settings = Mock()
@@ -221,3 +238,14 @@ class TestThemeInit():
 
         with pytest.raises(config_ex.NotSameDefaults):
             config.Theme('dark', settings)
+
+
+class TestThemeFileAsDict():
+    """Tests for the _file_as_dict function of the Theme class."""
+    # def test_all_theme_added(self, mxxn_env):
+    def test_1tmp(self, mxxn_env):
+        mxxn_pkg = env.Mxxn()
+
+        print(mxxn_pkg.theme_list)
+
+        # config.Theme._file_as_dict(

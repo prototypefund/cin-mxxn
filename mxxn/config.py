@@ -11,7 +11,7 @@ from mxxn.settings import Settings
 from mxxn.logging import logger
 
 
-class ConfigsDir(object):
+class ConfigsDir:
     """
     This class abstracts a configuration directory.
 
@@ -125,49 +125,40 @@ class ConfigsDir(object):
 
     def dict(self, name: str) -> dict:
         """
-        Get the config dictionary from the directory.
-
-        The default JSON configuration file is read in and merged
-        with the read-in JSON data from the file whose name was
-        passed as an argument. If a file with the name does not
-        exist, the default dictionary is returned.
+        Read the config file and return the JSON data as dictionary.
 
         Args:
             name: The name of the config file without extension
                 and '-default" string.
 
         Returns:
-            A merge of the json files from the directory.
+            Config data as dictionary.
 
         Raises:
+            ValueError: If config file does not exist.
             mxxn.exceptions.filesys.FileFormatError:
-                If one of both file does not contain correct JSON data.
+                If the file does not contain correct JSON data.
 
         """
-        default_file_name = self._path / (self.default + '-default.json')
-        file_name = self._path / (name + '.json')
+        if name in self._names:
+            if name == self._default:
+                file_name = self._path/f'{name}-default.json'
+            else:
+                file_name = self._path/name
 
-        with open(default_file_name, 'r') as f:
             try:
-                default_config_data = json.load(f)
+                with open(file_name, 'r') as f:
+                    data = json.load(f)
+
+                    return data
+
             except json.decoder.JSONDecodeError:
                 message = 'The file "{}" does not contain a ' \
-                    'regular JSON format.'.format(default_file_name)
+                    'regular JSON format.'.format(file_name)
 
                 raise filesys_ex.FileFormatError(message)
 
-        if (not self.default == name) and (name in self.names):
-            with open(file_name, 'r') as f:
-                try:
-                    config_data = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    message = 'The file "{}" does not contain a ' \
-                        'regular JSON format.'.format(file_name)
-                    raise filesys_ex.FileFormatError(message)
-
-            dicts.merge(default_config_data, config_data)
-
-        return default_config_data
+        raise ValueError('Config name {name} does not exist.')
 
 
 class Theme(dict):
@@ -175,7 +166,7 @@ class Theme(dict):
 
     def __init__(self, name: str, settings: Settings) -> None:
         """
-        Initialize the ConfigDir object.
+        Initialize the Themes object.
 
         Args:
             name: The name of the theme.
@@ -185,46 +176,96 @@ class Theme(dict):
         mxxn_pkg = env.Mxxn()
         default_theme = mxxn_pkg.default_theme
         self['mxxn'] = mxxn_pkg.theme(name)
-        mxn_names = env.mxns(settings)
 
-        log.debug('The theme of package mxxn was registered.')
+        # mxn_names = env.mxns(settings)
+        #
+        # log.debug('The theme of package mxxn was registered.')
+        #
+        # if mxn_names:
+        #     self['mxns'] = {}
+        #
+        # for mxn_name in mxn_names:
+        #     mxn_pkg = env.Mxn(mxn_name)
+        #     theme = mxn_pkg.theme(name)
+        #
+        #     if theme:
+        #         if mxn_pkg.default_theme != default_theme:
+        #             raise config_ex.NotSameDefaults(
+        #                 'Package {} has not the same default theme a mxxn.'
+        #                 .format(mxn_pkg.name))
+        #
+        #         self['mxns'][mxn_name] = theme
+        #
+        #     log.debug(
+        #         'The theme of package {} was registered.'
+        #         .format(mxn_pkg.name)
+        #     )
+        #
+        # try:
+        #     mxnapp_pkg = env.MxnApp()
+        #     theme = mxnapp_pkg.theme(name)
+        #
+        #     if theme:
+        #         if mxnapp_pkg.default_theme != default_theme:
+        #             raise config_ex.NotSameDefaults(
+        #                 'Package {} has not the same default theme a mxxn.'
+        #                 .format(mxnapp_pkg.name))
+        #
+        #         self['mxnapp'] = mxnapp_pkg.theme(name)
+        #
+        #     log.debug(
+        #         'The theme of package {} was registered.'
+        #         .format(mxnapp_pkg.name)
+        #     )
+        #
+        # except env_ex.MxnAppNotExistError:
+        #     pass
 
-        if mxn_names:
-            self['mxns'] = {}
-
-        for mxn_name in mxn_names:
-            mxn_pkg = env.Mxn(mxn_name)
-            theme = mxn_pkg.theme(name)
-
-            if theme:
-                if mxn_pkg.default_theme != default_theme:
-                    raise config_ex.NotSameDefaults(
-                        'Package {} has not the same default theme a mxxn.'
-                        .format(mxn_pkg.name))
-
-                self['mxns'][mxn_name] = theme
-
-            log.debug(
-                'The theme of package {} was registered.'
-                .format(mxn_pkg.name)
-            )
-
-        try:
-            mxnapp_pkg = env.MxnApp()
-            theme = mxnapp_pkg.theme(name)
-
-            if theme:
-                if mxnapp_pkg.default_theme != default_theme:
-                    raise config_ex.NotSameDefaults(
-                        'Package {} has not the same default theme a mxxn.'
-                        .format(mxnapp_pkg.name))
-
-                self['mxnapp'] = mxnapp_pkg.theme(name)
-
-            log.debug(
-                'The theme of package {} was registered.'
-                .format(mxnapp_pkg.name)
-            )
-
-        except env_ex.MxnAppNotExistError:
-            pass
+    @staticmethod
+    def _file_as_dict():
+        pass
+    # def dict(self, name: str) -> dict:
+    #     """
+    #     Get the config dictionary from the directory.
+    #
+    #     The default JSON configuration file is read in and merged
+    #     with the read-in JSON data from the file whose name was
+    #     passed as an argument. If a file with the name does not
+    #     exist, the default dictionary is returned.
+    #
+    #     Args:
+    #         name: The name of the config file without extension
+    #             and '-default" string.
+    #
+    #     Returns:
+    #         A merge of the json files from the directory.
+    #
+    #     Raises:
+    #         mxxn.exceptions.filesys.FileFormatError:
+    #             If one of both file does not contain correct JSON data.
+    #
+    #     """
+    #     default_file_name = self._path / (self.default + '-default.json')
+    #     file_name = self._path / (name + '.json')
+    #
+    #     with open(default_file_name, 'r') as f:
+    #         try:
+    #             default_config_data = json.load(f)
+    #         except json.decoder.JSONDecodeError:
+    #             message = 'The file "{}" does not contain a ' \
+    #                 'regular JSON format.'.format(default_file_name)
+    #
+    #             raise filesys_ex.FileFormatError(message)
+    #
+    #     if (not self.default == name) and (name in self.names):
+    #         with open(file_name, 'r') as f:
+    #             try:
+    #                 config_data = json.load(f)
+    #             except json.decoder.JSONDecodeError:
+    #                 message = 'The file "{}" does not contain a ' \
+    #                     'regular JSON format.'.format(file_name)
+    #                 raise filesys_ex.FileFormatError(message)
+    #
+    #         dicts.merge(default_config_data, config_data)
+    #
+    #     return default_config_data

@@ -6,6 +6,7 @@ from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
 from mxxn import config
 from mxxn import env
+from mxxn.settings import Settings
 
 
 class TestConfigDirInit():
@@ -142,49 +143,7 @@ class TestConfigDirDict:
 
 class TestThemeInit():
     """Tests for the initialization of the Theme class."""
-    # def test_all_theme_added(self, mxxn_env):
-    def test_2tmp(self, mxxn_env):
-        """All package themes were added."""
-        settings = Mock()
-        settings.enabled_mxns = ['mxnone', 'mxntwo']
 
-        mxnone_themes_dir = mxxn_env/'mxnone/configs/themes'
-        mxntwo_themes_dir = mxxn_env/'mxntwo/configs/themes'
-        mxnapp_themes_dir = mxxn_env/'mxnapp/configs/themes'
-        mxnone_themes_dir.mkdir(parents=True)
-        mxntwo_themes_dir.mkdir(parents=True)
-        mxnapp_themes_dir.mkdir(parents=True)
-
-        # with open(mxnone_themes_dir/'light-default.json', 'w') as f:
-        #     json.dump({'theme_mxnone': 'light'}, f)
-        #
-        # with open(mxnone_themes_dir/'dark.json', 'w') as f:
-        #     json.dump({'theme_mxnone': 'dark'}, f)
-        #
-        # with open(mxntwo_themes_dir/'light-default.json', 'w') as f:
-        #     json.dump({'theme_mxntwo': 'light'}, f)
-        #
-        # with open(mxntwo_themes_dir/'dark.json', 'w') as f:
-        #     json.dump({'theme_mxntwo': 'dark'}, f)
-        #
-        # with open(mxnapp_themes_dir/'light-default.json', 'w') as f:
-        #     json.dump({'theme_mxnapp': 'light'}, f)
-        #
-        # with open(mxnapp_themes_dir/'dark.json', 'w') as f:
-        #     json.dump({'theme_mxnapp': 'dark'}, f)
-
-        theme = config.Theme('light', settings)
-
-        print(theme)
-
-        # assert theme['mxns'] == {
-        #         'mxnone': {'theme_mxnone': 'dark'},
-        #         'mxntwo': {'theme_mxntwo': 'dark'}}
-        #
-        # assert theme['mxnapp'] == {'theme_mxnapp': 'dark'}
-        #
-        # assert 'mxxn' in theme
-        #
     def test_only_added_if_theme_exists(self, mxxn_env):
         """Only added if the theme exists in the package."""
         settings = Mock()
@@ -240,12 +199,83 @@ class TestThemeInit():
             config.Theme('dark', settings)
 
 
-class TestThemeFileAsDict():
-    """Tests for the _file_as_dict function of the Theme class."""
-    # def test_all_theme_added(self, mxxn_env):
-    def test_1tmp(self, mxxn_env):
-        mxxn_pkg = env.Mxxn()
+class TestThemeReplaceVariables():
+    """Tests for the _replace_variables function of the Theme class."""
 
-        print(mxxn_pkg.theme_list)
+    def test_variable_replaced(self, mxxn_env):
+        """All variables were replaced."""
+        theme = {
+            'variables': {
+                'primary-color': '#3c0f60'
+            },
+            'theme': {
+                'toolbar-color': '#000000',
+                'navbar-color': '{primary-color}',
+              }
+        }
 
-        # config.Theme._file_as_dict(
+        dict_replaced = config.Theme._replace_variables(theme)
+
+        assert dict_replaced == {
+                'toolbar-color': '#000000',
+                'navbar-color': '#3c0f60',
+                }
+
+    def test_spaces_after_opening_bracket(self, mxxn_env):
+        """Spaces after the opening curly bracket."""
+        theme = {
+            'variables': {
+                'primary-color': '#3c0f60'
+            },
+            'theme': {
+                'toolbar-color': '#000000',
+                'navbar-color': '{  primary-color}',
+              }
+        }
+
+        dict_replaced = config.Theme._replace_variables(theme)
+
+        assert dict_replaced == {
+                'toolbar-color': '#000000',
+                'navbar-color': '#3c0f60',
+                }
+
+    def test_spaces_before_closing_bracket(self, mxxn_env):
+        """Spaces before the closing curly bracket."""
+        theme = {
+            'variables': {
+                'primary-color': '#3c0f60'
+            },
+            'theme': {
+                'toolbar-color': '#000000',
+                'navbar-color': '{primary-color  }',
+              }
+        }
+
+        dict_replaced = config.Theme._replace_variables(theme)
+
+        assert dict_replaced == {
+                'toolbar-color': '#000000',
+                'navbar-color': '#3c0f60',
+                }
+
+    def test_incorrect_variable_name(self, mxxn_env):
+        """A incorrect variable name."""
+        theme = {
+            'variables': {
+                'primary-color': '#3c0f60'
+            },
+            'theme': {
+                'toolbar-color': '#000000',
+                'navbar-color': '{primary -color}',
+              }
+        }
+
+        dict_replaced = config.Theme._replace_variables(theme)
+
+        print(dict_replaced)
+
+        assert dict_replaced == {
+                'toolbar-color': '#000000',
+                'navbar-color': '{primary -color}'
+                }

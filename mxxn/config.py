@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import List
 import json
+import re
 from mxxn.exceptions import config as config_ex
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import env as env_ex
@@ -222,8 +223,33 @@ class Theme(dict):
         #     pass
 
     @staticmethod
-    def _file_as_dict():
-        pass
+    def _replace_variables(theme_dict: dict) -> dict:
+        """
+        Replace the placeholders with the values of the variables.
+
+        Args:
+            theme_dict: The data dictionary for the config file.
+
+        Returns:
+            The theme dictionary with replaced variables.
+        """
+        theme_dict_replaced = theme_dict['theme']
+        variables = theme_dict['variables']
+
+        for key, value in theme_dict_replaced.items():
+            result = re.findall(r'^{\s*[a-zA-Z0-9-]+\s*}$', value)
+
+            if result and len(result) == 1:
+                variable = result[0]
+                variable = variable.replace(' ', '')
+                variable = variable[1:-1]
+
+                if variable in variables:
+                    theme_dict_replaced[key] = value.replace(
+                            result[0], variables[variable])
+
+        return theme_dict_replaced
+
     # def dict(self, name: str) -> dict:
     #     """
     #     Get the config dictionary from the directory.

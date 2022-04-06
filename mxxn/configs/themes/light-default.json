@@ -1,6 +1,12 @@
 {
-    "toolBar": {
-        "backgroundColor": "#00ff00",
-        "shadowColor": "#ff0000"
-    }
+  "variables::": {
+    "primary-color": "#3c0f60"
+  },
+  "theme": {
+    "toolbar-background-color": "#ffffff",
+    "toolbar-shadow-color": "#000000",
+    "navbar-background-color": "variables::primary-color",
+    "navbar-shadow-color": "#000000",
+    "icon-color": "#0000ff"
+  }
 }

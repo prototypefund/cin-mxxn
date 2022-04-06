@@ -168,7 +168,8 @@ from typing import TypedDict
 from typing_extensions import NotRequired
 from pathlib import Path
 from falcon import Request, Response
-from mxxn.resources import Root, App, Themes
+from mxxn.resources import Root, App
+from mxxn.resources.themes import Themes
 from mxxn.settings import Settings
 from mxxn.env import MxnApp, Mxn
 from mxxn.exceptions.env import MxnAppNotExistError

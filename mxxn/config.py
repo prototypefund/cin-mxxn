@@ -12,7 +12,7 @@ from mxxn.settings import Settings
 from mxxn.logging import logger
 
 
-class ConfigsDir:
+class Base:
     """
     This class abstracts a configuration directory.
 
@@ -20,15 +20,14 @@ class ConfigsDir:
     different setups (for example, for themes or strings). The respective
     configuration file can be selected and its content returned as a
     dictionary. Each configuration folder must contain a default
-    configuration file. This file will be used as a base and will be
-    overwritten with the contents of the selected file. Only JSON files
-    are allowed in a configuration directory. In addition, the folder
-    must contain a file with the extension "-default.json".
+    configuration file. Only JSON files are allowed in a configuration
+    directory. In addition, the folder must contain a file with the
+    extension "-default.json".
     """
 
     def __init__(self, path: Path) -> None:
         """
-        Initialize the ConfigDir object.
+        Initialize the Base instance.
 
         The constructor checks whether the path to the configuration files
         exists, if there are only JSON files in it, and if there is a
@@ -295,3 +294,17 @@ class Theme(dict):
     #         dicts.merge(default_config_data, config_data)
     #
     #     return default_config_data
+
+    # """
+    # This class abstracts a configuration directory.
+    #
+    # A configuration directory is a directory containing JSON files for
+    # different setups (for example, for themes or strings). The respective
+    # configuration file can be selected and its content returned as a
+    # dictionary. Each configuration folder must contain a default
+    # configuration file. This file will be used as a base and will be
+    # overwritten with the contents of the selected file. Only JSON files
+    # are allowed in a configuration directory. In addition, the folder
+    # must contain a file with the extension "-default.json".
+    # """
+    #

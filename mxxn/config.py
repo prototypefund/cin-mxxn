@@ -5,10 +5,10 @@ import json
 import re
 from mxxn.exceptions import config as config_ex
 from mxxn.exceptions import filesys as filesys_ex
-from mxxn.exceptions import env as env_ex
+# from mxxn.exceptions import env as env_ex
 from mxxn.utils import dicts
-from mxxn import env
-from mxxn.settings import Settings
+# from mxxn import env
+# from mxxn.settings import Settings
 # from mxxn.logging import logger
 
 
@@ -20,9 +20,26 @@ class Base:
     different setups (for example, for themes or strings). The respective
     configuration file can be selected and its content returned as a
     dictionary. Each configuration folder must contain a default
-    configuration file. Only JSON files are allowed in a configuration
-    directory. In addition, the folder must contain a file with the
-    extension "-default.json".
+    configuration file. This file will be used as a base and will be
+    overwritten with the contents of the selected file. Only JSON files
+    are allowed in a configuration directory. In addition, the folder
+    must contain a file with the extension "-default.json".
+
+    Configuration files have the following format. The variables are
+    replaced by their value when read in.
+
+    .. code:: javascript
+
+        {
+            'variables': {
+                'primary.color': '#3c0f60'
+            },
+            'theme': {
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
+              }
+        }
+
     """
 
     def __init__(self, path: Path) -> None:
@@ -88,7 +105,7 @@ class Base:
     @property
     def files(self) -> List[Path]:
         """
-        Get the names of the files in the directory.
+        Get the config files of the directory.
 
         Returns:
             list: A list of files in the directory.

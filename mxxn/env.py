@@ -40,7 +40,7 @@ import re
 from pathlib import Path
 from mxxn.exceptions import env as env_ex
 from mxxn.settings import Settings
-from mxxn.config import Base
+from mxxn import config
 
 
 def is_develop() -> bool:
@@ -229,20 +229,20 @@ class Base():
 
         return None
 
-    @property
-    def default_theme(self) -> Optional[str]:
-        """
-        Get the default theme.
-
-        Returns:
-            The name of the default theme.
-        """
-        if self.themes_path:
-            themes_dir = Base(self.themes_path)
-
-            return themes_dir.default
-
-        return None
+    # @property
+    # def default_theme(self) -> Optional[str]:
+    #     """
+    #     Get the default theme.
+    #
+    #     Returns:
+    #         The name of the default theme.
+    #     """
+    #     if self.themes_path:
+    #         themes_dir = config.Base(self.themes_path)
+    #
+    #         return themes_dir.default
+    #
+    #     return None
 
     @property
     def routes(self) -> Optional[TypeRoutes]:
@@ -355,9 +355,7 @@ class Base():
             Returns the theme dictionary if it exists, otherwise returns None.
         """
         if self.themes_path:
-            themes_dir = Base(self.themes_path)
-
-            return themes_dir.dict(name)
+            return config.Theme(self.themes_path)
 
         return None
 
@@ -378,8 +376,7 @@ class Mxxn(Base):
     def theme_list(self) -> Optional[List[str]]:
         """Get a list of available themes."""
         if self.themes_path:
-            themes_dir = Base(self.themes_path)
-
+            themes_dir = config.Base(self.themes_path)
             return themes_dir.names
 
         return None

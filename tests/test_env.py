@@ -1,12 +1,12 @@
 """This module contains tests for the env module."""
 import inspect
 import pytest
-import json
 from pathlib import Path
 from unittest.mock import Mock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
 from mxxn.settings import Settings
+from mxxn import config
 
 
 class TestIsDevelop():
@@ -168,52 +168,15 @@ class TestBaseThemesPath():
         assert pkg.themes_path == themes_path
 
 
-class TestBaseDefaultThemes():
-    """Tests for the default_theme property of the Base class."""
-
-    def test_default_returned(self):
-        """The default theme returned."""
-        pkg = env.Base('mxxn')
-
-        assert pkg.default_theme == 'light'
-
-
 class TestBaseTheme():
     """Tests for the theme property of the Base class."""
 
-    def test_default_theme(self, mxxn_env):
-        """Default theme returned."""
-        themes_path = mxxn_env/'mxnone/configs/themes'
-        themes_path.mkdir(parents=True)
+    def test_theme_class_returned(self):
+        """A Theme class is returned."""
 
-        with open(
-                mxxn_env/'mxnone/configs/themes/light-default.json', 'w') as f:
-            json.dump({'backgroundColor': '#ff0000'}, f)
+        pkg = env.Base('mxxn')
 
-        pkg = env.Base('mxnone')
-
-        assert pkg.theme('light') == {'backgroundColor': '#ff0000'}
-
-    def test_dark_theme(self, mxxn_env):
-        """Is the dark theme."""
-        themes_path = mxxn_env/'mxnone/configs/themes'
-        themes_path.mkdir(parents=True)
-
-        with open(
-                mxxn_env/'mxnone/configs/themes/light-default.json', 'w') as f:
-            json.dump({
-                'backgroundColor': '#ff0000',
-                'shadowColor': '#0000ff'}, f)
-
-        with open(
-                mxxn_env/'mxnone/configs/themes/dark.json', 'w') as f:
-            json.dump({
-                'backgroundColor': '#0000ff'}, f)
-        pkg = env.Base('mxnone')
-
-        assert pkg.theme('dark') == {
-                'backgroundColor': '#0000ff',
-                'shadowColor': '#0000ff'}
+        assert isinstance(pkg.theme('light'), config.Theme)
 
 
 class TestBaseStringsPath():

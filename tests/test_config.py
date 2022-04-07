@@ -271,69 +271,36 @@ class TestBaseReplaceVariables():
                 }
 
 
-# class TestThemeDict():
-#     """Tests for the dict method of the Theme class."""
-#
-#     def test_1tmp(self, mxxn_env):
-#         theme = {
-#             'variables': {
-#                 'primary-color': '#3c0f60'
-#             },
-#             'theme': {
-#                 'toolbar-color': '#000000',
-#                 'navbar-color': '{primary-color}',
-#               }
-#         }
-#
-#         mxnone_themes_dir = mxxn_env/'mxnone/config'
-#         mxnone_themes_dir.mkdir()
-#
-#         with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
-#             json.dump(theme, f)
-#
-#         theme = config.Theme(mxnone_themes_dir)
-#
-#         assert theme.dict('en') == {
-#                 'toolbar-color': '#000000',
-#                 'navbar-color': '#3c0f60'
-#                 }
-#
-#     def test_tmp(self, mxxn_env):
-#         default_theme = {
-#             'variables': {
-#                 'primary-color': '#3c0f60'
-#             },
-#             'theme': {
-#                 'toolbar-color': '#000000',
-#                 'navbar-color': '{primary-color}',
-#               }
-#         }
-#
-#         theme = {
-#             'variables': {
-#                 'primary-color': '#ffffff'
-#             },
-#             'theme': {
-#                 'navbar-color': '{primary-color}',
-#               }
-#         }
-#
-#         mxnone_themes_dir = mxxn_env/'mxnone/config'
-#         mxnone_themes_dir.mkdir()
-#
-#         with open(mxxn_env/'mxnone/config/light-default.json', 'w') as f:
-#             json.dump(default_theme, f)
-#
-#         with open(mxxn_env/'mxnone/config/dark.json', 'w') as f:
-#             json.dump(theme, f)
-#
-#         theme_merged = config.Theme(mxnone_themes_dir).dict('dark')
-#
-#         assert theme_merged == {
-#                 'toolbar-color': '#000000',
-#                 'navbar-color': '#ffffff'
-#                 }
-#
+class TestThemeDict():
+    """Tests for the dict method of the Theme class."""
+
+    def test_dots_replaced(self, mxxn_env):
+        """All dots in variable names were replaced."""
+        theme = {
+            'variables': {
+                'primary.color': '#3c0f60'
+            },
+            'theme': {
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
+              }
+        }
+
+        mxnone_themes_dir = mxxn_env/'mxnone/config'
+        mxnone_themes_dir.mkdir()
+
+        with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
+            json.dump(theme, f)
+
+        theme = Theme(mxnone_themes_dir)
+
+        print(theme.dict('en'))
+
+        assert theme.dict('en') == {
+                'toolbar-color': '#000000',
+                'navbar-color': '#3c0f60'
+                }
+
 
 # class TestThemeInit():
 #     """Tests for the initialization of the Theme class."""

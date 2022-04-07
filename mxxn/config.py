@@ -140,25 +140,35 @@ class Base:
                 If the file does not contain correct JSON data.
 
         """
-        if name in self._names:
-            if name == self._default:
-                file_name = self._path/f'{name}-default.json'
-            else:
-                file_name = self._path/f'{name}.json'
+        try:
+            theme = None
 
-            try:
+            if name in self.names:
+                file_name = self._path/f'{self.default}-default.json'
+
                 with open(file_name, 'r') as f:
                     data = json.load(f)
 
-                    return data
+                default_theme = self._replace_variables(data)
 
-            except json.decoder.JSONDecodeError:
-                message = 'The file "{}" does not contain a ' \
-                    'regular JSON format.'.format(file_name)
+                if name != self.default:
+                    file_name = self._path/f'{name}.json'
 
-                raise filesys_ex.FileFormatError(message)
+                    with open(file_name, 'r') as f:
+                        data = json.load(f)
 
-        raise ValueError('Config name {name} does not exist.')
+                    theme = self._replace_variables(data)
+                    dicts.merge(default_theme, theme)
+
+                return default_theme
+
+        except json.decoder.JSONDecodeError:
+            message = 'The file "{}" does not contain a ' \
+                'regular JSON format.'.format(file_name)
+
+            raise filesys_ex.FileFormatError(message)
+
+        raise ValueError(f'Config name {name} does not exist.')
 
     @staticmethod
     def _replace_variables(theme_dict: dict) -> dict:
@@ -191,18 +201,20 @@ class Base:
 
 class Theme(Base):
     """The Theme dictionary of the framework."""
-    def dict(self, name: str) -> dict:
-        theme = None
 
-        if name in self.names:
-            default_theme = self._replace_variables(super().dict(self.default))
-
-            if name != self.default:
-                theme = self._replace_variables(super().dict(name))
-                dicts.merge(default_theme, theme)
-
-            return default_theme
-
+    pass
+    # def dict(self, name: str) -> dict:
+    #     theme = None
+    #
+    #     if name in self.names:
+    #         default_theme = self._replace_variables(super().dict(self.default))
+    #
+    #         if name != self.default:
+    #             theme = self._replace_variables(super().dict(name))
+    #             dicts.merge(default_theme, theme)
+    #
+    #         return default_theme
+    #
 
     # def __init__(self, name: str, settings: Settings) -> None:
     #     """

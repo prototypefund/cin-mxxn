@@ -185,7 +185,7 @@ class Base:
         variables = theme_dict['variables']
 
         for key, value in theme_dict_replaced.items():
-            result = re.findall(r'^{\s*[a-zA-Z0-9-]+\s*}$', value)
+            result = re.findall(r'^{\s*[a-zA-Z0-9.]+\s*}$', value)
 
             if result and len(result) == 1:
                 variable = result[0]

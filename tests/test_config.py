@@ -132,11 +132,11 @@ class TestBaseDict:
         """It is the default name."""
         default_config = {
             'variables': {
-                'primary-color': '#3c0f60'
+                'primary.color': '#3c0f60'
             },
             'theme': {
-                'toolbar-color': '#000000',
-                'navbar-color': '{primary-color}',
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
               }
         }
 
@@ -149,28 +149,28 @@ class TestBaseDict:
         config = Base(mxnone_config)
 
         assert config.dict('en') == {
-                'toolbar-color': '#000000',
-                'navbar-color': '#3c0f60'
+                'toolbar.color': '#000000',
+                'navbar.color': '#3c0f60'
                 }
 
     def test_not_default_name(self, mxxn_env):
         """It is not the defaul name."""
         default_config = {
             'variables': {
-                'primary-color': '#3c0f60'
+                'primary.color': '#3c0f60'
             },
             'theme': {
-                'toolbar-color': '#000000',
-                'navbar-color': '{primary-color}',
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
               }
         }
 
         config = {
             'variables': {
-                'primary-color': '#ffffff'
+                'primary.color': '#ffffff'
             },
             'theme': {
-                'navbar-color': '{primary-color}',
+                'navbar.color': '{primary.color}',
               }
         }
 
@@ -186,8 +186,8 @@ class TestBaseDict:
         merged_config = Base(mxnone_config).dict('dark')
 
         assert merged_config == {
-                'toolbar-color': '#000000',
-                'navbar-color': '#ffffff'
+                'toolbar.color': '#000000',
+                'navbar.color': '#ffffff'
                 }
 
 
@@ -198,76 +198,76 @@ class TestBaseReplaceVariables():
         """All variables were replaced."""
         config = {
             'variables': {
-                'primary-color': '#3c0f60'
+                'primary.color': '#3c0f60'
             },
             'theme': {
-                'toolbar-color': '#000000',
-                'navbar-color': '{primary-color}',
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
               }
         }
 
         replaced_dict = Base._replace_variables(config)
 
         assert replaced_dict == {
-                'toolbar-color': '#000000',
-                'navbar-color': '#3c0f60',
+                'toolbar.color': '#000000',
+                'navbar.color': '#3c0f60',
                 }
 
     def test_spaces_after_opening_bracket(self, mxxn_env):
         """Spaces after the opening curly bracket."""
         config = {
             'variables': {
-                'primary-color': '#3c0f60'
+                'primary.color': '#3c0f60'
             },
             'theme': {
-                'toolbar-color': '#000000',
-                'navbar-color': '{  primary-color}',
+                'toolbar.color': '#000000',
+                'navbar.color': '{  primary.color}',
               }
         }
 
         replaced_dict = Base._replace_variables(config)
 
         assert replaced_dict == {
-                'toolbar-color': '#000000',
-                'navbar-color': '#3c0f60',
+                'toolbar.color': '#000000',
+                'navbar.color': '#3c0f60',
                 }
 
     def test_spaces_before_closing_bracket(self, mxxn_env):
         """Spaces before the closing curly bracket."""
         config = {
             'variables': {
-                'primary-color': '#3c0f60'
+                'primary.color': '#3c0f60'
             },
             'theme': {
-                'toolbar-color': '#000000',
-                'navbar-color': '{primary-color  }',
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color  }',
               }
         }
 
         replaced_dict = Base._replace_variables(config)
 
         assert replaced_dict == {
-                'toolbar-color': '#000000',
-                'navbar-color': '#3c0f60',
+                'toolbar.color': '#000000',
+                'navbar.color': '#3c0f60',
                 }
 
     def test_incorrect_variable_name(self, mxxn_env):
         """A incorrect variable name."""
         config = {
             'variables': {
-                'primary-color': '#3c0f60'
+                'primary.color': '#3c0f60'
             },
             'theme': {
-                'toolbar-color': '#000000',
-                'navbar-color': '{primary -color}',
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary .color}',
               }
         }
 
         replaced_dict = Base._replace_variables(config)
 
         assert replaced_dict == {
-                'toolbar-color': '#000000',
-                'navbar-color': '{primary -color}'
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary .color}'
                 }
 
 

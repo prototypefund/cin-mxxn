@@ -1,12 +1,9 @@
 """Tests for the config module."""
 import pytest
-from unittest.mock import Mock
 import json
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
 from mxxn.config import Base, Theme
-from mxxn import env
-from mxxn.settings import Settings
 
 
 class TestBaseInit():

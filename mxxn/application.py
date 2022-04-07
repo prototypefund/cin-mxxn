@@ -6,9 +6,78 @@ from mxxn.routes import StaticRoutesMiddleware
 from mxxn.logging import logger
 from mxxn.env import Mxxn, mxns, Mxn, MxnApp, TypeRoutes
 from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import config as config_ex
 from mxxn.exceptions import capture_errors
 from mxxn.exceptions import routing as routing_ex
 from mxxn.database import Database
+
+
+def theme(name: str, settings: Settings) -> None:
+    """
+    Get the theme dict of the application.
+
+    The application's theme dictionary has the following format.
+
+    .. code:: javascript
+        {
+            'mxxn': {
+                <Mxxn package theme variables>
+            },
+            'mxns': {
+                'one': {
+                    <Mxn two package theme variables>
+                },
+                'two': {
+                    <Mxn two package theme variables>
+                }
+            },
+            'mxnapp': {
+                <MxnApp package theme variables>
+            }
+
+    Args:
+        name: The name of the theme.
+        settings: The settings object of the application.
+    """
+    theme_dict = {}
+    mxxn_pkg = Mxxn()
+    mxxn_theme = mxxn_pkg.theme
+    theme_dict['mxxn'] = mxxn_theme.dict(name)
+
+    mxn_names = mxns(settings)
+
+    if mxn_names:
+        theme_dict['mxns'] = {}
+
+        for mxn_name in mxn_names:
+            mxn_pkg = Mxn(mxn_name)
+            mxn_theme = mxn_pkg.theme
+
+            if mxn_theme:
+                if mxn_theme.default != mxxn_theme.default:
+                    raise config_ex.NotSameDefaults(
+                        'Package {} has not the same default theme a mxxn.'
+                        .format(mxn_pkg.name))
+
+                theme_dict['mxns'][mxn_name] = mxn_theme.dict(name)
+
+    try:
+        theme_dict['mxnapp'] = {}
+        mxnapp_pkg = MxnApp()
+        mxnapp_theme = mxnapp_pkg.theme
+
+        if mxnapp_theme:
+            if mxnapp_theme.default != mxnapp_theme.default:
+                raise config_ex.NotSameDefaults(
+                    'Package {} has not the same default theme a mxxn.'
+                    .format(mxnapp_pkg.name))
+
+            theme_dict['mxnapp'] = mxnapp_theme.dict(name)
+
+    except env_ex.MxnAppNotExistError:
+        pass
+
+    return theme_dict
 
 
 class App(object):

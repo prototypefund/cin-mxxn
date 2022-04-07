@@ -1,11 +1,11 @@
 {
-  "variables::": {
+  "variables": {
   },
   "theme": {
-    "toolbar-background-color": "#999999",
-    "toolbar-shadow-color": "#000000",
-    "navbar-background-color": "#3c0f60",
-    "navbar-shadow-color": "#000000",
-    "icon-color": "#0000ff"
+    "toolbar.background.color": "#999999",
+    "toolbar.shadow.color": "#000000",
+    "navbar.background.color": "#3c0f60",
+    "navbar.shadow.color": "#000000",
+    "icon.color": "#0000ff"
   }
 }

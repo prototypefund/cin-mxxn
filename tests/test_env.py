@@ -176,7 +176,7 @@ class TestBaseTheme():
 
         pkg = env.Base('mxxn')
 
-        assert isinstance(pkg.theme('light'), config.Theme)
+        assert isinstance(pkg.theme, config.Theme)
 
 
 class TestBaseStringsPath():

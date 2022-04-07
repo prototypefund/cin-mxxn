@@ -344,15 +344,14 @@ class Base():
 
         return []
 
-    def theme(self, name: str) -> Optional[dict]:
+    @property
+    def theme(self) -> Optional[dict]:
         """
-        Get the theme dictionary.
-
-        Args:
-            name: The name of the theme.
+        Get an instance of the Theme config for this package.
 
         Returns:
-            Returns the theme dictionary if it exists, otherwise returns None.
+            Returns instance of Theme config class if it exists,
+                otherwise returns None.
         """
         if self.themes_path:
             return config.Theme(self.themes_path)

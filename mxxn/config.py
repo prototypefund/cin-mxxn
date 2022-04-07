@@ -9,7 +9,7 @@ from mxxn.exceptions import env as env_ex
 from mxxn.utils import dicts
 from mxxn import env
 from mxxn.settings import Settings
-from mxxn.logging import logger
+# from mxxn.logging import logger
 
 
 class Base:
@@ -144,7 +144,7 @@ class Base:
             if name == self._default:
                 file_name = self._path/f'{name}-default.json'
             else:
-                file_name = self._path/name
+                file_name = self._path/f'{name}.json'
 
             try:
                 with open(file_name, 'r') as f:
@@ -160,23 +160,63 @@ class Base:
 
         raise ValueError('Config name {name} does not exist.')
 
-
-class Theme(dict):
-    """The Theme dictionary of the framework."""
-
-    def __init__(self, name: str, settings: Settings) -> None:
+    @staticmethod
+    def _replace_variables(theme_dict: dict) -> dict:
         """
-        Initialize the Themes object.
+        Replace the placeholders with the values of the variables.
 
         Args:
-            name: The name of the theme.
-            settings: The settings object of the application.
-        """
-        log = logger('registration')
-        mxxn_pkg = env.Mxxn()
-        default_theme = mxxn_pkg.default_theme
-        self['mxxn'] = mxxn_pkg.theme(name)
+            theme_dict: The data dictionary for the config file.
 
+        Returns:
+            The theme dictionary with replaced variables.
+        """
+        theme_dict_replaced = theme_dict['theme']
+        variables = theme_dict['variables']
+
+        for key, value in theme_dict_replaced.items():
+            result = re.findall(r'^{\s*[a-zA-Z0-9-]+\s*}$', value)
+
+            if result and len(result) == 1:
+                variable = result[0]
+                variable = variable.replace(' ', '')
+                variable = variable[1:-1]
+
+                if variable in variables:
+                    theme_dict_replaced[key] = value.replace(
+                            result[0], variables[variable])
+
+        return theme_dict_replaced
+
+
+class Theme(Base):
+    """The Theme dictionary of the framework."""
+    def dict(self, name: str) -> dict:
+        theme = None
+
+        if name in self.names:
+            default_theme = self._replace_variables(super().dict(self.default))
+
+            if name != self.default:
+                theme = self._replace_variables(super().dict(name))
+                dicts.merge(default_theme, theme)
+
+            return default_theme
+
+
+    # def __init__(self, name: str, settings: Settings) -> None:
+    #     """
+    #     Initialize the Themes object.
+    #
+    #     Args:
+    #         name: The name of the theme.
+    #         settings: The settings object of the application.
+    #     """
+    #     log = logger('registration')
+    #     mxxn_pkg = env.Mxxn()
+    #     default_theme = mxxn_pkg.default_theme
+    #     self['mxxn'] = mxxn_pkg.theme(name)
+    #
         # mxn_names = env.mxns(settings)
         #
         # log.debug('The theme of package mxxn was registered.')
@@ -220,34 +260,6 @@ class Theme(dict):
         #
         # except env_ex.MxnAppNotExistError:
         #     pass
-
-    @staticmethod
-    def _replace_variables(theme_dict: dict) -> dict:
-        """
-        Replace the placeholders with the values of the variables.
-
-        Args:
-            theme_dict: The data dictionary for the config file.
-
-        Returns:
-            The theme dictionary with replaced variables.
-        """
-        theme_dict_replaced = theme_dict['theme']
-        variables = theme_dict['variables']
-
-        for key, value in theme_dict_replaced.items():
-            result = re.findall(r'^{\s*[a-zA-Z0-9-]+\s*}$', value)
-
-            if result and len(result) == 1:
-                variable = result[0]
-                variable = variable.replace(' ', '')
-                variable = variable[1:-1]
-
-                if variable in variables:
-                    theme_dict_replaced[key] = value.replace(
-                            result[0], variables[variable])
-
-        return theme_dict_replaced
 
     # def dict(self, name: str) -> dict:
     #     """

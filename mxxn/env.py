@@ -339,7 +339,7 @@ class Base():
                 otherwise returns None.
         """
         if self.themes_path:
-            return config.Base(self.themes_path)
+            return config.Config(self.themes_path)
 
         return None
 
@@ -360,7 +360,7 @@ class Mxxn(Base):
     def theme_list(self) -> Optional[List[str]]:
         """Get a list of available themes."""
         if self.themes_path:
-            themes_dir = config.Base(self.themes_path)
+            themes_dir = config.Config(self.themes_path)
             return themes_dir.names
 
         return None

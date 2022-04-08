@@ -3,16 +3,16 @@ import pytest
 import json
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
-from mxxn.config import Base
+from mxxn.config import Config
 
 
-class TestBaseInit():
-    """Test for the initialization of Base class instance."""
+class TestConfigInit():
+    """Test for the initialization of Config class instance."""
 
     def test_path_not_exist(self, mxxn_env):
         """Is PathNotExistError raised if path not exist."""
         with pytest.raises(filesys_ex.PathNotExistError):
-            Base(mxxn_env/'mxnone/xxxyyyzzz')
+            Config(mxxn_env/'mxnone/xxxyyyzzz')
 
     def test_non_json_extension(self, mxxn_env):
         """Is ExtensionError raised."""
@@ -23,7 +23,7 @@ class TestBaseInit():
         (mxnone_config/'fake.txt').touch()
 
         with pytest.raises(filesys_ex.ExtensionError):
-            Base(mxnone_config)
+            Config(mxnone_config)
 
     def test_too_many_defaults(self, mxxn_env):
         """Is TooManyDefaultConfigsError raised."""
@@ -34,7 +34,7 @@ class TestBaseInit():
         (mxnone_config/'de-default.json').touch()
 
         with pytest.raises(config_ex.TooManyDefaultConfigsError):
-            Base(mxnone_config)
+            Config(mxnone_config)
 
     def test_no_default(self, mxxn_env):
         """Test if NoDefaultConfigError is raised."""
@@ -44,11 +44,11 @@ class TestBaseInit():
         (mxnone_config/'en.json').touch()
 
         with pytest.raises(config_ex.NoDefaultConfigError):
-            Base(mxnone_config)
+            Config(mxnone_config)
 
 
-class TestBaseFiles():
-    """Tests for the files method of Base class."""
+class TestConfigFiles():
+    """Tests for the files method of Config class."""
 
     def test_files_returned(self, mxxn_env):
         """Are the filenames returned."""
@@ -59,13 +59,13 @@ class TestBaseFiles():
         en_file = mxnone_config/'en-default.json'
         en_file.touch()
 
-        config = Base(mxnone_config)
+        config = Config(mxnone_config)
 
         assert config.files == [en_file, de_file]
 
 
-class TestBaseNames():
-    """Test for the names method of Base class."""
+class TestConfigNames():
+    """Test for the names method of Config class."""
 
     def test_names_returned(self, mxxn_env):
         """Are the names returned."""
@@ -74,13 +74,13 @@ class TestBaseNames():
         (mxnone_config/'de-DE.json').touch()
         (mxnone_config/'en-default.json').touch()
 
-        config = Base(mxnone_config)
+        config = Config(mxnone_config)
 
         assert config.names == ['en', 'de-DE']
 
 
-class TestBaseDefault():
-    """Test for the default method of Base class."""
+class TestConfigDefault():
+    """Test for the default method of Config class."""
 
     def test_default_returned(self, mxxn_env):
         """Is the default name returned."""
@@ -89,13 +89,13 @@ class TestBaseDefault():
         (mxnone_config/'de-DE.json').touch()
         (mxnone_config/'en-default.json').touch()
 
-        config = Base(mxnone_config)
+        config = Config(mxnone_config)
 
         assert config.default == 'en'
 
 
-class TestBaseDict:
-    """Test for the dict method of the Base class."""
+class TestConfigDict:
+    """Test for the dict method of the Config class."""
 
     def test_not_a_json_file(self, mxxn_env):
         """One file does not contain correct JSON data."""
@@ -104,7 +104,7 @@ class TestBaseDict:
         (mxnone_config/'de-DE.json').touch()
         (mxnone_config/'en-default.json').touch()
 
-        config = Base(mxnone_config)
+        config = Config(mxnone_config)
 
         with pytest.raises(filesys_ex.FileFormatError):
             config.dict('en')
@@ -120,7 +120,7 @@ class TestBaseDict:
         with open(mxxn_env/'mxnone/config/de.json', 'w') as f:
             json.dump({}, f)
 
-        config = Base(mxnone_config)
+        config = Config(mxnone_config)
 
         with pytest.raises(ValueError):
             config.dict('uk')
@@ -143,7 +143,7 @@ class TestBaseDict:
         with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
             json.dump(default_config, f)
 
-        config = Base(mxnone_config)
+        config = Config(mxnone_config)
 
         assert config.dict('en') == {
                 'toolbar.color': '#000000',
@@ -180,7 +180,7 @@ class TestBaseDict:
         with open(mxxn_env/'mxnone/config/dark.json', 'w') as f:
             json.dump(config, f)
 
-        merged_config = Base(mxnone_config).dict('dark')
+        merged_config = Config(mxnone_config).dict('dark')
 
         assert merged_config == {
                 'toolbar.color': '#000000',
@@ -188,8 +188,8 @@ class TestBaseDict:
                 }
 
 
-class TestBaseValidateVariables():
-    """Tests for the _validate_variables function of the Base class."""
+class TestConfigValidateVariables():
+    """Tests for the _validate_variables function of the Config class."""
 
     def test_all_variables_correct(self):
         """All variables are in the correct format."""
@@ -203,7 +203,7 @@ class TestBaseValidateVariables():
               }
         }
 
-        Base._validate_variables(config)
+        Config._validate_variables(config)
 
     def test_incorrect_format_in_variables(self):
         """A incorrect formated variable in variables section."""
@@ -218,7 +218,7 @@ class TestBaseValidateVariables():
         }
 
         with pytest.raises(config_ex.ConfigsError):
-            Base._validate_variables(config)
+            Config._validate_variables(config)
 
     def test_incorrect_format_in_data(self):
         """A incorrect formated variable in data section."""
@@ -233,7 +233,7 @@ class TestBaseValidateVariables():
         }
 
         with pytest.raises(config_ex.ConfigsError):
-            Base._validate_variables(config)
+            Config._validate_variables(config)
 
     def test_not_allows_root_section(self):
         """A key other than variable or data in the root."""
@@ -245,7 +245,7 @@ class TestBaseValidateVariables():
         }
 
         with pytest.raises(config_ex.ConfigsError):
-            Base._validate_variables(config)
+            Config._validate_variables(config)
 
     def test_no_variables_key(self):
         """No variables key in the root."""
@@ -255,7 +255,7 @@ class TestBaseValidateVariables():
         }
 
         with pytest.raises(config_ex.ConfigsError):
-            Base._validate_variables(config)
+            Config._validate_variables(config)
 
     def test_no_data_key(self):
         """No data key in the root."""
@@ -265,11 +265,11 @@ class TestBaseValidateVariables():
         }
 
         with pytest.raises(config_ex.ConfigsError):
-            Base._validate_variables(config)
+            Config._validate_variables(config)
 
 
-class TestBaseReplaceVariables():
-    """Tests for the _replace_variables function of the Base class."""
+class TestConfigReplaceVariables():
+    """Tests for the _replace_variables function of the Config class."""
 
     def test_variable_replaced(self, mxxn_env):
         """All variables were replaced."""
@@ -283,7 +283,7 @@ class TestBaseReplaceVariables():
               }
         }
 
-        replaced_dict = Base._replace_variables(config)
+        replaced_dict = Config._replace_variables(config)
 
         assert replaced_dict == {
                 'toolbar.color': '#000000',
@@ -302,7 +302,7 @@ class TestBaseReplaceVariables():
               }
         }
 
-        replaced_dict = Base._replace_variables(config)
+        replaced_dict = Config._replace_variables(config)
 
         assert replaced_dict == {
                 'toolbar.color': '#000000',
@@ -321,7 +321,7 @@ class TestBaseReplaceVariables():
               }
         }
 
-        replaced_dict = Base._replace_variables(config)
+        replaced_dict = Config._replace_variables(config)
 
         assert replaced_dict == {
                 'toolbar.color': '#000000',
@@ -340,7 +340,7 @@ class TestBaseReplaceVariables():
               }
         }
 
-        replaced_dict = Base._replace_variables(config)
+        replaced_dict = Config._replace_variables(config)
 
         assert replaced_dict == {
                 'toolbar.color': '#000000',
@@ -360,7 +360,7 @@ class TestBaseReplaceVariables():
               }
         }
 
-        replaced_dict = Base._replace_variables(config)
+        replaced_dict = Config._replace_variables(config)
 
         assert replaced_dict == {
                 'toolbar.color': '#000000',

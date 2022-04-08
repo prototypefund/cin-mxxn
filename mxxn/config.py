@@ -12,7 +12,7 @@ from mxxn.utils import dicts
 # from mxxn.logging import logger
 
 
-class Base:
+class Config:
     """
     This class abstracts a configuration directory.
 
@@ -44,7 +44,7 @@ class Base:
 
     def __init__(self, path: Path) -> None:
         """
-        Initialize the Base instance.
+        Initialize the Config instance.
 
         The constructor checks whether the path to the configuration files
         exists, if there are only JSON files in it, and if there is a

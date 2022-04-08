@@ -1,6 +1,6 @@
 """This module provides functionality to work with configuration files."""
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Any
 import json
 import re
 from mxxn.exceptions import config as config_ex
@@ -189,7 +189,7 @@ class Config:
         raise ValueError(f'Config name {name} does not exist.')
 
     @staticmethod
-    def _validate_variables(config_dict: dict) -> None:
+    def _validate_variables(config_dict: Dict[str, Dict[str, dict]]) -> None:
         """
         Validate the variables format.
 
@@ -210,7 +210,7 @@ class Config:
                             f'The variable {key} is not in correct format.')
 
     @staticmethod
-    def _replace_variables(config_dict: dict) -> dict:
+    def _replace_variables(config_dict: Dict[str, dict]) -> dict:
         """
         Replace the placeholders with the values of the variables.
 
@@ -220,8 +220,8 @@ class Config:
         Returns:
             The theme dictionary with replaced variables.
         """
-        config_dict_replaced = config_dict['data']
-        variables = config_dict['variables']
+        config_dict_replaced: dict = config_dict['data']
+        variables: dict = config_dict['variables']
 
         for key, value in config_dict_replaced.items():
             matches = list(re.finditer(
@@ -240,7 +240,7 @@ class Config:
         return config_dict_replaced
 
 
-def theme(name: str, settings: Settings) -> None:
+def theme(name: str, settings: Settings) -> dict:
     """
     Get the theme dict of the application.
 
@@ -270,7 +270,11 @@ def theme(name: str, settings: Settings) -> None:
     theme_dict = {}
     mxxn_pkg = env.Mxxn()
     mxxn_theme = mxxn_pkg.theme
-    theme_dict['mxxn'] = mxxn_theme.dict(name)
+
+    if mxxn_theme:
+        theme_dict['mxxn'] = mxxn_theme.dict(name)
+    else:
+        theme_dict['mxxn'] = {}
 
     mxn_names = env.mxns(settings)
 

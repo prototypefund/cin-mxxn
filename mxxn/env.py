@@ -330,7 +330,7 @@ class Base():
         return []
 
     @property
-    def theme(self) -> Optional[dict]:
+    def theme(self) -> Optional[config.Config]:
         """
         Get an instance of the Theme config for this package.
 

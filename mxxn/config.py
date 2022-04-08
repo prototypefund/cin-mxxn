@@ -191,6 +191,12 @@ class Base:
 
     @staticmethod
     def _validate_variables(config_dict: dict) -> None:
+        """
+        Validate the variables format.
+
+        Args:
+            config_dict: The data dictionary for the config file.
+        """
         for section in ['variables', 'data']:
             if section not in config_dict or len(config_dict) != 2:
                 raise config_ex.ConfigsError(
@@ -205,7 +211,7 @@ class Base:
                             f'The variable {key} is not in correct format.')
 
     @staticmethod
-    def _replace_variables(theme_dict: dict) -> dict:
+    def _replace_variables(config_dict: dict) -> dict:
         """
         Replace the placeholders with the values of the variables.
 
@@ -215,10 +221,10 @@ class Base:
         Returns:
             The theme dictionary with replaced variables.
         """
-        theme_dict_replaced = theme_dict['data']
-        variables = theme_dict['variables']
+        config_dict_replaced = config_dict['data']
+        variables = config_dict['variables']
 
-        for key, value in theme_dict_replaced.items():
+        for key, value in config_dict_replaced.items():
             result = re.findall(r'^{\s*[a-zA-Z0-9.]+\s*}$', value)
 
             if result and len(result) == 1:
@@ -227,10 +233,10 @@ class Base:
                 variable = variable[1:-1]
 
                 if variable in variables:
-                    theme_dict_replaced[key] = value.replace(
+                    config_dict_replaced[key] = value.replace(
                             result[0], variables[variable])
 
-        return theme_dict_replaced
+        return config_dict_replaced
 
 
 class Theme(Base):

@@ -171,12 +171,12 @@ class TestBaseThemesPath():
 class TestBaseTheme():
     """Tests for the theme property of the Base class."""
 
-    def test_theme_class_returned(self):
-        """A Theme class is returned."""
+    def test_config_class_returned(self):
+        """A config class is returned."""
 
         pkg = env.Base('mxxn')
 
-        assert isinstance(pkg.theme, config.Theme)
+        assert isinstance(pkg.theme, config.Base)
 
 
 class TestBaseStringsPath():

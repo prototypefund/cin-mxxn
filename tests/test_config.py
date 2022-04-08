@@ -3,7 +3,7 @@ import pytest
 import json
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
-from mxxn.config import Base, Theme
+from mxxn.config import Base
 
 
 class TestBaseInit():
@@ -365,35 +365,4 @@ class TestBaseReplaceVariables():
         assert replaced_dict == {
                 'toolbar.color': '#000000',
                 'navbar.color': '#3c0f60 #ff00ff'
-                }
-
-
-class TestThemeDict():
-    """Tests for the dict method of the Theme class."""
-
-    def test_dots_replaced(self, mxxn_env):
-        """All dots in variable names were replaced."""
-        theme = {
-            'variables': {
-                'primary.color': '#3c0f60'
-            },
-            'data': {
-                'toolbar.color': '#000000',
-                'navbar.color': '{primary.color}',
-              }
-        }
-
-        mxnone_themes_dir = mxxn_env/'mxnone/config'
-        mxnone_themes_dir.mkdir()
-
-        with open(mxxn_env/'mxnone/config/en-default.json', 'w') as f:
-            json.dump(theme, f)
-
-        theme = Theme(mxnone_themes_dir)
-
-        print(theme.dict('en'))
-
-        assert theme.dict('en') == {
-                'toolbar-color': '#000000',
-                'navbar-color': '#3c0f60'
                 }

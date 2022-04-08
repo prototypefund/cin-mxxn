@@ -339,7 +339,7 @@ class Base():
                 otherwise returns None.
         """
         if self.themes_path:
-            return config.Theme(self.themes_path)
+            return config.Base(self.themes_path)
 
         return None
 

@@ -239,35 +239,3 @@ class Base:
                 config_dict_replaced[key] = value
 
         return config_dict_replaced
-
-
-class Theme(Base):
-    """This class represents the theme config of a framework package."""
-
-    def dict(self, name: str) -> dict:
-        """
-        Get the theme dictionary of the package.
-
-        In the theme dict, the dots in the variable names are replaced by
-        hyphens. The variables are used in the frontend as CSS variables
-        and this are used with a hyphen.
-
-        Args:
-            name: The name of the theme file without extension
-                and '-default" string.
-
-        Returns:
-            Theme data as dictionary.
-
-        Raises:
-            ValueError: If theme file does not exist.
-            mxxn.exceptions.filesys.FileFormatError:
-                If the file does not contain correct JSON data.
-
-        """
-        theme_dict = super().dict(name)
-
-        replaced_theme_dict = {
-                k.replace('.', '-'): v for k, v in theme_dict.items()}
-
-        return replaced_theme_dict

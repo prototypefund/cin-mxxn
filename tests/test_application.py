@@ -1,114 +1,12 @@
 """This module contains tests for the app module."""
 from inspect import cleandoc
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import falcon
 from falcon.testing import TestClient as Client
-import json
 from mxxn.application import App
 from mxxn import env
 from mxxn.exceptions import routing as routing_ex
-from mxxn.application import theme
-
-
-class TestThemeInit():
-    """Tests for the initialization of the Theme class."""
-
-    def test_all_pkg_themes_added(self, mxxn_env):
-        """The themes of all packages were added."""
-        default_config = {
-            'variables': {
-                'primary.color': '#3c0f60'
-            },
-            'data': {
-                'toolbar.color': '#000000',
-                'navbar.color': '{primary.color}',
-              }
-        }
-
-        config = {
-            'variables': {
-                'primary.color': '#ffffff'
-            },
-            'data': {
-                'navbar.color': '{primary.color}',
-              }
-        }
-
-        mxnone_theme_path = mxxn_env/'mxnone/configs/themes'
-        mxnone_theme_path.mkdir(parents=True)
-        mxntwo_theme_path = mxxn_env/'mxntwo/configs/themes'
-        mxntwo_theme_path.mkdir(parents=True)
-        mxnapp_theme_path = mxxn_env/'mxnapp/configs/themes'
-        mxnapp_theme_path.mkdir(parents=True)
-
-        with open(mxnone_theme_path/'light-default.json', 'w') as f:
-            json.dump(default_config, f)
-
-        with open(mxnone_theme_path/'dark.json', 'w') as f:
-            json.dump(config, f)
-
-        with open(mxntwo_theme_path/'light-default.json', 'w') as f:
-            json.dump(default_config, f)
-
-        with open(mxntwo_theme_path/'dark.json', 'w') as f:
-            json.dump(config, f)
-
-        with open(mxnapp_theme_path/'light-default.json', 'w') as f:
-            json.dump(default_config, f)
-
-        with open(mxnapp_theme_path/'dark.json', 'w') as f:
-            json.dump(config, f)
-
-        settings = Mock()
-        settings.enabled_mxns = ['mxnone', 'mxntwo']
-
-        theme_dict = theme('light', settings)
-
-        assert theme_dict['mxxn']
-        assert theme_dict['mxns']['mxnone']
-        assert theme_dict['mxns']['mxntwo']
-        assert theme_dict['mxnapp']
-
-    def test_only_added_if_theme_exists(self, mxxn_env):
-        """Only added if the theme exists in the package."""
-        default_config = {
-            'variables': {
-                'primary.color': '#3c0f60'
-            },
-            'data': {
-                'toolbar.color': '#000000',
-                'navbar.color': '{primary.color}',
-              }
-        }
-
-        config = {
-            'variables': {
-                'primary.color': '#ffffff'
-            },
-            'data': {
-                'navbar.color': '{primary.color}',
-              }
-        }
-
-        mxnone_theme_path = mxxn_env/'mxnone/configs/themes'
-        mxnone_theme_path.mkdir(parents=True)
-
-        with open(mxnone_theme_path/'light-default.json', 'w') as f:
-            json.dump(default_config, f)
-
-        with open(mxnone_theme_path/'dark.json', 'w') as f:
-            json.dump(config, f)
-
-        settings = Mock()
-        settings.enabled_mxns = ['mxnone', 'mxntwo']
-
-        theme_dict = theme('light', settings)
-
-        assert theme_dict['mxxn']
-        assert theme_dict['mxns']['mxnone']
-        assert 'mxntwo' not in theme_dict['mxns']
-        assert not theme_dict['mxnapp']
 
 
 @pytest.fixture()

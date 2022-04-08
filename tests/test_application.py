@@ -20,7 +20,7 @@ class TestThemeInit():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color}',
               }
@@ -30,7 +30,7 @@ class TestThemeInit():
             'variables': {
                 'primary.color': '#ffffff'
             },
-            'theme': {
+            'data': {
                 'navbar.color': '{primary.color}',
               }
         }
@@ -76,7 +76,7 @@ class TestThemeInit():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color}',
               }
@@ -86,7 +86,7 @@ class TestThemeInit():
             'variables': {
                 'primary.color': '#ffffff'
             },
-            'theme': {
+            'data': {
                 'navbar.color': '{primary.color}',
               }
         }

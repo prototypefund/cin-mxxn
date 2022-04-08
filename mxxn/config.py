@@ -166,6 +166,7 @@ class Base:
                 with open(file_name, 'r') as f:
                     data = json.load(f)
 
+                self._validate_variables(data)
                 default_theme = self._replace_variables(data)
 
                 if name != self.default:
@@ -174,6 +175,7 @@ class Base:
                     with open(file_name, 'r') as f:
                         data = json.load(f)
 
+                    self._validate_variables(data)
                     theme = self._replace_variables(data)
                     dicts.merge(default_theme, theme)
 
@@ -188,6 +190,21 @@ class Base:
         raise ValueError(f'Config name {name} does not exist.')
 
     @staticmethod
+    def _validate_variables(config_dict: dict) -> None:
+        for section in ['variables', 'data']:
+            if section not in config_dict or len(config_dict) != 2:
+                raise config_ex.ConfigsError(
+                        'Only "variables" and "data" root keys allowed and '
+                        'both must exist.')
+
+            for key in config_dict[section].keys():
+                result = re.findall(r'^[a-zA-Z0-9]+([.]?[a-zA-Z0-9]+)+$', key)
+
+                if len(result) != 1:
+                    raise config_ex.ConfigsError(
+                            f'The variable {key} is not in correct format.')
+
+    @staticmethod
     def _replace_variables(theme_dict: dict) -> dict:
         """
         Replace the placeholders with the values of the variables.
@@ -198,7 +215,7 @@ class Base:
         Returns:
             The theme dictionary with replaced variables.
         """
-        theme_dict_replaced = theme_dict['theme']
+        theme_dict_replaced = theme_dict['data']
         variables = theme_dict['variables']
 
         for key, value in theme_dict_replaced.items():

@@ -131,7 +131,7 @@ class TestBaseDict:
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color}',
               }
@@ -156,7 +156,7 @@ class TestBaseDict:
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color}',
               }
@@ -166,7 +166,7 @@ class TestBaseDict:
             'variables': {
                 'primary.color': '#ffffff'
             },
-            'theme': {
+            'data': {
                 'navbar.color': '{primary.color}',
               }
         }
@@ -188,6 +188,86 @@ class TestBaseDict:
                 }
 
 
+class TestBaseValidateVariables():
+    """Tests for the _validate_variables function of the Base class."""
+
+    def test_all_variables_correct(self):
+        """All variables are in the correct format."""
+        config = {
+            'variables': {
+                'primary.color': '#3c0f60'
+            },
+            'data': {
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
+              }
+        }
+
+        Base._validate_variables(config)
+
+    def test_incorrect_format_in_variables(self):
+        """A incorrect formated variable in variables section."""
+        config = {
+            'variables': {
+                'primary-color': '#3c0f60'
+            },
+            'data': {
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color}',
+              }
+        }
+
+        with pytest.raises(config_ex.ConfigsError):
+            Base._validate_variables(config)
+
+    def test_incorrect_format_in_data(self):
+        """A incorrect formated variable in data section."""
+        config = {
+            'variables': {
+                'primary.color': '#3c0f60'
+            },
+            'data': {
+                'toolbar-color': '#000000',
+                'navbar.color': '{primary.color}',
+              }
+        }
+
+        with pytest.raises(config_ex.ConfigsError):
+            Base._validate_variables(config)
+
+    def test_not_allows_root_section(self):
+        """A key other than variable or data in the root."""
+        config = {
+            'test': {
+            },
+            'data': {
+              }
+        }
+
+        with pytest.raises(config_ex.ConfigsError):
+            Base._validate_variables(config)
+
+    def test_no_variables_key(self):
+        """No variables key in the root."""
+        config = {
+            'data': {
+              }
+        }
+
+        with pytest.raises(config_ex.ConfigsError):
+            Base._validate_variables(config)
+
+    def test_no_data_key(self):
+        """No data key in the root."""
+        config = {
+            'varables': {
+              }
+        }
+
+        with pytest.raises(config_ex.ConfigsError):
+            Base._validate_variables(config)
+
+
 class TestBaseReplaceVariables():
     """Tests for the _replace_variables function of the Base class."""
 
@@ -197,7 +277,7 @@ class TestBaseReplaceVariables():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color}',
               }
@@ -216,7 +296,7 @@ class TestBaseReplaceVariables():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{  primary.color}',
               }
@@ -235,7 +315,7 @@ class TestBaseReplaceVariables():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color  }',
               }
@@ -254,7 +334,7 @@ class TestBaseReplaceVariables():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary .color}',
               }
@@ -277,7 +357,7 @@ class TestThemeDict():
             'variables': {
                 'primary.color': '#3c0f60'
             },
-            'theme': {
+            'data': {
                 'toolbar.color': '#000000',
                 'navbar.color': '{primary.color}',
               }

@@ -204,9 +204,9 @@ class Base:
                         'both must exist.')
 
             for key in config_dict[section].keys():
-                result = re.findall(r'^[a-zA-Z0-9]+([.]?[a-zA-Z0-9]+)+$', key)
+                result = re.match(r'^[a-zA-Z0-9]+([.]?[a-zA-Z0-9]+)*$', key)
 
-                if len(result) != 1:
+                if not result:
                     raise config_ex.ConfigsError(
                             f'The variable {key} is not in correct format.')
 
@@ -225,16 +225,18 @@ class Base:
         variables = config_dict['variables']
 
         for key, value in config_dict_replaced.items():
-            result = re.findall(r'^{\s*[a-zA-Z0-9.]+\s*}$', value)
+            matches = list(re.finditer(
+                    r'{\s*[a-zA-Z0-9]+([.]?[a-zA-Z0-9]+)*\s*}', value))
 
-            if result and len(result) == 1:
-                variable = result[0]
+            for match in matches:
+                variable = match.group()
                 variable = variable.replace(' ', '')
                 variable = variable[1:-1]
 
                 if variable in variables:
-                    config_dict_replaced[key] = value.replace(
-                            result[0], variables[variable])
+                    value = value.replace(match.group(), variables[variable])
+
+                config_dict_replaced[key] = value
 
         return config_dict_replaced
 

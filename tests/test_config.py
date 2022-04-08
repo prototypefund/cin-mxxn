@@ -347,6 +347,26 @@ class TestBaseReplaceVariables():
                 'navbar.color': '{primary .color}'
                 }
 
+    def test_multiple_variable(self, mxxn_env):
+        """Multiple variables used."""
+        config = {
+            'variables': {
+                'primary.color': '#3c0f60',
+                'secondary.color': '#ff00ff'
+            },
+            'data': {
+                'toolbar.color': '#000000',
+                'navbar.color': '{primary.color} {secondary.color}',
+              }
+        }
+
+        replaced_dict = Base._replace_variables(config)
+
+        assert replaced_dict == {
+                'toolbar.color': '#000000',
+                'navbar.color': '#3c0f60 #ff00ff'
+                }
+
 
 class TestThemeDict():
     """Tests for the dict method of the Theme class."""

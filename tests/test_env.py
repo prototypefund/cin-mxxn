@@ -324,16 +324,6 @@ class TestMxxnInit():
         assert mxxn.name == 'mxxn'
 
 
-class TestMxxnThemeList():
-    """Tests for the theme_list method."""
-
-    def test_all_themes_returned(self):
-        """All themes returned."""
-        pkg = env.Mxxn()
-
-        assert pkg.theme_list == ['dark', 'light']
-
-
 class TestMxnUnprefixedName():
     """Tests for the unprefixed_name property of Mxn class."""
 

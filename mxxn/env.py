@@ -356,15 +356,6 @@ class Mxxn(Base):
         """
         super().__init__(name)
 
-    @property
-    def theme_list(self) -> Optional[List[str]]:
-        """Get a list of available themes."""
-        if self.themes_path:
-            themes_dir = config.Config(self.themes_path)
-            return themes_dir.names
-
-        return None
-
 
 class Mxn(Base):
     """With this class elements of a Mxn package can be accessed."""

@@ -23,6 +23,7 @@ class App(object):
         self.asgi.add_error_handler(Exception, capture_errors)
         self.asgi.add_middleware([
             settings_middleware, static_routes_middleware])
+        self.asgi.req_options.auto_parse_qs_csv = True
         self._register_routes()
         self._register_static_paths()
 

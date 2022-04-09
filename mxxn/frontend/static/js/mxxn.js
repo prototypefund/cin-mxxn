@@ -1,9 +1,5 @@
-var mxxn = (function (exports, MxxnLogin) {
+var mxxn = (function (exports) {
   'use strict';
-
-  function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-  var MxxnLogin__default = /*#__PURE__*/_interopDefaultLegacy(MxxnLogin);
 
   /* Riot v6.1.2, @license MIT */
   /**
@@ -2483,12 +2479,19 @@ var mxxn = (function (exports, MxxnLogin) {
       name: 'mxxn-app'
   };
 
+  var MxxnLogin = {
+      css: null,
+      exports: null,
+      template: (template, expressionTypes, bindingTypes, getComponent) => template('\n\tMXXN-login\n', []),
+      name: 'mxxn-login'
+  };
+
   function app() {
       const mountApp = component(MxxnApp);
       mountApp(document.body);
   }
   function login() {
-      const mountLogin = component(MxxnLogin__default["default"]);
+      const mountLogin = component(MxxnLogin);
       mountLogin(document.body);
   }
 
@@ -2500,4 +2503,4 @@ var mxxn = (function (exports, MxxnLogin) {
 
   return exports;
 
-})({}, MxxnLogin);
+})({});

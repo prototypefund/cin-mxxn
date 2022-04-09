@@ -277,9 +277,9 @@ def theme(name: str, settings: Settings) -> dict:
         theme_dict['mxxn'] = {}
 
     mxn_names = env.mxns(settings)
+    theme_dict['mxns'] = {}
 
     if mxn_names:
-        theme_dict['mxns'] = {}
 
         for mxn_name in mxn_names:
             mxn_pkg = env.Mxn(mxn_name)

@@ -24,3 +24,9 @@ class NotSameDefaults(ConfigsError):
     """Raised if the defaults are not the same."""
 
     pass
+
+
+class NoThemeConfigError(ConfigsError):
+    """Raised ff there are no theme configuration files."""
+
+    pass

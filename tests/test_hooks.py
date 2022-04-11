@@ -8,12 +8,12 @@ import inspect
 from pathlib import Path
 
 
-class TestRender(object):
+class TestRender:
     """Tests for render hook."""
 
     def test_file_was_rendered(self):
         """Test if the file was rendered."""
-        class Root(object):
+        class Root:
             @falcon.after(hooks.render, Path('app.j2'), 'mxxn')
             async def on_get(self, req, resp):
                 resp.context.render = {}
@@ -34,7 +34,7 @@ class TestRender(object):
 
     def test_package_not_exist(self, caplog):
         """The package does not exist."""
-        class Root(object):
+        class Root:
             @falcon.after(hooks.render, Path('app.j2'), 'mxnxxyyzz')
             async def on_get(self, req, resp):
                 resp.context.render = {}
@@ -52,7 +52,7 @@ class TestRender(object):
 
     def test_default_content_type(self):
         """Default content-type is HTML."""
-        class Root(object):
+        class Root:
             @falcon.after(hooks.render, Path('app.j2'), 'mxxn')
             async def on_get(self, req, resp):
                 resp.context.render = {}
@@ -68,7 +68,7 @@ class TestRender(object):
 
     def test_given_media_type_used(self):
         """The given media type was used."""
-        class Root(object):
+        class Root:
             @falcon.after(
                 hooks.render, Path('app.j2'), 'mxxn', falcon.MEDIA_TEXT
             )
@@ -86,7 +86,7 @@ class TestRender(object):
 
     def test_if_template_not_found(self, caplog):
         """The template was not found."""
-        class Root(object):
+        class Root:
             @falcon.after(hooks.render, Path('non-existing.j2'), 'mxxn')
             async def on_get(self, req, resp):
                 resp.context.render = {}
@@ -109,7 +109,7 @@ class TestRender(object):
         from mxxn import hooks
         from pathlib import Path
 
-        class Resource():
+        class Resource:
             @falcon.after(
                 hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
@@ -141,7 +141,7 @@ class TestRender(object):
         from mxxn import hooks
         from pathlib import Path
 
-        class Resource(object):
+        class Resource:
             @falcon.after(
                 hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
@@ -173,7 +173,7 @@ class TestRender(object):
         from mxxn import hooks
         from pathlib import Path
 
-        class Resource(object):
+        class Resource:
             @falcon.after(
                 hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
@@ -205,7 +205,7 @@ class TestRender(object):
         from mxxn import hooks
         from pathlib import Path
 
-        class Resource(object):
+        class Resource:
             @falcon.after(
                 hooks.render, Path('template.j2'), 'mxnone', falcon.MEDIA_TEXT
             )
@@ -231,16 +231,15 @@ class TestRender(object):
         assert response.status == '500 Internal Server Error'
         assert 'TemplateSyntaxError' in str(caplog.records[-1])
 
-    def test_caller_package_used(self, caplog):
+    def test_caller_package_used(self):
         """Caller package is used."""
-        class Root(object):
+        class Root:
             @falcon.after(hooks.render, Path('app.j2'))
             async def on_get(self, req, resp):
                 resp.context.render = {}
 
         app = falcon.asgi.App()
         app.add_route('/', Root())
-        app.add_error_handler(Exception, capture_errors)
         client = testing.TestClient(app)
 
         response = client.simulate_get('/')

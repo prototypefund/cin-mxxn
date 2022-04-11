@@ -3,19 +3,19 @@ from jinja2 import Environment, PackageLoader
 from jinja2 import exceptions as jinja2_ex
 from pathlib import Path
 from typing import Type, Optional
-import falcon
+from falcon import Request, Response, MEDIA_HTML, HTTP_200
 from mxxn.exceptions import env as env_ex
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.utils.packages import caller_package_name
 
 
 async def render(
-            req: falcon.Request,
-            resp: falcon.Response,
+            req: Request,
+            resp: Response,
             resource: Type,
             template: Path,
             package_name: Optional[str] = None,
-            media_type: str = falcon.MEDIA_HTML
+            media_type: str = MEDIA_HTML
         ) -> None:
     """
     Render the given Jinja2 template.
@@ -72,7 +72,7 @@ async def render(
             resp.text = await jinja2_template.render_async()
 
         resp.content_type = media_type
-        resp.status = falcon.HTTP_200
+        resp.status = HTTP_200
 
     except ModuleNotFoundError:
         raise env_ex.PackageNotExistError(

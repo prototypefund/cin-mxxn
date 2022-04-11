@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 from mxxn import env
 from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import config as config_ex
 from mxxn.settings import Settings
 from mxxn import config
 
@@ -322,6 +323,26 @@ class TestMxxnInit():
         mxxn = env.Mxxn()
 
         assert mxxn.name == 'mxxn'
+
+
+class TestMxxnTheme():
+    """Tests for the creation of the Mxxn class."""
+
+    def test_config_instance_returned(self):
+        """A config instance is returned."""
+        mxxn = env.Mxxn()
+
+        assert isinstance(mxxn.theme, config.Config)
+
+    def test_no_themes_config(self):
+        """A NoThemeConfigError exception is raised."""
+        mxxn = env.Mxxn()
+
+        with patch('mxxn.config.Config') as mock:
+            mock.return_value = None
+
+            with pytest.raises(config_ex.NoThemeConfigError):
+                mxxn.theme
 
 
 class TestMxnUnprefixedName():

@@ -39,6 +39,7 @@ from importlib.metadata import metadata, requires, PackageNotFoundError
 import re
 from pathlib import Path
 from mxxn.exceptions import env as env_ex
+from mxxn.exceptions import config as config_ex
 from mxxn.settings import Settings
 from mxxn import config
 
@@ -355,6 +356,25 @@ class Mxxn(Base):
             name: A optional name of the Mxxn package.
         """
         super().__init__(name)
+
+    @property
+    def theme(self) -> config.Config:
+        """
+        Get an instance of the Theme config for Mxxn package.
+
+        Returns:
+            Returns instance of Theme config class.
+
+        Raises:
+            NoThemeConfigError: If no themes config file exists.
+        """
+        mxxn_theme = super().theme
+
+        if mxxn_theme:
+            return mxxn_theme
+
+        raise config_ex.NoThemeConfigError(
+                'No themes config files in Mxxn package')
 
 
 class Mxn(Base):

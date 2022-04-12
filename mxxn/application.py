@@ -2,7 +2,7 @@
 from falcon import asgi
 from typing import Optional
 from mxxn.settings import Settings, SettingsMiddleware
-from mxxn.routes import StaticRoutesMiddleware
+from mxxn.routes import StaticRoutesMiddleware, QueryStringValidationMiddleware
 from mxxn.logging import logger
 from mxxn.env import Mxxn, mxns, Mxn, MxnApp, TypeRoutes
 from mxxn.exceptions import env as env_ex
@@ -17,12 +17,12 @@ class App(object):
     def __init__(self) -> None:
         self.settings = Settings()
         self.database = Database(self.settings)
-        settings_middleware = SettingsMiddleware(self.settings)
-        static_routes_middleware = StaticRoutesMiddleware(self.settings)
         self.asgi = asgi.App()
         self.asgi.add_error_handler(Exception, capture_errors)
         self.asgi.add_middleware([
-            settings_middleware, static_routes_middleware])
+            SettingsMiddleware(self.settings),
+            StaticRoutesMiddleware(self.settings),
+            QueryStringValidationMiddleware()])
         self.asgi.req_options.auto_parse_qs_csv = True
         self._register_routes()
         self._register_static_paths()

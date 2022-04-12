@@ -68,7 +68,7 @@ class TestQueryStingValidationMiddleware:
     def test_invalid_query_string(self):
         """It is an invalid query string."""
         class Root:
-            query_string_definition = {
+            QUERY_STRING_DEFINITION = {
                 'GET': {
                     'none': {
                         'type': 'object',
@@ -125,7 +125,7 @@ class TestQueryStingValidationMiddleware:
     def test_to_many_parameter(self):
         """To many parameters in reguest URL."""
         class Root:
-            query_string_definition = {
+            QUERY_STRING_DEFINITION = {
                 'GET': {
                     'none': {
                         'type': 'object',
@@ -167,7 +167,7 @@ class TestQueryStingValidationMiddleware:
     def test_no_definition_for_method(self):
         """It is no definition for the request method."""
         class Root:
-            query_string_definition = {
+            QUERY_STRING_DEFINITION = {
                 'DELETE': {
                     'none': {
                         'type': 'object',
@@ -208,7 +208,7 @@ class TestQueryStingValidationMiddleware:
     def test_wrong_query_parameter(self):
         """The query parameter not allowed."""
         class Root:
-            query_string_definition = {
+            QUERY_STRING_DEFINITION = {
                 'GET': {
                     'none': {
                         'type': 'object',
@@ -249,7 +249,7 @@ class TestQueryStingValidationMiddleware:
     def test_correct_query_string(self):
         """Correct query string."""
         class Root:
-            query_string_definition = {
+            QUERY_STRING_DEFINITION = {
                 'GET': {
                     'none': {
                         'type': 'object',
@@ -289,7 +289,7 @@ class TestQueryStingValidationMiddleware:
     def test_parameter_with_correct_query_string(self):
         """Correct query string for URL with parameter."""
         class Root:
-            query_string_definition = {
+            QUERY_STRING_DEFINITION = {
                 'GET': {
                     'id': {
                         'type': 'object',

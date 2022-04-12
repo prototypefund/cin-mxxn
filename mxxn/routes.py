@@ -273,8 +273,8 @@ class QueryStringValidationMiddleware:
         Raises:
             HTTPBadRequest: If the query string is invalid.
         """
-        if hasattr(resource, 'query_string_definition') and req.params:
-            definition = resource.query_string_definition
+        if hasattr(resource, 'QUERY_STRING_DEFINITION') and req.params:
+            definition = resource.QUERY_STRING_DEFINITION
 
             try:
                 if not params:

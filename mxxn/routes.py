@@ -166,8 +166,9 @@ specific framework package.
 """
 from typing import TypedDict
 from typing_extensions import NotRequired
+from jsonschema import validate, ValidationError
 from pathlib import Path
-from falcon import Request, Response
+from falcon import Request, Response, HTTPBadRequest
 from mxxn.resources import Root, App
 from mxxn.resources.themes import Themes
 from mxxn.settings import Settings
@@ -195,7 +196,7 @@ ROUTES: Routes = [
 """The routes definition of the mxxn package."""
 
 
-class StaticRoutesMiddleware():
+class StaticRoutesMiddleware:
     """The middleware for static routes."""
 
     def __init__(self, settings: Settings) -> None:
@@ -224,8 +225,10 @@ class StaticRoutesMiddleware():
         Change the path to covered static file.
 
         Args:
-            req: The request object.
-            resp: The response object.
+            req: Request object that will be passed to the
+                routed responder.
+            resp: Response object that will be passed to the
+                responder.
         """
         if req.path.startswith(('/static/mxxn/', '/static/mxns/')) \
                 and self._covers:
@@ -246,3 +249,61 @@ class StaticRoutesMiddleware():
                             and static_file in self._covers['mxns'][mxn_name]:
                         req.path = req.path.replace(
                                 '/static', '/static/covers', 1)
+
+
+class QueryStringValidationMiddleware:
+    """The middleware for query string validation."""
+
+    async def process_resource(self, req, resp, resource, params):
+        """
+        Validate the query string of the URL.
+
+        Args:
+            req: Request object that will be passed to the
+                routed responder.
+            resp: Response object that will be passed to the
+                responder.
+            resource: Resource object to which the request was
+                routed.
+            params: A dict-like object representing any additional
+                params derived from the route's URI template fields,
+                that will be passed to the resource's responder
+                method as keyword arguments.
+
+        Raises:
+            HTTPBadRequest: If the query string is invalid.
+        """
+        if hasattr(resource, 'query_string_definition') and req.params:
+            definition = resource.query_string_definition
+
+            try:
+                if not params:
+                    schema = definition[req.method]['none']
+                    validate(instance=req.params, schema=schema)
+
+                else:
+                    if not len(params) == 1:
+                        raise HTTPBadRequest(
+                            title='Only one parameter allowed.',
+                            description='Only one parameter allowed in '
+                            'the request URL'
+                            )
+
+                    else:
+                        param_name = list(params.keys())[0]
+                        schema = definition[req.method][param_name]
+                        validate(instance=req.params, schema=schema)
+
+            except ValidationError:
+                raise HTTPBadRequest(
+                        title='Query string error',
+                        description='The query string for the '
+                        f'{resource.__class__.__name__} resource is not valid'
+                        )
+
+            except KeyError:
+                raise HTTPBadRequest(
+                        title='Query string error',
+                        description=f'Query string for {req.method} method of '
+                        f'{resource.__class__.__name__} resource not allowed'
+                        )

@@ -372,8 +372,7 @@ class TestConfigReplaceVariables():
 class TestMergedConfig():
     """Tests for the initialization of the Theme class."""
 
-    # def test_all_pkg_themes_added(self, mxxn_env):
-    def test_tmp(self, mxxn_env):
+    def test_all_pkg_themes_added(self, mxxn_env):
         """The themes of all packages were added."""
         default_config = {
             'variables': {

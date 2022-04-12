@@ -1,12 +1,37 @@
 """The theme module."""
-from falcon import Request, Response, HTTP_200
+from falcon import Request, Response, HTTP_200, HTTPBadRequest, HTTP_NO_CONTENT
 from mxxn import env
 from mxxn import config
 from typing import Optional, List
+from mxxn.exceptions import config as config_ex
 
 
 class Themes():
     """The Theme resource of the Mxxn package."""
+    QUERY_STRING_DEFINITION = {
+        'GET': {
+            'none': {
+                'type': 'object',
+                'properties': {
+                    'fields': {
+                        'anyOf': [
+                            {
+                                'type': 'string',
+                                'enum': ['id', 'theme']
+
+                            },
+                            {
+                                'type': 'array',
+                                'items': {
+                                    'enum': ['id', 'theme']
+                                    }
+                            }]
+                        }
+                    },
+                'additionalProperties': False,
+                }
+            }
+        }
 
     async def on_get(
             self,
@@ -25,22 +50,23 @@ class Themes():
         mxxn_pkg = env.Mxxn()
         mxxn_theme = mxxn_pkg.theme
 
-        if mxxn_theme:
-            params = req.params
+        params = req.params
 
-            if id:
+        if id:
+            try:
                 resp.media = config.theme(id, req.context.settings)
                 resp.status = HTTP_200
 
-                return
-
+            except ValueError:
+                resp.status = HTTP_NO_CONTENT
+        else:
             themes: List[dict] = []
             theme_names = mxxn_theme.names
 
-            for name in theme_names:
-                filtered_theme: dict = {}
+            if params:
+                for name in theme_names:
+                    filtered_theme: dict = {}
 
-                if 'fields' in params:
                     if 'id' in params['fields']:
                         filtered_theme['id'] = name
 
@@ -49,11 +75,15 @@ class Themes():
                                 name, req.context.settings)
 
                     themes.append(filtered_theme)
-                else:
+
+                resp.media = themes
+                resp.status = HTTP_200
+            else:
+                for name in theme_names:
                     themes.append({
                         'id': name,
                         'theme': config.theme(name, req.context.settings)
                         })
 
-            resp.media = themes
-            resp.status = HTTP_200
+                resp.media = themes
+                resp.status = HTTP_200

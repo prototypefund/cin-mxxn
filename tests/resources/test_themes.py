@@ -34,8 +34,6 @@ class TestThemes:
 
         theme = result.json
 
-        print(theme)
-
         assert 'mxxn' in theme
         assert 'mxns' in theme
         assert 'mxnapp' in theme
@@ -46,7 +44,25 @@ class TestThemes:
 
         themes = result.json
 
-        print(themes)
-
         assert themes[0]['id'] == 'dark'
         assert themes[1]['id'] == 'light'
+
+    def test_id_with_query_string_(self, client):
+        """Resource requested with ID and query string."""
+        result = client.get('/app/mxxn/themes/light?dsdsddsd')
+
+        assert result.status_code == 400
+        assert 'Query string' in result.json['title']
+
+    def test_wrong_query_parameter_(self, client):
+        """Resource requested with wrong query parameter."""
+        result = client.get('/app/mxxn/themes?wrong=123')
+
+        assert result.status_code == 400
+        assert 'Query parameter' in result.json['title']
+
+    def test_theme_not_exist(self, client):
+        """The theme does not exist."""
+        result = client.get('/app/mxxn/themes/xxyyzz')
+
+        assert result.status_code == 204

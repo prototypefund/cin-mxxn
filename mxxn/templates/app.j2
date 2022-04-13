@@ -7,15 +7,15 @@
 		<link rel="icon" href="static/mxxn/images/favicon.png">
 	</head>
 	<body>
-		{% for js_url in js_urls %}
-			<script src="{{ js_url }}"></script>
-		{% endfor %}
-
-	<script>
+	<script type="module">
 		{% if auth %}
-			mxxn.app()
+			import {app} from '/static/mxxn/js/mxxn.js'
+
+			app()
 		{% else %}
-			mxxn.login()
+			import {login} from '/static/mxxn/js/mxxn.js'
+
+			login()
 		{% endif %}
 	</script>
 	</body>

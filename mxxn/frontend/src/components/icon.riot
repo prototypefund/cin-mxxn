@@ -10,6 +10,7 @@
   <script lang="ts">
 		import {RiotComponent, withTypes} from 'riot'
 		import {IconLoadError} from 'exceptions'
+		import {request} from 'request'
 
 
     interface Props {
@@ -37,7 +38,7 @@
 				this.state.isReady = false
 				const url = 'static/mxxn/icons/' + name +'.svg'
 
-				mxxn.request(url)
+				request(url)
 					.then((response) => response.text())
 					.then (svgFile => {
 						const parser = new window.DOMParser()

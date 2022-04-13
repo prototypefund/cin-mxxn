@@ -9,7 +9,7 @@ export default [
 		output: {
 			name: 'mxxn',
 				file: 'static/js/mxxn.js',
-				format: 'iife'
+				format: 'esm'
 		},
 		plugins: [
 			nodeResolve(),

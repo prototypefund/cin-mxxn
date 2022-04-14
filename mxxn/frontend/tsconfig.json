@@ -6,7 +6,5 @@
   },
   "import": [
     "mxxn.d.ts"
-  ],
-  "exclude": [
   ]
 }

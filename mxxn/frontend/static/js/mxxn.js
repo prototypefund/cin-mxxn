@@ -1,3 +1,28 @@
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
 /* Riot v6.1.2, @license MIT */
 /**
  * Convert a string from camel case to dash-case
@@ -2274,31 +2299,6 @@ function component(implementation) {
 
 const withTypes = component => component;
 
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
 class RequestError extends Error {
     constructor(message) {
         super(message);
@@ -2350,6 +2350,7 @@ function request(url, options = {}) {
 var MxxnIcon = {
     css: `mxxn-icon svg,[is="mxxn-icon"] svg{ fill: var(--mxxn-icon-color); }`,
     exports: withTypes({
+        // export for test dependency injection
         request: request,
         state: {
             isReady: false,
@@ -2484,13 +2485,134 @@ var MxxnLogin = {
     name: 'mxxn-login'
 };
 
+class Theme {
+    constructor(name) {
+        this.isReady = new Promise((resolve) => {
+            this.loadNames().then(() => {
+                this.load(name).then(() => {
+                    addEventListener('mxxn.theme.change', this.changeHandler.bind(this));
+                    resolve(true);
+                });
+            });
+        });
+    }
+    load(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield Theme.request('/app/mxxn/themes/' + name);
+            const data = yield response.json();
+            this.data = data;
+        });
+    }
+    loadNames() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield Theme.request('/app/mxxn/themes?fields=id');
+            const names = yield response.json();
+            this.names = names;
+        });
+    }
+    changeHandler(event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const name = event.detail.name;
+            if (name && this.names.includes(name)) {
+                yield this.load(name);
+                return;
+            }
+            throw new Error();
+        });
+    }
+}
+Theme.request = request;
+//
+// class Media{
+//   media: string = 'small'
+//
+//   mediaQueries = {
+//     small: window.matchMedia('(min-width: 320px)'),
+//     medium: window.matchMedia('(min-width: 660px)'),
+//     large: window.matchMedia('(min-width: 1100px)')
+//   }
+//
+//   rootComponent = null
+//   components = []
+//
+//   constructor() {
+//     for (const key in this.mediaQueries){
+//         this.mediaQueries[key].addEventListener('change', this.changesHandler)
+//     }
+//     this.update(false)
+//   }
+//
+//   addRootComponent = (component) => {
+//     this.components.push(component)
+//     this.rootComponent = component
+//     component.state.media = 'media-' + this.media
+//   }
+//
+//   addComponent = (component) => {
+//     this.components.push(component)
+//     component.state.media = 'media-' + this.media
+//   }
+//
+//   updateComponents = () => {
+//     for (const component of this.components){
+//       component.state.media = 'media-' + this.media
+//     }
+//
+//     // TODO: check if rootComponent
+//     this.rootComponent.update()
+//   }
+//
+//   update = (updateComponents=true) => {
+//     let size = null
+//
+//     for (let [media, mediaQuery] of Object.entries(this.mediaQueries)){
+//       if (mediaQuery.matches){
+//         size = media
+//       }
+//     }
+//
+//     if (this.media != size){
+//       this.media = size
+//
+//       if (updateComponents) {
+//         this.updateComponents()
+//       }
+//     }
+//   }
+//
+//   changesHandler = () => {
+//     this.update()
+//   }
+// }
+//
+// const media = new Media()
+//
+// function mediaPlugin(component){
+//   if (component.rootComponent){
+//       media.addRootComponent(component)
+//   }
+//   else if (component.plugins){
+//     if (component.plugins.includes('media')){
+//       media.addComponent(component)
+//     }
+//   }
+// }
+//
+//
+
 function app() {
-    const mountApp = component(MxxnApp);
-    mountApp(document.body);
+    return __awaiter(this, void 0, void 0, function* () {
+        const theme = new Theme('light');
+        yield theme.isReady;
+        const mountApp = component(MxxnApp);
+        mountApp(document.body);
+    });
 }
 function login() {
-    const mountLogin = component(MxxnLogin);
-    mountLogin(document.body);
+    return __awaiter(this, void 0, void 0, function* () {
+        const mountLogin = component(MxxnLogin);
+        mountLogin(document.body);
+    });
 }
 
 export { app, login, request };

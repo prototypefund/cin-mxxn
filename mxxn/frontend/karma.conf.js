@@ -12,7 +12,7 @@ module.exports = function(config) {
     files: [
       {
         pattern: 'tests/**/*.test.ts',
-        watched: false ,
+        watched: false,
         type: 'js'
       },
       {
@@ -35,8 +35,9 @@ module.exports = function(config) {
           riot(),
           typescript({
 			include: [
-				'src/**/*.ts+(|x)',
-				'src/**/*.riot'
+				'src/**/*.ts',
+				'src/**/*.riot',
+                'tests/**/*.ts',
 			]
           })
         ],

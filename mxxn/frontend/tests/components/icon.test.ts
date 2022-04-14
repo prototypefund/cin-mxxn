@@ -9,16 +9,17 @@ describe('Tests_for_Icon_component',function() {
   /**
    * Init with existing SVG icon.
    */
-  it('Initialization_with_existing_icon', async function () {
+  fit('Initialization_with_existing_icon', async function () {
     const svg = `
       <svg>
         <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
       </svg>`
 
     const response = new Response(svg, { status: 200, statusText: 'OK', })
-    mxxn.request = jasmine.createSpy('request').and.resolveTo(response)
+    Icon.exports.request = jasmine.createSpy('request').and.resolveTo(response)
 
     const element = document.createElement('component')
+    document.body.appendChild(element);
     const component = riot.component(Icon)
     const icon = component(element, {'name': 'logout'})
 

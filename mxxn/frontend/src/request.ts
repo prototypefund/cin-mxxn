@@ -45,4 +45,3 @@ async function request(url: string, options: RequestInit = {}): Promise<Response
 export {
   request
 }
-

@@ -19,7 +19,7 @@ export default [
 					'src/**/*.ts+(|x)',
 					'src/**/*.riot'
 				]
-			}),
+			})
 		]
 	}
 ];

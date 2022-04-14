@@ -10,11 +10,10 @@
   <script lang="ts">
 		import {RiotComponent, withTypes} from 'riot'
 		import {IconLoadError} from 'exceptions'
-		import {request} from 'request'
-
+		import {request as requestImport} from 'request'
 
     interface Props {
-      name: string
+      name: string,
     }
 
     interface State {
@@ -22,10 +21,13 @@
     }
 
     export interface Icon extends RiotComponent<Props, State> {
+			request: any
       change: (string) => void
     }
 
 		export default withTypes<Icon>({
+			request: requestImport,
+
 			state: {
         isReady: false,
       },
@@ -38,7 +40,7 @@
 				this.state.isReady = false
 				const url = 'static/mxxn/icons/' + name +'.svg'
 
-				request(url)
+				this.request(url)
 					.then((response) => response.text())
 					.then (svgFile => {
 						const parser = new window.DOMParser()

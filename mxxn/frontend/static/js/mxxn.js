@@ -2350,6 +2350,7 @@ function request(url, options = {}) {
 var MxxnIcon = {
     css: `mxxn-icon svg,[is="mxxn-icon"] svg{ fill: var(--mxxn-icon-color); }`,
     exports: withTypes({
+        request: request,
         state: {
             isReady: false,
         },
@@ -2359,7 +2360,7 @@ var MxxnIcon = {
         change(name) {
             this.state.isReady = false;
             const url = 'static/mxxn/icons/' + name + '.svg';
-            request(url)
+            this.request(url)
                 .then((response) => response.text())
                 .then(svgFile => {
                 const parser = new window.DOMParser();

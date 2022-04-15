@@ -5,18 +5,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<base href="{{ base_url }}"> </base>
 		<link rel="icon" href="static/mxxn/images/favicon.png">
+		<script type="module">
+			import './static/mxxn/js/mxxn.js'
+		</script>
 	</head>
 	<body>
-	<script type="module" async>
-		{% if auth %}
-			import {app} from '/static/mxxn/js/mxxn.js'
-
-			await app()
-		{% else %}
-			import {login} from '/static/mxxn/js/mxxn.js'
-
-			await login()
-		{% endif %}
-	</script>
+		<mxxn-app></mxxn-app>
 	</body>
 </html>

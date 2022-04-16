@@ -1,16 +1,39 @@
 import {html, css, LitElement} from 'lit';
+import {theme} from '../themes';
 
 
 export class App extends LitElement {
-  static styles = css`
-    :host {
-      --mxxn-toolbar-background-color: #ffffff;
-      --mxxn-toolbar-shadow-color: #000000;
-      --mxxn-navbar-background-color: #3c0f60;
-      --mxxn-navbar-shadow-color: #000000;
-      --mxxn-icon-color: #0000ff;
-    }
+  constructor() {
+    super();
+    theme.initialize('light').then(() => {
+      this.updateTheme();
+    });
+  }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('mxxn.theme.changed', this.updateTheme);
+    super.disconnectedCallback();
+  }
+
+  updateTheme(){
+    const data = theme.getData();
+
+    for (const variable in data){
+      console.log(variable)
+      this.style.setProperty(variable, data[variable]);
+    }
+  }
+
+  changeTheme(){
+    theme.change('dark')
+  }
+
+  static styles = css`
     .app-grid{
       height: 100vh;
       width: 100vw;
@@ -40,7 +63,7 @@ export class App extends LitElement {
   render() {
     return html`
       <div class="app-grid">
-		    <mxxn-navbar></mxxn-navbar>
+		    <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
 		    <div class="toolbar-mxns-grid">
           <mxxn-mainbar>
           </mxxn-mainbar>

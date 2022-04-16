@@ -24,11 +24,165 @@ var t;const i=globalThis.trustedTypes,s$1=i?i.createPolicy("lit-html",{createHTM
  * SPDX-License-Identifier: BSD-3-Clause
  */var l,o;class s extends a$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Dt=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Dt=x(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Dt)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Dt)||void 0===t||t.setConnected(!1);}render(){return b}}s.finalized=!0,s._$litElement$=!0,null===(l=globalThis.litElementHydrateSupport)||void 0===l||l.call(globalThis,{LitElement:s});const n=globalThis.litElementPolyfillSupport;null==n||n({LitElement:s});(null!==(o=globalThis.litElementVersions)&&void 0!==o?o:globalThis.litElementVersions=[]).push("3.2.0");
 
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+class RequestError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'RequestError';
+    }
+}
+class ThemeError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'ThemeError';
+    }
+}
+
+/**
+ * Send an HTTP request to the given URL.
+ *
+ * The request function is essentially a mapper for fetch with some
+ * default options. The options are set to match the most API calls.
+ * The function also implements error handling and throws an
+ * exception if an error occurs.
+ *
+ * @param url The URL of the request
+ * @param options A options object merged into the default options
+ * @returns Promise resolved with a Response, rejected with RequestError
+ */
+function request(url, options = {}) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const defaultOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+        };
+        const usedOptions = Object.assign(Object.assign({}, defaultOptions), options);
+        const response = yield fetch(url, usedOptions);
+        const status = response.status;
+        if (status === 200 || status === 201) {
+            return response;
+        }
+        const message = `
+    An error occurred during the call of the URL ${url}.
+    Status: ${status} ${response.statusText}
+    `;
+        throw new RequestError(message);
+    });
+}
+
+class Theme {
+    constructor() {
+        this.data = {};
+        this.names = [];
+        // for test dependency injection
+        this.request = request;
+    }
+    initialize(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadNames();
+            yield this.load(name);
+        });
+    }
+    getData() {
+        return this.data;
+    }
+    getNames() {
+        return this.names;
+    }
+    change(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.load(name);
+            const event = new CustomEvent('mxxn.theme.changed');
+            dispatchEvent(event);
+        });
+    }
+    load(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (name && this.names.includes(name)) {
+                const response = yield this.request('/app/mxxn/themes/' + name);
+                const responseData = yield response.json();
+                const data = {};
+                for (const pkg in responseData) {
+                    for (const variable in responseData[pkg]) {
+                        const variableName = `--${pkg}-${variable.replace(/\./g, '-')}`;
+                        data[variableName] = responseData[pkg][variable];
+                    }
+                }
+                this.data = data;
+            }
+            else {
+                throw new ThemeError(`The theme with name "${name}" does not exist.`);
+            }
+        });
+    }
+    loadNames() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.request('/app/mxxn/themes?fields=id');
+            const names = yield response.json();
+            for (const name of names) {
+                this.names.push(name.id);
+            }
+        });
+    }
+}
+const theme = new Theme();
+
 class App extends s {
+    constructor() {
+        super();
+        theme.initialize('light').then(() => {
+            this.updateTheme();
+        });
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
+    }
+    disconnectedCallback() {
+        window.removeEventListener('mxxn.theme.changed', this.updateTheme);
+        super.disconnectedCallback();
+    }
+    updateTheme() {
+        const data = theme.getData();
+        for (const variable in data) {
+            console.log(variable);
+            this.style.setProperty(variable, data[variable]);
+        }
+    }
+    changeTheme() {
+        theme.change('dark');
+    }
     render() {
         return $ `
       <div class="app-grid">
-		    <mxxn-navbar></mxxn-navbar>
+		    <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
 		    <div class="toolbar-mxns-grid">
           <mxxn-mainbar>
           </mxxn-mainbar>
@@ -42,14 +196,6 @@ class App extends s {
     }
 }
 App.styles = r$2 `
-    :host {
-      --mxxn-toolbar-background-color: #ffffff;
-      --mxxn-toolbar-shadow-color: #000000;
-      --mxxn-navbar-background-color: #3c0f60;
-      --mxxn-navbar-shadow-color: #000000;
-      --mxxn-icon-color: #0000ff;
-    }
-
     .app-grid{
       height: 100vh;
       width: 100vw;
@@ -102,3 +248,5 @@ Navbar.styles = r$2 `
 customElements.define('mxxn-app', App);
 customElements.define('mxxn-navbar', Navbar);
 customElements.define('mxxn-mainbar', Mainbar);
+
+export { theme };

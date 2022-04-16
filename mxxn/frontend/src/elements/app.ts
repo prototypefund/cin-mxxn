@@ -48,7 +48,7 @@ export class App extends LitElement {
           <div>
             mxns
           </div>
-		</div>
+        </div>
       </div>
     `;
   }

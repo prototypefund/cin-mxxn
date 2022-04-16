@@ -11,8 +11,5 @@
     "lit": "^2.2.2",
     "rollup": "^2.70.2",
     "typescript": "^4.6.3"
-  },
-  "dependencies": {
-    "typescript-lit-html-plugin": "^0.9.0"
   }
 }

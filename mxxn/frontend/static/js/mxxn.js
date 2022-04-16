@@ -36,7 +36,7 @@ class App extends s {
           <div>
             mxns
           </div>
-		</div>
+        </div>
       </div>
     `;
     }

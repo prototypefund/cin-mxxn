@@ -14,8 +14,15 @@ class IconLoadError extends Error {
   }
 }
 
+class ThemeError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'ThemeError'
+  }
+}
 
 export{
   RequestError,
-  IconLoadError
+  IconLoadError,
+  ThemeError
 }

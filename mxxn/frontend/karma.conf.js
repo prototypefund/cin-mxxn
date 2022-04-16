@@ -30,7 +30,7 @@ module.exports = function(config) {
         ],
         output: {
             dir: 'tests/build',
-            format: 'esm',
+            format: 'iife',
         },
     },
 

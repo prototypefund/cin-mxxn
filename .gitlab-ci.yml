@@ -1,18 +1,18 @@
 image: quay.io/pypa/manylinux2014_x86_64:latest
 
 before_script:
-  - /opt/python/cp38-cp38/bin/python --version
-  - /opt/python/cp38-cp38/bin/python -m venv .venv38
-  - . .venv38/bin/activate
+  - /opt/python/cp310-cp310/bin/python --version
+  - /opt/python/cp310-cp310/bin/python -m venv .venv310
+  - . .venv310/bin/activate
   - pip install .[develop]
   - deactivate
 
 stages:
   - Test
 
-test_python38:
+test_python310:
   stage: Test
   script:
-    - . .venv38/bin/activate
+    - . .venv310/bin/activate
     - python -m pytest
     - deactivate

@@ -1,7 +1,8 @@
 image: quay.io/pypa/manylinux2014_x86_64:latest
 
 before_script:
-  - python --version  # For debugging
+  - python --version
+  - pip install .[develop]
 
 test:
   script:

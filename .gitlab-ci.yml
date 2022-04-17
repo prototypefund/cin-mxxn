@@ -1,8 +1,8 @@
 image: quay.io/pypa/manylinux2014_x86_64:latest
 
 before_script:
-  - ./opt/python/cp38-cp38/bin/python --version
-  - ./opt/python/cp38-cp38/bin/python -m venv .venv38
+  - /opt/python/cp38-cp38/bin/python --version
+  - /opt/python/cp38-cp38/bin/python -m venv .venv38
   - . .venv38/bin/activate
   - pip install .[develop]
 

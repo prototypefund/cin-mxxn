@@ -14,5 +14,5 @@ test_python38:
   stage: Test
   script:
     - . .venv38/bin/activate
-    - pytest
+    - python -m pytest
     - deactivate

@@ -54,7 +54,7 @@ class Theme {
   private async loadNames() {
     const response = await this.request('/app/mxxn/themes?fields=id');
     const responseData = await response.json();
-    const names = []
+    const names = [];
 
     for (const name of responseData){
       names.push(name.id);

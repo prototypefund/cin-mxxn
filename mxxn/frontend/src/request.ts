@@ -1,7 +1,7 @@
 /**
  * The request module contains functions for handling API calls.
  */
-import {RequestError} from './exceptions'
+import {RequestError} from './exceptions';
 
 
 /**
@@ -23,12 +23,12 @@ async function request(url: string, options: RequestInit = {}): Promise<Response
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     },
-  }
+  };
 
   const usedOptions = {...defaultOptions, ...options};
 
   const response = await fetch(url, usedOptions);
-  const status = response.status
+  const status = response.status;
 
   if (status === 200 || status === 201) {
     return response;
@@ -37,12 +37,13 @@ async function request(url: string, options: RequestInit = {}): Promise<Response
   const message = `
     An error occurred during the call of the URL ${url}.
     Status: ${status} ${response.statusText}
-    `
-  throw new RequestError(message)
+    `;
+
+  throw new RequestError(message);
 }
 
 
 export {
   request
-}
+};
 

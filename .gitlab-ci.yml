@@ -2,6 +2,8 @@ image: quay.io/pypa/manylinux2014_x86_64:latest
 
 before_script:
   - python --version
+  - python -m venv .venv
+  - . .venv/bin/activate
   - pip install .[develop]
 
 test:

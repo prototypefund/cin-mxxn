@@ -59,7 +59,7 @@ class TestThemes:
         result = client.get('/app/mxxn/themes?wrong=123')
 
         assert result.status_code == 400
-        assert 'Query parameter' in result.json['title']
+        assert 'Query string' in result.json['title']
 
     def test_theme_not_exist(self, client):
         """The theme does not exist."""

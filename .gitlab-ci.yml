@@ -5,7 +5,14 @@ before_script:
   - /opt/python/cp38-cp38/bin/python -m venv .venv38
   - . .venv38/bin/activate
   - pip install .[develop]
+  - deactivate
 
-test:
+stages:
+  - Test
+
+test_python38:
+  stage: Test
   script:
-    - echo test
+    - . .venv38/bin/activate
+    - pytest
+    - deactivate

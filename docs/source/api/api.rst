@@ -5,5 +5,5 @@ API-Dokumentation
     :maxdepth: 2
 
     backend
-    frontend
+    Frontend <../../typedoc/index.html#http://>
 

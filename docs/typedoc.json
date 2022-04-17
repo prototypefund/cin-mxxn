@@ -1,0 +1,8 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "mxxn",
+    "entryPoints": "../mxxn/frontend/src",
+    "entryPointStrategy": "expand",
+    "excludeExternals": true,
+    "out": "build/typedoc"
+}

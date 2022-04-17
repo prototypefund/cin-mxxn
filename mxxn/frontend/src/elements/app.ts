@@ -24,7 +24,6 @@ export class App extends LitElement {
     const data = theme.getData();
 
     for (const variable in data){
-      console.log(variable)
       this.style.setProperty(variable, data[variable]);
     }
   }

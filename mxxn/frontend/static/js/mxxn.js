@@ -99,6 +99,7 @@ function request(url, options = {}) {
 
 class Theme {
     constructor() {
+        this.isInitialized = false;
         this.data = {};
         this.names = [];
         // for test dependency injection
@@ -108,6 +109,7 @@ class Theme {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.loadNames();
             yield this.load(name);
+            this.isInitialized = true;
         });
     }
     getData() {
@@ -145,10 +147,12 @@ class Theme {
     loadNames() {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield this.request('/app/mxxn/themes?fields=id');
-            const names = yield response.json();
-            for (const name of names) {
-                this.names.push(name.id);
+            const responseData = yield response.json();
+            const names = [];
+            for (const name of responseData) {
+                names.push(name.id);
             }
+            this.names = names;
         });
     }
 }
@@ -172,7 +176,6 @@ class App extends s {
     updateTheme() {
         const data = theme.getData();
         for (const variable in data) {
-            console.log(variable);
             this.style.setProperty(variable, data[variable]);
         }
     }

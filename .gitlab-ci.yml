@@ -2,6 +2,7 @@ test:backend:python3.10:
   stage: test
   image: python:3.10-alpine3.15
   script:
+    - apk --update add gcc
     - pip install .[develop]
     - python -m pytest
 

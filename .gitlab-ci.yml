@@ -5,7 +5,7 @@ pages:
   script:
   - pip install .[develop]
   - cd docs
-  - make -b html docs/source public
+  - make -b html source ../public
   artifacts:
     paths:
     - public

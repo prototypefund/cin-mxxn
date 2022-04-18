@@ -5,5 +5,5 @@ API-Dokumentation
     :maxdepth: 1
 
     Backend <backend.rst>
-    Frontend <../../typedoc/index.html#http://>
+    Frontend <typedoc/index.html#http://>
 

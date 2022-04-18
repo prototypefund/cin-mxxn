@@ -4,5 +4,5 @@
     "entryPoints": "../mxxn/frontend/src",
     "entryPointStrategy": "expand",
     "excludeExternals": true,
-    "out": "build/typedoc"
+    "out": "build/html/typedoc"
 }

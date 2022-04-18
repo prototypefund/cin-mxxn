@@ -3,7 +3,7 @@ pages:
   stage: deploy
   image: python:3.10
   script:
-    - apt update && apt install nodejs npm
+    - apt update && apt -y install nodejs npm
     - pip install .[develop]
     - cd mxxn/frontend
     - npm install

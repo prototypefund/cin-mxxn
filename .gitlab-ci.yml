@@ -1,10 +1,18 @@
-image: python:3.7-alpine
+image: quay.io/pypa/manylinux2014_x86_64:latest
+
+before_script:
+- /opt/python/cp310-cp310/bin/python --version
+- /opt/python/cp310-cp310/bin/python -m venv .venv310
+- . .venv310/bin/activate
+- pip install .[develop]
+- deactivate
     
 pages:
   stage: deploy
   script:
-  - pip install -U sphinx
-  - sphinx-build -b html docs/source public 
+  - . .venv310/bin/activate
+  - sphinx-build -b html docs/source public
+  - deactivate
   artifacts:
     paths:
     - public

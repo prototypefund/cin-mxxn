@@ -6,7 +6,7 @@ pages:
     - pip install .[develop]
     - cd docs
     - make html
-    - cp -r build/* ../public
+    - mv build/html ../public
   artifacts:
     paths:
       - public

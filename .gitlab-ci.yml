@@ -4,8 +4,7 @@ pages:
   image: python:3.10
   script:
   - pip install .[develop]
-  - cd docs
-  - make -b html public
+  - sphinx-build -b html docs public 
   artifacts:
     paths:
     - public

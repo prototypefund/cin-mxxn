@@ -1,6 +1,6 @@
 test:backend:python3.10:
   stage: test
-  image: python:3.10-alpine3.15
+  image: python:3.10
   script:
     - apk --update add gcc linux-headers
     - pip install .[develop]
@@ -16,7 +16,7 @@ test:frontend:
 
 pages:
   stage: deploy
-  image: python:3.10-alpine
+  image: python:3.10
   script:
     - pip install .[develop]
     - sphinx-build -b html docs/source public

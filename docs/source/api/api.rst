@@ -2,8 +2,8 @@ API-Dokumentation
 +++++++++++++++++
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
-    backend
+    Backend <backend.rst>
     Frontend <../../typedoc/index.html#http://>
 

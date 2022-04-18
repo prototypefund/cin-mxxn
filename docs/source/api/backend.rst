@@ -3,7 +3,7 @@ Backend
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
-    backend/python
-    backend/rest
+    Python <backend/python/mxxn.rst>
+    REST <backend/rest.rst>

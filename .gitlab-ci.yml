@@ -1,6 +1,6 @@
 test:backend:python3.10:
   stage: test
-  image: python:3.10
+  image: python:3.10-alpine3.15
   script:
     - pip install .[develop]
     - python -m pytest
@@ -15,7 +15,7 @@ test:frontend:
 
 pages:
   stage: deploy
-  image: python:3.10
+  image: python:3.10-alpine
   script:
     - pip install .[develop]
     - sphinx-build -b html docs/source public

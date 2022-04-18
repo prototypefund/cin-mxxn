@@ -5,7 +5,7 @@ pages:
   script:
     - pip install .[develop]
     - cd docs
-    - make BUILDDIR=public html
+    - make BUILDDIR=../public html
   artifacts:
     paths:
       - public

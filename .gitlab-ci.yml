@@ -7,6 +7,13 @@ before_script:
 - pip install .[develop]
 - deactivate
 
+test:backend:python3.10:
+  stage: test
+  script:
+  - . .venv310/bin/activate
+  - python -m pytest
+  - deactivate
+
 pages:
   stage: deploy
   script:

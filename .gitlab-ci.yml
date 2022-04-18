@@ -1,4 +1,9 @@
-
+test:backend:python3.10:
+  stage: test
+  image: python:3.10
+  script:
+    - pip install .[develop]
+    - python -m pytest
 
 test:frontend:
   stage: test
@@ -8,3 +13,12 @@ test:frontend:
     - npm install
     - npm run test -- --single-run
 
+pages:
+  stage: deploy
+  image: python:3.10
+  script:
+    - pip install .[develop]
+    - sphinx-build -b html docs/source public
+  artifacts:
+    paths:
+      - public

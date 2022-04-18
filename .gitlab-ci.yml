@@ -1,17 +1,8 @@
-test:backend:python3.10:
-  stage: test
-  image: python:3.10
-  script:
-  - pip install .[develop]
-  - python -m pytest
 
-pages:
-  stage: deploy
-  image: python:3.10
+
+test:frontend:
+  stage: test
+  image: zenika/alpine-chrome:with-node
   script:
-  - pip install .[develop]
-  - sphinx-build -b html docs/source public
-  artifacts:
-    paths:
-    - public
+    - ls
 

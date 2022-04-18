@@ -6,4 +6,5 @@ test:frontend:
   script:
     - cd mxxn/frontend
     - npm install
+    - npm run test -- --single-run
 

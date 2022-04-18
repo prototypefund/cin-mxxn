@@ -4,5 +4,6 @@ test:frontend:
   stage: test
   image: zenika/alpine-chrome:with-node
   script:
-    - ls
+    - cd mxxn/frontend
+    - npm install
 

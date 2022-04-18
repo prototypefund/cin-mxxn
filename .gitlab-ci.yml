@@ -1,3 +1,17 @@
+test:backend:python3.10:
+  stage: test
+  image: python:3.10
+  script:
+    - pip install .[develop]
+    - python -m pytest
+
+test:frontend:
+  stage: test
+  image: zenika/alpine-chrome:with-node
+  script:
+    - cd mxxn/frontend
+    - npm install
+    - npm run test -- --single-run
 
 pages:
   stage: deploy

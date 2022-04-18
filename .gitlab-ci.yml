@@ -3,8 +3,11 @@ pages:
   stage: deploy
   image: python:3.10
   script:
+    - apt update && apt install nodejs npm
     - pip install .[develop]
-    - cd docs
+    - cd mxxn/frontend
+    - npm install
+    - cd ../../docs
     - make html
     - mv build/html ../public
   artifacts:

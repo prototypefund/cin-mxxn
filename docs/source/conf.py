@@ -1,8 +1,12 @@
 import os
 import sys
-sys.path.append(os.path.abspath(
-    os.path.join(__file__, "../../mxxn")
-))
+from pathlib import Path
+
+sys.path.insert(0, os.path.abspath(Path(__file__).parents[1]))
+
+print('#############################')
+print(sys.path)
+
 """The config of the docs."""
 project = 'mxxn'
 copyright = '2022, lluar'

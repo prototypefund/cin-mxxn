@@ -2,11 +2,11 @@ default:
   image: quay.io/pypa/manylinux2014_x86_64:latest
 
 stages:
-  - Test
-  - Deploy
+  - test
+  - deploy
 
 test:backend:python3.10:
-  stage: Test
+  stage: test
   script:
     - /opt/python/cp310-cp310/bin/python --version
     - /opt/python/cp310-cp310/bin/python -m venv .venv310
@@ -16,7 +16,7 @@ test:backend:python3.10:
     - deactivate
 
 pages:
-  stage: Deploy
+  stage: deploy
   script:
     - /opt/python/cp310-cp310/bin/python --version
     - /opt/python/cp310-cp310/bin/python -m venv .venv310

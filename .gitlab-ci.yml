@@ -1,8 +1,11 @@
+default:
+  image: quay.io/pypa/manylinux2014_x86_64:latest
+
 stages:
   - Test
+  - Deploy
 
-test:python3.10:
-  image: quay.io/pypa/manylinux2014_x86_64:latest
+test:backend:python3.10:
   stage: Test
   script:
     - /opt/python/cp310-cp310/bin/python --version
@@ -11,3 +14,17 @@ test:python3.10:
     - pip install .[develop]
     - python -m pytest
     - deactivate
+
+pages:
+  stage: Deploy
+  script:
+    - /opt/python/cp310-cp310/bin/python --version
+    - /opt/python/cp310-cp310/bin/python -m venv .venv310
+    - . .venv310/bin/activate
+    - sphinx-build -b html . public
+    - deactivate
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

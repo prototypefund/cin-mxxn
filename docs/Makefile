@@ -18,6 +18,8 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	../mxxn/frontend/node_modules/.bin/typedoc --tsconfig ../mxxn/frontend/tsconfig.json
-	rm -r source/api/backend/python
+
+	$(dir="source/api/backend/python" && [ -d $dir ] && rm -r $dir)
+
 	sphinx-apidoc -T -M -a -e -o source/api/backend/python ../mxxn
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

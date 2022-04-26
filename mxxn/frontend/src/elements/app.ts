@@ -41,7 +41,7 @@ export class App extends LitElement {
       grid-template-columns: auto 1fr;
     }
 
-    .toolbar-mxns-grid{
+    .mainbar-mxns-grid{
       display: grid;
       overflow: hidden;
       grid-template-columns: 1fr;
@@ -63,7 +63,7 @@ export class App extends LitElement {
     return html`
       <div class="app-grid">
 		    <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
-		    <div class="toolbar-mxns-grid">
+		    <div class="mainbar-mxns-grid">
           <mxxn-mainbar>
           </mxxn-mainbar>
 

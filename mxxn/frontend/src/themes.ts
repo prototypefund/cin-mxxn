@@ -1,16 +1,7 @@
-/**
- * This is the doc comment for file1.ts
- *
- * Specify this is a module comment and rename it to my-module:
- */
 import {request as requestImport} from './request';
 import {ThemeError} from './exceptions';
 
-/**
- * Test class
- *
- *
- */
+
 export class Theme {
   public isInitialized = false;
 

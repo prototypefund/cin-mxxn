@@ -62,6 +62,12 @@ class RequestError extends Error {
         this.name = 'RequestError';
     }
 }
+class IconLoadError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'IconLoadError';
+    }
+}
 class ThemeError extends Error {
     constructor(message) {
         super(message);
@@ -318,13 +324,17 @@ class Icon extends s {
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('load data');
-            const url = 'static/mxxn/icons/' + this.name + '.svg';
-            const response = yield Icon.request(url, { cache: 'force-cache' });
-            const text = yield response.text();
-            const parser = new window.DOMParser();
-            const parsed = parser.parseFromString(text, 'text/html');
-            this._svg = parsed.querySelector('svg');
+            try {
+                const url = 'static/mxxn/icons/' + this.name + '.svg';
+                const response = yield Icon.request(url, { cache: 'force-cache' });
+                const text = yield response.text();
+                const parser = new window.DOMParser();
+                const parsed = parser.parseFromString(text, 'text/html');
+                this._svg = parsed.querySelector('svg');
+            }
+            catch (ex) {
+                throw new IconLoadError(ex.message);
+            }
         });
     }
     render() {

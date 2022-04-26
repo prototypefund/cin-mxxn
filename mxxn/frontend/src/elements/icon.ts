@@ -1,6 +1,7 @@
 import {css, LitElement} from 'lit';
 import {property, state} from 'lit/decorators.js';
-import {request} from 'request'
+import {request} from 'request';
+import {IconLoadError} from '../exceptions';
 
 
 export class Icon extends LitElement {
@@ -8,27 +9,30 @@ export class Icon extends LitElement {
 
   @property()
   name = '';
-  isLoading: Promise<void>
+  isLoading: Promise<void>;
 
   @state()
   private _svg: SVGSVGElement;
 
-  willUpdate(changedProperties: Map<string, any>) {
+  willUpdate(changedProperties: Map<string, any>): void {
 
     if (changedProperties.has('name')){
       this.isLoading = this.load();
     }
   }
 
-  async load() {
-    console.log('load data')
-
-    const url = 'static/mxxn/icons/' + this.name +'.svg'
-    const response = await Icon.request(url, {cache: 'force-cache'})
-    const text = await response.text();
-    const parser = new window.DOMParser()
-    const parsed = parser.parseFromString(text, 'text/html')
-    this._svg = parsed.querySelector('svg')
+  async load(): Promise<void> {
+    try {
+      const url = 'static/mxxn/icons/' + this.name +'.svg';
+      const response = await Icon.request(url, {cache: 'force-cache'});
+      const text = await response.text();
+      const parser = new window.DOMParser();
+      const parsed = parser.parseFromString(text, 'text/html');
+      this._svg = parsed.querySelector('svg');
+    }
+    catch (ex) {
+      throw new IconLoadError(ex.message);
+    }
   }
 
   static styles = css`

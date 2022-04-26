@@ -29,7 +29,7 @@ export class App extends LitElement {
   }
 
   changeTheme(){
-    theme.change('dark')
+    theme.change('dark');
   }
 
   static styles = css`

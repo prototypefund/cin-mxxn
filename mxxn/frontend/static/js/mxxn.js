@@ -171,7 +171,6 @@ class Theme {
 }
 const theme = new Theme();
 
-// @ts-ignore
 class MediaController {
     constructor(host) {
         this.mediaQueries = {
@@ -180,8 +179,9 @@ class MediaController {
             large: window.matchMedia('(min-width: 1100px)')
         };
         this.host = host;
-        // @ts-ignore
         host.addController(this);
+    }
+    hostConnected() {
         for (const key in this.mediaQueries) {
             this.mediaQueries[key].addEventListener('change', this.changesHandler.bind(this));
         }

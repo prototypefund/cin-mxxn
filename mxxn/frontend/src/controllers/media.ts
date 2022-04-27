@@ -1,8 +1,6 @@
 import {ReactiveController, ReactiveControllerHost} from 'lit';
-import {property} from 'lit/decorators.js';
 
 
-// @ts-ignore
 export class MediaController implements ReactiveController {
   private host: ReactiveControllerHost;
   private mediaQueries = {
@@ -13,12 +11,13 @@ export class MediaController implements ReactiveController {
 
   size: string;
 
-
   constructor(host: ReactiveControllerHost) {
     this.host = host;
-    // @ts-ignore
     host.addController(this);
 
+  }
+
+  hostConnected(){
     for (const key in this.mediaQueries){
       this.mediaQueries[key].addEventListener('change', this.changesHandler.bind(this))
     }

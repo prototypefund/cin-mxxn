@@ -280,7 +280,6 @@ def theme(name: str, settings: Settings) -> dict:
     theme_dict['mxns'] = {}
 
     if mxn_names:
-
         for mxn_name in mxn_names:
             mxn_pkg = env.Mxn(mxn_name)
             mxn_theme = mxn_pkg.theme
@@ -288,7 +287,7 @@ def theme(name: str, settings: Settings) -> dict:
             if mxn_theme:
                 if mxn_theme.default != mxxn_theme.default:
                     raise config_ex.NotSameDefaults(
-                        'Package {} has not the same default theme a mxxn.'
+                        'Package {} has not the same default theme as mxxn.'
                         .format(mxn_pkg.name))
 
                 theme_dict['mxns'][mxn_name] = mxn_theme.dict(name)
@@ -301,7 +300,7 @@ def theme(name: str, settings: Settings) -> dict:
         if mxnapp_theme:
             if mxnapp_theme.default != mxnapp_theme.default:
                 raise config_ex.NotSameDefaults(
-                    'Package {} has not the same default theme a mxxn.'
+                    'Package {} has not the same default theme as mxxn.'
                     .format(mxnapp_pkg.name))
 
             theme_dict['mxnapp'] = mxnapp_theme.dict(name)
@@ -310,3 +309,50 @@ def theme(name: str, settings: Settings) -> dict:
         pass
 
     return theme_dict
+
+
+def strings(name: str, settings: Settings) -> dict:
+    strings_dict = {}
+    mxxn_pkg = env.Mxxn()
+    mxxn_strings = mxxn_pkg.strings
+
+    if mxxn_strings:
+        strings_dict['mxxn'] = mxxn_strings.dict(name)
+    else:
+        strings_dict['mxxn'] = {}
+
+    mxn_names = env.mxns(settings)
+    strings_dict['mxns'] = {}
+
+    if mxn_names:
+        for mxn_name in mxn_names:
+            mxn_pkg = env.Mxn(mxn_name)
+            mxn_strings = mxn_pkg.strings
+
+            if mxn_strings:
+                if mxn_strings.default != mxxn_strings.default:
+                    raise config_ex.NotSameDefaults(
+                        'Package {} has not the same '
+                        'default strings config as mxxn.'
+                        .format(mxn_pkg.name))
+
+                strings_dict['mxns'][mxn_name] = mxn_strings.dict(name)
+
+    try:
+        strings_dict['mxnapp'] = {}
+        mxnapp_pkg = env.MxnApp()
+        mxnapp_strings = mxnapp_pkg.strings
+
+        if mxnapp_strings:
+            if mxnapp_strings.default != mxnapp_strings.default:
+                raise config_ex.NotSameDefaults(
+                    'Package {} has not the same default stings '
+                    'config as mxxn.'
+                    .format(mxnapp_pkg.name))
+
+            strings_dict['mxnapp'] = mxnapp_strings.dict(name)
+
+    except env_ex.MxnAppNotExistError:
+        pass
+
+    return strings_dict

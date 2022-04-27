@@ -4,7 +4,7 @@ import json
 from unittest.mock import Mock
 from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import config as config_ex
-from mxxn.config import Config, theme
+from mxxn.config import Config, theme, strings
 
 
 class TestConfigInit():
@@ -369,8 +369,8 @@ class TestConfigReplaceVariables():
                 }
 
 
-class TestMergedConfig():
-    """Tests for the initialization of the Theme class."""
+class TestTheme():
+    """Tests for the theme function."""
 
     def test_all_pkg_themes_added(self, mxxn_env):
         """The themes of all packages were added."""
@@ -468,3 +468,98 @@ class TestMergedConfig():
         assert 'mxntwo' not in theme_dict['mxns']
         assert not theme_dict['mxnapp']
 
+
+class TestStrings():
+    """Tests for strings."""
+
+    def test_all_pkg_strings_added(self, mxxn_env):
+        """The strings of all packages were added."""
+        default_config = {
+            'variables': {
+                'login': 'login'
+            },
+            'data': {
+                'login.text': 'Hello {login}',
+              }
+        }
+
+        config = {
+            'variables': {
+            },
+            'data': {
+                'some.string': 'some string',
+              }
+        }
+
+        mxnone_strings_path = mxxn_env/'mxnone/configs/strings'
+        mxnone_strings_path.mkdir(parents=True)
+        mxntwo_strings_path = mxxn_env/'mxntwo/configs/strings'
+        mxntwo_strings_path.mkdir(parents=True)
+        mxnapp_strings_path = mxxn_env/'mxnapp/configs/strings'
+        mxnapp_strings_path.mkdir(parents=True)
+
+        with open(mxnone_strings_path/'en-default.json', 'w') as f:
+            json.dump(default_config, f)
+
+        with open(mxnone_strings_path/'de.json', 'w') as f:
+            json.dump(config, f)
+
+        with open(mxntwo_strings_path/'en-default.json', 'w') as f:
+            json.dump(default_config, f)
+
+        with open(mxntwo_strings_path/'de.json', 'w') as f:
+            json.dump(config, f)
+
+        with open(mxnapp_strings_path/'en-default.json', 'w') as f:
+            json.dump(default_config, f)
+
+        with open(mxnapp_strings_path/'de.json', 'w') as f:
+            json.dump(config, f)
+
+        settings = Mock()
+        settings.enabled_mxns = ['mxnone', 'mxntwo']
+
+        strings_dict = strings('en', settings)
+
+        assert strings_dict['mxxn']
+        assert strings_dict['mxns']['mxnone']
+        assert strings_dict['mxns']['mxntwo']
+        assert strings_dict['mxnapp']
+
+    def test_only_added_if_strings_exists(self, mxxn_env):
+        """Only added if the strings exists in the package."""
+        default_config = {
+            'variables': {
+                'login': 'login'
+            },
+            'data': {
+                'login.text': 'Hello {login}',
+              }
+        }
+
+        config = {
+            'variables': {
+            },
+            'data': {
+                'some.string': 'some string',
+              }
+        }
+
+        mxnone_strings_path = mxxn_env/'mxnone/configs/strings'
+        mxnone_strings_path.mkdir(parents=True)
+
+        with open(mxnone_strings_path/'en-default.json', 'w') as f:
+            json.dump(default_config, f)
+
+        with open(mxnone_strings_path/'de.json', 'w') as f:
+            json.dump(config, f)
+
+        settings = Mock()
+        settings.enabled_mxns = ['mxnone', 'mxntwo']
+
+        strings_dict = strings('en', settings)
+
+        assert strings_dict['mxxn']
+        assert strings_dict['mxns']['mxnone']
+        assert 'mxntwo' not in strings_dict['mxns']
+        assert not strings_dict['mxnapp']

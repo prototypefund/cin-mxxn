@@ -353,7 +353,7 @@ class Base():
             Returns instance of strings config class if it exists,
                 otherwise returns None.
         """
-        if self.themes_path:
+        if self.strings_path:
             return config.Config(self.strings_path)
 
         return None

@@ -1,8 +1,11 @@
 import {html, css, LitElement} from 'lit';
 import {theme} from '../themes';
+import {MediaController} from '../controllers/media';
 
 
 export class App extends LitElement {
+  private media = new MediaController(this);
+
   constructor() {
     super();
     theme.initialize('light').then(() => {
@@ -53,6 +56,18 @@ export class App extends LitElement {
       box-shadow: 0px -3px 6px var(--mxxn-toolbar-shadow-color);
     }
 
+    mxxn-mainbar.small{
+      background-color: #ff0000;
+    }
+
+    mxxn-mainbar.medium{
+      background-color: #00ff00;
+    }
+
+    mxxn-mainbar.large{
+      background-color: #0000ff;
+    }
+
     mxxn-navbar{
       background-color: var(--mxxn-navbar-background-color);
       box-shadow: -3px 0px 6px var(--mxxn-navbar-shadow-color);
@@ -64,8 +79,10 @@ export class App extends LitElement {
       <div class="app-grid">
 		    <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
 		    <div class="mainbar-mxns-grid">
-          <mxxn-mainbar>
+          <mxxn-mainbar class="${this.media.size}">
           </mxxn-mainbar>
+
+          ${this.media.size}
 
           <div>
             mxns

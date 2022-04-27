@@ -171,9 +171,41 @@ class Theme {
 }
 const theme = new Theme();
 
+// @ts-ignore
+class MediaController {
+    constructor(host) {
+        this.mediaQueries = {
+            small: window.matchMedia('(min-width: 0px)'),
+            medium: window.matchMedia('(min-width: 660px)'),
+            large: window.matchMedia('(min-width: 1100px)')
+        };
+        this.host = host;
+        // @ts-ignore
+        host.addController(this);
+        for (const key in this.mediaQueries) {
+            this.mediaQueries[key].addEventListener('change', this.changesHandler.bind(this));
+        }
+        this.changesHandler();
+    }
+    changesHandler() {
+        let size = null;
+        for (let [media, mediaQuery] of Object.entries(this.mediaQueries)) {
+            if (mediaQuery.matches) {
+                size = media;
+            }
+        }
+        if (this.size != size) {
+            this.size = size;
+            this.host.requestUpdate();
+        }
+        console.log(this.size);
+    }
+}
+
 class App extends s {
     constructor() {
         super();
+        this.media = new MediaController(this);
         theme.initialize('light').then(() => {
             this.updateTheme();
         });
@@ -200,8 +232,10 @@ class App extends s {
       <div class="app-grid">
 		    <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
 		    <div class="mainbar-mxns-grid">
-          <mxxn-mainbar>
+          <mxxn-mainbar class="${this.media.size}">
           </mxxn-mainbar>
+
+          ${this.media.size}
 
           <div>
             mxns
@@ -230,6 +264,18 @@ App.styles = r$2 `
     mxxn-mainbar{
       background-color: var(--mxxn-toolbar-background-color);
       box-shadow: 0px -3px 6px var(--mxxn-toolbar-shadow-color);
+    }
+
+    mxxn-mainbar.small{
+      background-color: #ff0000;
+    }
+
+    mxxn-mainbar.medium{
+      background-color: #00ff00;
+    }
+
+    mxxn-mainbar.large{
+      background-color: #0000ff;
     }
 
     mxxn-navbar{

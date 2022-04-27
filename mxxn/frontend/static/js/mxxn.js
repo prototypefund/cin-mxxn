@@ -198,7 +198,6 @@ class MediaController {
             this.size = size;
             this.host.requestUpdate();
         }
-        console.log(this.size);
     }
 }
 

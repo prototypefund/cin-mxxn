@@ -5,10 +5,6 @@ customElements.define('mxxn-icon', Icon);
 
 
 describe('Tests for Icon component.',function() {
-  beforeEach(() => {
-    document.body.innerHTML = '';
-  });
-
   it('Initialization with existing icon.', async () => {
     const svg = `
       <svg>

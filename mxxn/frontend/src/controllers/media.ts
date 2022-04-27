@@ -39,6 +39,5 @@ export class MediaController implements ReactiveController {
       this.size = size
       this.host.requestUpdate();
     }
-    console.log(this.size);
   }
 }

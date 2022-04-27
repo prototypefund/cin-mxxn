@@ -180,6 +180,17 @@ class TestBaseTheme():
         assert isinstance(pkg.theme, config.Config)
 
 
+class TestBaseStrings():
+    """Tests for the strings property of the Base class."""
+
+    def test_config_class_returned(self):
+        """A config class is returned."""
+
+        pkg = env.Base('mxxn')
+
+        assert isinstance(pkg.strings, config.Config)
+
+
 class TestBaseStringsPath():
     """Tests for the strings_path property of the Base class."""
 

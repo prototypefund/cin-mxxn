@@ -333,14 +333,28 @@ class Base():
     @property
     def theme(self) -> Optional[config.Config]:
         """
-        Get an instance of the Theme config for this package.
+        Get an instance of the theme config for this package.
 
         Returns:
-            Returns instance of Theme config class if it exists,
+            Returns instance of theme config class if it exists,
                 otherwise returns None.
         """
         if self.themes_path:
             return config.Config(self.themes_path)
+
+        return None
+
+    @property
+    def strings(self) -> Optional[config.Config]:
+        """
+        Get an instance of the strings config for this package.
+
+        Returns:
+            Returns instance of strings config class if it exists,
+                otherwise returns None.
+        """
+        if self.themes_path:
+            return config.Config(self.strings_path)
 
         return None
 

@@ -137,71 +137,133 @@ function request(url, options = {}) {
 
 class Theme {
     constructor() {
-        this.isInitialized = false;
         this.data = {};
-        this.names = [];
         // for test dependency injection
         this.request = request;
+        this.isInitialized = false;
     }
     initialize(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.loadNames();
             yield this.load(name);
             this.isInitialized = true;
         });
     }
-    getData() {
+    get state() {
         return this.data;
-    }
-    getNames() {
-        return this.names;
-    }
-    change(name) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.load(name);
-            const event = new CustomEvent('mxxn.theme.changed');
-            dispatchEvent(event);
-        });
     }
     load(name) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (name && this.names.includes(name)) {
+            try {
                 const response = yield this.request('/app/mxxn/themes/' + name);
                 const responseData = yield response.json();
                 const data = {};
-                for (const pkg in responseData) {
-                    for (const variable in responseData[pkg]) {
-                        const variableName = `--${pkg}-${variable.replace(/\./g, '-')}`;
-                        data[variableName] = responseData[pkg][variable];
+                Object.entries(responseData).forEach(([pkg, value]) => {
+                    if (pkg === 'mxxn' || pkg === 'mxnapp') {
+                        Object.entries(value).forEach(([variable, value]) => {
+                            const variableName = `--${pkg}-${variable.replace(/\./g, '-')}`;
+                            data[variableName] = value;
+                        });
                     }
-                }
+                    else if (pkg === 'mxns') {
+                        Object.entries(value).forEach(([mxn, variables]) => {
+                            Object.entries(variables).forEach(([variable, value]) => {
+                                const variableName = `--${pkg}-${mxn}-${variable.replace(/\./g, '-')}`;
+                                data[variableName] = value;
+                            });
+                        });
+                    }
+                });
                 this.data = data;
+                const event = new CustomEvent('mxxn.theme.changed');
+                dispatchEvent(event);
             }
-            else {
-                throw new ThemeError(`The theme with name "${name}" does not exist.`);
+            catch (ex) {
+                throw new ThemeError('An error occurred while loading the application theme.');
             }
-        });
-    }
-    loadNames() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = yield this.request('/app/mxxn/themes?fields=id');
-            const responseData = yield response.json();
-            const names = [];
-            for (const name of responseData) {
-                names.push(name.id);
-            }
-            this.names = names;
         });
     }
 }
 const theme = new Theme();
+// import {request as requestImport} from '../request';
+// import {StringsError} from '../exceptions';
+//
+//
+// export class Strings {
+//   private data: object = {};
+//   public isInitialized = false;
+//   // for test dependency injection
+//   private request = requestImport;
+//
+//   async initialize(name: string){
+//     await this.load(name);
+//     this.isInitialized = true;
+//   }
+//
+//   get state() {
+//     return this.data;
+//   }
+//
+//   async load(locale: string) {
+//     const data = {};
+//
+//     function makeObject(data, variables) {
+//       Object.entries(variables).forEach(([variable, value]) => {
+//         const parts = variable.split('.');
+//         let object = data;
+//
+//         parts.forEach((key, i) => {
+//           if (i < parts.length - 1) {
+//             object[key] = object[key] || {};
+//             object = object[key];
+//           }
+//           else {
+//             object[key] = value;
+//           }
+//         });
+//       })
+//     }
+//
+//     try {
+//       const response = await this.request('/app/mxxn/strings/'+locale);
+//       const responseData = await response.json();
+//
+//       Object.entries(responseData).forEach(([pkg, value]) => {
+//         if ((pkg === 'mxxn' || pkg === 'mxnapp') && Object.keys(value).length > 0) {
+//           data[pkg] = {};
+//           makeObject(data[pkg], value)
+//         }
+//         else if (pkg === 'mxns' && Object.keys(value).length > 0) {
+//           data[pkg] = {};
+//
+//           Object.entries(responseData[pkg]).forEach(([mxn, value]) => {
+//           
+//             if (Object.keys(value).length > 0) {
+//               data[pkg][mxn] = {};
+//               makeObject(data[pkg][mxn], value)
+//             }
+//           });
+//         }
+//       });
+//
+//       this.data = data;
+//       const event = new CustomEvent('mxxn.strings.changed');
+//       dispatchEvent(event);
+//     }
+//     catch (ex) {
+//       throw new StringsError(
+//         'An error occurred while loading the application strings.');
+//     }
+//   }
+// }
+//
+// export const strings = new Strings();
 
 class Strings {
     constructor() {
         this.data = {};
-        this.isInitialized = false;
         // for test dependency injection
         this.request = request;
+        this.isInitialized = false;
     }
     initialize(name) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -214,7 +276,6 @@ class Strings {
     }
     load(locale) {
         return __awaiter(this, void 0, void 0, function* () {
-            const data = {};
             function makeObject(data, variables) {
                 Object.entries(variables).forEach(([variable, value]) => {
                     const parts = variable.split('.');
@@ -233,6 +294,7 @@ class Strings {
             try {
                 const response = yield this.request('/app/mxxn/strings/' + locale);
                 const responseData = yield response.json();
+                const data = {};
                 Object.entries(responseData).forEach(([pkg, value]) => {
                     if ((pkg === 'mxxn' || pkg === 'mxnapp') && Object.keys(value).length > 0) {
                         data[pkg] = {};
@@ -316,27 +378,29 @@ class App extends s {
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
             yield theme.initialize('light');
-            this.updateTheme();
+            // this.updateTheme();
             yield strings.initialize('de');
             this.isInitialized = true;
         });
     }
     connectedCallback() {
         super.connectedCallback();
-        window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
+        // window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
     }
     disconnectedCallback() {
-        window.removeEventListener('mxxn.theme.changed', this.updateTheme);
+        // window.removeEventListener('mxxn.theme.changed', this.updateTheme);
         super.disconnectedCallback();
     }
-    updateTheme() {
-        const data = theme.getData();
-        for (const variable in data) {
-            this.style.setProperty(variable, data[variable]);
-        }
-    }
+    // updateTheme(){
+    //   const data = theme.getData();
+    //
+    //   for (const variable in data){
+    //     this.style.setProperty(variable, data[variable]);
+    //   }
+    // }
+    //
     changeTheme() {
-        theme.change('dark');
+        // theme.change('dark');
     }
     changeStrings() {
         strings.load('en');

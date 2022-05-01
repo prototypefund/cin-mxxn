@@ -20,31 +20,31 @@ export class App extends LitElement {
 
   async initialize() {
     await theme.initialize('light');
-    this.updateTheme();
+    // this.updateTheme();
     await strings.initialize('de');
     this.isInitialized = true;
   }
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
+    // window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
   }
 
   disconnectedCallback() {
-    window.removeEventListener('mxxn.theme.changed', this.updateTheme);
+    // window.removeEventListener('mxxn.theme.changed', this.updateTheme);
     super.disconnectedCallback();
   }
 
-  updateTheme(){
-    const data = theme.getData();
-
-    for (const variable in data){
-      this.style.setProperty(variable, data[variable]);
-    }
-  }
-
+  // updateTheme(){
+  //   const data = theme.getData();
+  //
+  //   for (const variable in data){
+  //     this.style.setProperty(variable, data[variable]);
+  //   }
+  // }
+  //
   changeTheme(){
-    theme.change('dark');
+    // theme.change('dark');
   }
 
   changeStrings(){

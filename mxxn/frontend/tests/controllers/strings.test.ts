@@ -1,7 +1,7 @@
 // @ts-nocheck
 import {strings} from '../../src/states/strings';
 import {StringsController} from '../../src/controllers/strings';
-import {LitElement, html} from 'lit';
+import {LitElement} from 'lit';
 
 
 class StringsElement extends LitElement {

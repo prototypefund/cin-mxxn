@@ -1,236 +1,77 @@
-import {theme} from '../src/themes'
-
-
-describe('Tests for loadNames method of the Theme class.', () => {
-  it('Names has been loaded and saved as array.', async () => {
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const response = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValue(response);
-
-    // @ts-ignore
-    await theme.loadNames();
-
-    // @ts-ignore
-    expect(theme.names).toEqual(['dark', 'light']);
-  })
-});
+// @ts-nocheck
+import {theme} from '../src/themes';
+import {ThemeError} from '../src/exceptions';
 
 
 describe('Tests for load method of the Theme class.', () => {
-  it('Data has been loaded and saved as object.', async () => {
-    const dark = {
+  it('The Mxxn variables generated.', async () => {
+    const light = {
       mxxn: {
         'icon.color': '#ffffff'
       },
-      mxns: {},
+      mxns: {
+      },
       mxnapp: {}
     };
 
-    const light = {
-      mxxn: {
-        'icon.color': '#000000'
-      },
-      mxns: {},
-      mxnapp: {}
-    };
-
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const responseNames = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    const responseDark = new Response(
-      JSON.stringify(dark), { status: 200, statusText: 'OK', });
-
-    const responseLight = new Response(
+    const response = new Response(
       JSON.stringify(light), { status: 200, statusText: 'OK', });
 
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValues(
-      responseNames, responseDark, responseLight
-    );
+    theme.request = jasmine.createSpy('request').and.returnValue(response);
 
-    await theme.initialize('dark');
-
-    expect(theme.getData()).toEqual({
-      '--mxxn-icon-color': '#ffffff'
-    });
-
-    // @ts-ignore
     await theme.load('light');
 
-    // @ts-ignore
-    expect(theme.getData()).toEqual({
-      '--mxxn-icon-color': '#000000'
+    expect(theme.state).toEqual({'--mxxn-icon-color': '#ffffff'});
+  });
+
+  it('Variables for MxnApp and Mxns were created.', async () => {
+    const light = {
+      mxxn: {
+        'icon.color': '#ffffff',
+        'icon.background.color': '#000000'
+      },
+      mxns: {
+        one: {
+          'one.a': 'one-a',
+          'one.b': 'one-b'
+        },
+        two: {
+          'two.a': 'two-a',
+          'two.b': 'two-b'
+        },
+      },
+      mxnapp: {
+        'some.color': '#ff0000',
+      }
+    };
+
+    const response = new Response(
+      JSON.stringify(light), { status: 200, statusText: 'OK', });
+
+    theme.request = jasmine.createSpy('request').and.returnValue(response);
+
+    await theme.load();
+
+    expect(theme.state).toEqual({
+      '--mxxn-icon-color': '#ffffff',
+      '--mxxn-icon-background-color': '#000000',
+      '--mxns-one-one-a': 'one-a',
+      '--mxns-one-one-b': 'one-b',
+      '--mxns-two-two-a': 'two-a',
+      '--mxns-two-two-b': 'two-b',
+      '--mxnapp-some-color': '#ff0000'
     });
+  });
+
+  it('Throw ThemeError.', async () => {
+    await expectAsync(theme.load('light')).toBeRejectedWithError(ThemeError);
   });
 });
 
 
 describe('Tests for initialize method of the Theme class.', () => {
-  it('Instance was initialized.', async () => {
-    const data = {
-      mxxn: {
-        'icon.color': '#0000ff'
-      },
-      mxns: {},
-      mxnapp: {}
-    };
-
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const responseNames = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    const responseData = new Response(
-      JSON.stringify(data), { status: 200, statusText: 'OK', });
-
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValues(
-      responseNames, responseData);
-
-    // @ts-ignore
-    await theme.initialize('dark');
-
-    expect(theme.getData()).toEqual({'--mxxn-icon-color': '#0000ff'});
-    expect(theme.getNames()).toEqual(['dark', 'light']);
-  });
-
   it('The isInitialized property was set.', async () => {
-    const data = {
-      mxxn: {
-        'icon.color': '#0000ff'
-      },
-      mxns: {},
-      mxnapp: {}
-    };
-
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const responseNames = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    const responseData = new Response(
-      JSON.stringify(data), { status: 200, statusText: 'OK', });
-
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValues(
-      responseNames, responseData);
-
-    // @ts-ignore
-    await theme.initialize('dark');
-
-    expect(theme.isInitialized).toBeTrue();
-  })
-});
-
-
-describe('Tests for getData method of the Theme class.', () => {
-  it('The data were returned.', async () => {
-    const data = {
-      mxxn: {
-        'icon.color': '#0000ff'
-      },
-      mxns: {},
-      mxnapp: {}
-    };
-
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const responseNames = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    const responseData = new Response(
-      JSON.stringify(data), { status: 200, statusText: 'OK', });
-
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValues(
-      responseNames, responseData);
-
-    await theme.initialize('dark');
-
-    expect(theme.getData()).toEqual({'--mxxn-icon-color': '#0000ff'});
-  });
-});
-
-
-describe('Tests for getNames method of the Theme class.', () => {
-  it('The names were returned.', async () => {
-    const data = {
-      mxxn: {
-        'icon.color': '#0000ff'
-      },
-      mxns: {},
-      mxnapp: {}
-    };
-
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const responseNames = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    const responseData = new Response(
-      JSON.stringify(data), { status: 200, statusText: 'OK', });
-
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValues(responseNames, responseData);
-
-    await theme.initialize('dark');
-
-    expect(theme.getNames()).toEqual(['dark', 'light']);
-  });
-});
-
-
-describe('Tests for change method of the Theme class.', () => {
-  it('Theme data changed.', async () => {
-    const dark = {
+    const light = {
       mxxn: {
         'icon.color': '#ffffff'
       },
@@ -238,43 +79,35 @@ describe('Tests for change method of the Theme class.', () => {
       mxnapp: {}
     };
 
+    const response = new Response(
+      JSON.stringify(light), { status: 200, statusText: 'OK', });
+
+    theme.request = jasmine.createSpy('request').and.returnValue(response);
+
+    expect(theme.isInitialized).toBeFalse()
+
+    await theme.initialize('light');
+
+    expect(theme.isInitialized).toBeTrue()
+  });
+
+  it('Variables were created.', async () => {
     const light = {
       mxxn: {
-        'icon.color': '#000000'
+        'icon.color': '#ffffff'
       },
-      mxns: {},
+      mxns: {
+      },
       mxnapp: {}
     };
 
-    const names = [
-      {
-        "id": "dark"
-      },
-      {
-        "id": "light"
-      }
-    ];
-
-    const responseNames = new Response(
-      JSON.stringify(names), { status: 200, statusText: 'OK', });
-
-    const responseDark = new Response(
-      JSON.stringify(dark), { status: 200, statusText: 'OK', });
-
-    const responseLight = new Response(
+    const response = new Response(
       JSON.stringify(light), { status: 200, statusText: 'OK', });
 
-    // @ts-ignore
-    theme.request = jasmine.createSpy('request').and.returnValues(
-      responseNames, responseDark, responseLight
-    );
+    theme.request = jasmine.createSpy('request').and.returnValue(response);
 
-    await theme.initialize('dark');
+    await theme.initialize('light');
 
-    expect(theme.getData()).toEqual({'--mxxn-icon-color': '#ffffff'});
-
-    await theme.change('light');
-
-    expect(theme.getData()).toEqual({'--mxxn-icon-color': '#000000'});
-  })
+    expect(theme.state).toEqual({'--mxxn-icon-color': '#ffffff'});
+  });
 });

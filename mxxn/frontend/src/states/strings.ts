@@ -4,9 +4,10 @@ import {StringsError} from '../exceptions';
 
 export class Strings {
   private data: object = {};
-  public isInitialized = false;
   // for test dependency injection
   private request = requestImport;
+
+  isInitialized = false;
 
   async initialize(name: string){
     await this.load(name);
@@ -18,8 +19,6 @@ export class Strings {
   }
 
   async load(locale: string) {
-    const data = {};
-
     function makeObject(data, variables) {
       Object.entries(variables).forEach(([variable, value]) => {
         const parts = variable.split('.');
@@ -40,6 +39,7 @@ export class Strings {
     try {
       const response = await this.request('/app/mxxn/strings/'+locale);
       const responseData = await response.json();
+      const data = {};
 
       Object.entries(responseData).forEach(([pkg, value]) => {
         if ((pkg === 'mxxn' || pkg === 'mxnapp') && Object.keys(value).length > 0) {

@@ -1,5 +1,6 @@
 import {html, css, LitElement} from 'lit';
 import {theme} from '../themes';
+import {strings} from '../states/strings';
 import {MediaController} from '../controllers/media';
 
 
@@ -8,8 +9,13 @@ export class App extends LitElement {
 
   constructor() {
     super();
+
     theme.initialize('light').then(() => {
       this.updateTheme();
+    });
+
+    strings.initialize('de').then(() => {
+      console.log(strings.state);
     });
   }
 

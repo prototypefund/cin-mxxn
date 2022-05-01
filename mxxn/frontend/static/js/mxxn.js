@@ -74,6 +74,12 @@ class ThemeError extends Error {
         this.name = 'ThemeError';
     }
 }
+class StringsError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'StringsError';
+    }
+}
 
 /**
  * Send an HTTP request to the given URL.
@@ -171,6 +177,70 @@ class Theme {
 }
 const theme = new Theme();
 
+class Strings {
+    constructor() {
+        this.data = {};
+        this.isInitialized = false;
+        // for test dependency injection
+        this.request = request;
+    }
+    initialize(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.load(name);
+            this.isInitialized = true;
+        });
+    }
+    get state() {
+        return this.data;
+    }
+    load(locale) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = {};
+            function makeObject(data, variables) {
+                Object.entries(variables).forEach(([variable, value]) => {
+                    const parts = variable.split('.');
+                    let object = data;
+                    parts.forEach((key, i) => {
+                        if (i < parts.length - 1) {
+                            object[key] = object[key] || {};
+                            object = object[key];
+                        }
+                        else {
+                            object[key] = value;
+                        }
+                    });
+                });
+            }
+            try {
+                const response = yield this.request('/app/mxxn/strings/' + locale);
+                const responseData = yield response.json();
+                Object.entries(responseData).forEach(([pkg, value]) => {
+                    if ((pkg === 'mxxn' || pkg === 'mxnapp') && Object.keys(value).length > 0) {
+                        data[pkg] = {};
+                        makeObject(data[pkg], value);
+                    }
+                    else if (pkg === 'mxns' && Object.keys(value).length > 0) {
+                        data[pkg] = {};
+                        Object.entries(responseData[pkg]).forEach(([mxn, value]) => {
+                            if (Object.keys(value).length > 0) {
+                                data[pkg][mxn] = {};
+                                makeObject(data[pkg][mxn], value);
+                            }
+                        });
+                    }
+                });
+                this.data = data;
+                const event = new CustomEvent('mxxn.strings.changed');
+                dispatchEvent(event);
+            }
+            catch (ex) {
+                throw new StringsError('An error occurred while loading the application strings.');
+            }
+        });
+    }
+}
+const strings = new Strings();
+
 class MediaController {
     constructor(host) {
         this.mediaQueries = {
@@ -207,6 +277,9 @@ class App extends s {
         this.media = new MediaController(this);
         theme.initialize('light').then(() => {
             this.updateTheme();
+        });
+        strings.initialize('de').then(() => {
+            console.log(strings.state);
         });
     }
     connectedCallback() {

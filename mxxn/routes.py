@@ -171,6 +171,7 @@ from pathlib import Path
 from falcon import Request, Response, HTTPBadRequest
 from mxxn.resources import Root, App
 from mxxn.resources.themes import Themes
+from mxxn.resources.strings import Strings
 from mxxn.settings import Settings
 from mxxn.env import MxnApp, Mxn
 from mxxn.exceptions.env import MxnAppNotExistError
@@ -192,7 +193,9 @@ ROUTES: Routes = [
         {'url': 'APP_ROOT', 'resource': Root},
         {'url': '/', 'resource': App},
         {'url': '/themes', 'resource': Themes},
-        {'url': '/themes/{id}', 'resource': Themes}]
+        {'url': '/themes/{id}', 'resource': Themes},
+        {'url': '/strings', 'resource': Strings},
+        {'url': '/strings/{id}', 'resource': Strings}]
 """The routes definition of the mxxn package."""
 
 

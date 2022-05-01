@@ -1,22 +1,28 @@
 import {html, css, LitElement} from 'lit';
+import {state} from 'lit/decorators.js';
 import {theme} from '../themes';
 import {strings} from '../states/strings';
 import {MediaController} from '../controllers/media';
+import {StringsController} from '../controllers/strings';
 
 
 export class App extends LitElement {
   private media = new MediaController(this);
+  private strings = new StringsController(this);
+
+  @state()
+  private isInitialized = false;
 
   constructor() {
     super();
+    this.initialize()
+  }
 
-    theme.initialize('light').then(() => {
-      this.updateTheme();
-    });
-
-    strings.initialize('de').then(() => {
-      console.log(strings.state);
-    });
+  async initialize() {
+    await theme.initialize('light');
+    this.updateTheme();
+    await strings.initialize('de');
+    this.isInitialized = true;
   }
 
   connectedCallback() {
@@ -39,6 +45,10 @@ export class App extends LitElement {
 
   changeTheme(){
     theme.change('dark');
+  }
+
+  changeStrings(){
+    strings.load('en');
   }
 
   static styles = css`
@@ -81,20 +91,24 @@ export class App extends LitElement {
     `;
 
   render() {
-    return html`
-      <div class="app-grid">
-		    <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
-		    <div class="mainbar-mxns-grid">
-          <mxxn-mainbar class="${this.media.size}">
-          </mxxn-mainbar>
+    if (this.isInitialized) {
+      return html`
+        <div class="app-grid">
+          <mxxn-navbar @click="${this.changeTheme}"></mxxn-navbar>
+          <div class="mainbar-mxns-grid">
+            <mxxn-mainbar @click='${this.changeStrings}' class="${this.media.size}">
+            </mxxn-mainbar>
 
-          ${this.media.size}
+            ${this.media.size} <br>
 
-          <div>
-            mxns
+            ${// @ts-ignore
+              this.strings.state.mxxn.login}
+            <div>
+              mxns
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
+    }
   }
 }

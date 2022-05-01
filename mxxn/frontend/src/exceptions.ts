@@ -22,9 +22,16 @@ class ThemeError extends Error {
   }
 }
 
+class StringsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'StringsError';
+  }
+}
 
 export{
   RequestError,
   IconLoadError,
-  ThemeError
+  ThemeError,
+  StringsError
 };

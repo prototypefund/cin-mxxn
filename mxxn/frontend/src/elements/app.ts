@@ -1,6 +1,6 @@
 import {html, css, LitElement} from 'lit';
 import {state} from 'lit/decorators.js';
-import {theme} from '../themes';
+import {theme} from '../states/themes';
 import {strings} from '../states/strings';
 import {MediaController} from '../controllers/media';
 import {StringsController} from '../controllers/strings';

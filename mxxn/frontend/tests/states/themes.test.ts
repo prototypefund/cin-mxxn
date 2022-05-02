@@ -1,6 +1,6 @@
 // @ts-nocheck
-import {theme} from '../src/themes';
-import {ThemeError} from '../src/exceptions';
+import {Theme} from '../../src/states/themes';
+import {ThemeError} from '../../src/exceptions';
 
 
 describe('Tests for load method of the Theme class.', () => {
@@ -16,7 +16,8 @@ describe('Tests for load method of the Theme class.', () => {
 
     const response = new Response(
       JSON.stringify(light), { status: 200, statusText: 'OK', });
-
+    
+    const theme = new Theme()
     theme.request = jasmine.createSpy('request').and.returnValue(response);
 
     await theme.load('light');
@@ -48,6 +49,7 @@ describe('Tests for load method of the Theme class.', () => {
     const response = new Response(
       JSON.stringify(light), { status: 200, statusText: 'OK', });
 
+    const theme = new Theme()
     theme.request = jasmine.createSpy('request').and.returnValue(response);
 
     await theme.load();
@@ -64,6 +66,7 @@ describe('Tests for load method of the Theme class.', () => {
   });
 
   it('Throw ThemeError.', async () => {
+    const theme = new Theme()
     await expectAsync(theme.load('light')).toBeRejectedWithError(ThemeError);
   });
 });
@@ -82,9 +85,10 @@ describe('Tests for initialize method of the Theme class.', () => {
     const response = new Response(
       JSON.stringify(light), { status: 200, statusText: 'OK', });
 
+    const theme = new Theme()
     theme.request = jasmine.createSpy('request').and.returnValue(response);
 
-    expect(theme.isInitialized).toBeFalse()
+    theme.isInitialized = false;
 
     await theme.initialize('light');
 
@@ -104,6 +108,7 @@ describe('Tests for initialize method of the Theme class.', () => {
     const response = new Response(
       JSON.stringify(light), { status: 200, statusText: 'OK', });
 
+    const theme = new Theme()
     theme.request = jasmine.createSpy('request').and.returnValue(response);
 
     await theme.initialize('light');

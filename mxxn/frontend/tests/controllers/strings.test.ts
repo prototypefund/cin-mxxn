@@ -11,28 +11,6 @@ class StringsElement extends LitElement {
 customElements.define('mxxn-strings-element', StringsElement);
 
 describe('Tests for StringsController.', () => {
-  it('The state variable added.', async () => {
-    const en = {
-      mxxn: {
-        'app.login': 'login'
-      },
-      mxns: {},
-      mxnapp: {}
-    };
-
-    const response = new Response(
-      JSON.stringify(en), { status: 200, statusText: 'OK', });
-
-    strings.request = jasmine.createSpy('request').and.returnValue(response);
-
-    const mediaElement = document.createElement('mxxn-strings-element');
-    document.body.appendChild(mediaElement);
-    const element = document.body.querySelector('mxxn-strings-element');
-    await element.updateComplete;
-
-    expect(element.strings.state).toEqual({})
-  });
-
   it('The state variable updated after initialization.', async () => {
     const en = {
       mxxn: {
@@ -51,8 +29,6 @@ describe('Tests for StringsController.', () => {
     document.body.appendChild(mediaElement);
     const element = document.body.querySelector('mxxn-strings-element');
     await element.updateComplete;
-
-    expect(element.strings.state).toEqual({})
 
     await strings.initialize();
 
@@ -90,8 +66,6 @@ describe('Tests for StringsController.', () => {
     const element = document.body.querySelector('mxxn-strings-element');
     await element.updateComplete;
     await strings.initialize();
-
-    expect(element.strings.state).toEqual({mxxn: {app: {login: 'login'}}});
 
     await strings.load('de');
 

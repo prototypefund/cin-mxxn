@@ -324,7 +324,6 @@ class App extends s {
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
             yield theme.initialize('light');
-            // this.updateTheme();
             yield strings.initialize('de');
             this.isInitialized = true;
         });

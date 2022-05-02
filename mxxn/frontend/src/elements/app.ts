@@ -22,7 +22,6 @@ export class App extends LitElement {
 
   async initialize() {
     await theme.initialize('light');
-    // this.updateTheme();
     await strings.initialize('de');
     this.isInitialized = true;
   }

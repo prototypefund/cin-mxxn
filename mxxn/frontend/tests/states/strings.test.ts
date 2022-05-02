@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {strings} from '../../src/states/strings'
+import {Strings} from '../../src/states/strings'
 import {StringsError} from '../../src/exceptions';
 
 
@@ -15,6 +15,8 @@ describe('Tests for load method of the Strings class.', () => {
 
     const response = new Response(
       JSON.stringify(en), { status: 200, statusText: 'OK', });
+
+    const strings = new Strings()
 
     strings.request = jasmine.createSpy('request').and.returnValue(response);
 
@@ -48,6 +50,7 @@ describe('Tests for load method of the Strings class.', () => {
     const response = new Response(
       JSON.stringify(en), { status: 200, statusText: 'OK', });
 
+    const strings = new Strings()
     strings.request = jasmine.createSpy('request').and.returnValue(response);
 
     await strings.load();
@@ -63,6 +66,7 @@ describe('Tests for load method of the Strings class.', () => {
   });
 
   it('Throw StringError.', async () => {
+    const strings = new Strings()
     await expectAsync(strings.load('en')).toBeRejectedWithError(StringsError);
   });
 });
@@ -81,6 +85,7 @@ describe('Tests for initialize method of the Strings class.', () => {
     const response = new Response(
       JSON.stringify(en), { status: 200, statusText: 'OK', });
 
+    const strings = new Strings()
     strings.request = jasmine.createSpy('request').and.returnValue(response);
 
     expect(strings.isInitialized).toBeFalse()
@@ -90,7 +95,7 @@ describe('Tests for initialize method of the Strings class.', () => {
     expect(strings.isInitialized).toBeTrue()
   });
 
-  fit('Nested object was created.', async () => {
+  it('Nested object was created.', async () => {
     const en = {
       mxxn: {
         'app.login': 'login'
@@ -102,6 +107,7 @@ describe('Tests for initialize method of the Strings class.', () => {
     const response = new Response(
       JSON.stringify(en), { status: 200, statusText: 'OK', });
 
+    const strings = new Strings()
     strings.request = jasmine.createSpy('request').and.returnValue(response);
 
     await strings.initialize('en');

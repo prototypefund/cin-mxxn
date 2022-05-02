@@ -4,11 +4,13 @@ import {theme} from '../states/theme';
 import {strings} from '../states/strings';
 import {MediaController} from '../controllers/media';
 import {StringsController} from '../controllers/strings';
+import {ThemeController} from '../controllers/theme';
 
 
 export class App extends LitElement {
   private media = new MediaController(this);
   private strings = new StringsController(this);
+  private theme = new ThemeController(this);
 
   @state()
   private isInitialized = false;
@@ -25,26 +27,14 @@ export class App extends LitElement {
     this.isInitialized = true;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    // window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
+  updateTheme(){
+    for (const variable in this.theme.state){
+      this.style.setProperty(variable, this.theme.state[variable]);
+    }
   }
 
-  disconnectedCallback() {
-    // window.removeEventListener('mxxn.theme.changed', this.updateTheme);
-    super.disconnectedCallback();
-  }
-
-  // updateTheme(){
-  //   const data = theme.getData();
-  //
-  //   for (const variable in data){
-  //     this.style.setProperty(variable, data[variable]);
-  //   }
-  // }
-  //
   changeTheme(){
-    // theme.change('dark');
+    theme.load('dark');
   }
 
   changeStrings(){
@@ -103,6 +93,9 @@ export class App extends LitElement {
 
             ${// @ts-ignore
               this.strings.state.mxxn.login}
+
+            ${// @ts-ignore
+              this.theme.state['--mxxn-icon-color']}
             <div>
               mxns
             </div>

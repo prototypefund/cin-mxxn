@@ -294,11 +294,30 @@ class StringsController {
     }
 }
 
+class ThemeController {
+    constructor(host) {
+        this.host = host;
+        host.addController(this);
+    }
+    hostConnected() {
+        this.changesHandler();
+        addEventListener('mxxn.theme.changed', this.changesHandler.bind(this));
+    }
+    changesHandler() {
+        this.state = theme.state;
+        this.host.requestUpdate();
+        if (typeof this.host.updateTheme !== "undefined") {
+            this.host.updateTheme();
+        }
+    }
+}
+
 class App extends s {
     constructor() {
         super();
         this.media = new MediaController(this);
         this.strings = new StringsController(this);
+        this.theme = new ThemeController(this);
         this.isInitialized = false;
         this.initialize();
     }
@@ -310,24 +329,13 @@ class App extends s {
             this.isInitialized = true;
         });
     }
-    connectedCallback() {
-        super.connectedCallback();
-        // window.addEventListener('mxxn.theme.changed', this.updateTheme.bind(this));
+    updateTheme() {
+        for (const variable in this.theme.state) {
+            this.style.setProperty(variable, this.theme.state[variable]);
+        }
     }
-    disconnectedCallback() {
-        // window.removeEventListener('mxxn.theme.changed', this.updateTheme);
-        super.disconnectedCallback();
-    }
-    // updateTheme(){
-    //   const data = theme.getData();
-    //
-    //   for (const variable in data){
-    //     this.style.setProperty(variable, data[variable]);
-    //   }
-    // }
-    //
     changeTheme() {
-        // theme.change('dark');
+        theme.load('dark');
     }
     changeStrings() {
         strings.load('en');
@@ -345,6 +353,9 @@ class App extends s {
 
             ${ // @ts-ignore
             this.strings.state.mxxn.login}
+
+            ${ // @ts-ignore
+            this.theme.state['--mxxn-icon-color']}
             <div>
               mxns
             </div>

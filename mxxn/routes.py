@@ -41,7 +41,13 @@ ROUTES: Routes = [
 
 
 class StaticRoutesMiddleware:
-    """The middleware for static routes."""
+    """
+    A middleware for changing static routes.
+
+    This middleware checks if a cover file exists for the
+    requested static file and if so, the request URL is
+    set to the URL of the cover.
+    """
 
     def __init__(self, settings: Settings) -> None:
         """
@@ -66,7 +72,7 @@ class StaticRoutesMiddleware:
 
     async def process_request(self, req: Request, resp: Response) -> None:
         """
-        Change the path to covered static file.
+        If a cover exists, the URL will be changed to the path of the cover.
 
         Args:
             req: Request object that will be passed to the

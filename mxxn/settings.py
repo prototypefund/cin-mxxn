@@ -1,38 +1,5 @@
 
-"""
-The Settings module is used to access the application settings.
-
-Like most Python packages, the Mxxn framework uses a settings file in INI
-format. This has the advantage that there is the possibility of using only
-one settings file for Mxxn, Alembic, Supervisor, Gunicorn etc.
-
-Mxxn itself reads the *mxxn* section and the *sqlalchemy_url* variable of
-the *alembic* section of the settings file.
-
-.. note::
-    If an extra settings file is used for alembic, then the alembic section
-    with the sqlalchemy_url variable must still be present in the Mxxn
-    settings file.
-
-The Mxxn settings file can be passed to the framework via the environment
-variable *MXXN_SETTINGS*. If the variable is not used, the settings.ini file
-is searched for in the current working directory. If no settings file is
-applied, the default settings of the Mxxn framework are used.
-
-List of variables:
-
-+-------------+------------------+-------+--------------------------+
-| Section     | Variable         | Type  | Description              |
-+=============+==================+=======+==========================+
-| mxxn        | enabled_mxns     | list  | List of enabled mxns     |
-+-------------+------------------+-------+--------------------------+
-| mxxn        | app_path         | str   | Application directory    |
-+-------------+------------------+-------+--------------------------+
-| mxxn        | data_path        | str   | Data directory           |
-+-------------+------------------+-------+--------------------------+
-| alembic     | sqlalchemy_url   | str   | SQLAlchemy database url  |
-+-------------+------------------+-------+--------------------------+
-"""
+"""The Settings module is used to access the application settings."""
 from pathlib import Path
 from os import environ
 from jsonschema import exceptions as jsonschema_ex
@@ -113,7 +80,7 @@ class Settings():
         """
         Get a list of enabled mxns.
 
-        It is possible to activate only specific mixins in the
+        It is possible to activate only specific Mxns in the
         settings file. If the *enabled_mxns* variable of the settings
         file is not set, None is returned. To deactivate all installed mxns,
         an empty list can be set in the settings file.

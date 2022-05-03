@@ -45,7 +45,7 @@ from mxxn.exceptions import filesys as filesys_ex
 from mxxn.exceptions import settings as settings_ex
 
 
-_settings_schema: dict = {
+_SETTINGS_SCHEMA: dict = {
     'type': 'object',
     'properties': {
         'mxxn': {
@@ -218,7 +218,7 @@ class Settings():
                     self._data['alembic']['sqlalchemy.url'] =\
                             config['alembic']['sqlalchemy.url']
 
-            validate(instance=self._data, schema=_settings_schema)
+            validate(instance=self._data, schema=_SETTINGS_SCHEMA)
 
         except ValueError:
             raise settings_ex.SettingsFormatError(

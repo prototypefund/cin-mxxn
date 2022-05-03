@@ -10,6 +10,7 @@ Welcome to MXXN's documentation!
     :maxdepth: 2
     :caption: Contents:
 
+    cli
     routes
     settings
     logging

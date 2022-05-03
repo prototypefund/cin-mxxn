@@ -12,6 +12,7 @@ Welcome to MXXN's documentation!
 
     routes
     settings
+    logging
     api/api
 
 Indices and tables

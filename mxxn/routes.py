@@ -9,7 +9,7 @@ from typing import TypedDict, Any
 from typing_extensions import NotRequired
 from jsonschema import validate, ValidationError
 from pathlib import Path
-from falcon import Request, Response, Resource, HTTPBadRequest
+from falcon import Request, Response, HTTPBadRequest
 from mxxn.resources import Root, App
 from mxxn.resources.themes import Themes
 from mxxn.resources.strings import Strings
@@ -145,8 +145,9 @@ class QueryStringValidationMiddleware:
     """
 
     async def process_resource(
-        self, req: Request, resp: Response,
-            resource: Resource, params: Any) -> None:
+            self, req: Request, resp: Response,
+            resource: Any, params: Any
+            ) -> None:
         """
         Validate the query string of the URL.
 

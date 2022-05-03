@@ -12,7 +12,7 @@ def logger(context: Optional[str] = None) -> Logger:
         context: The name of the logging context.
 
     Return:
-        A mixxin application logger.
+        A mxxn application logger.
     """
     caller_package = caller_package_name()
 

@@ -11,6 +11,7 @@ Welcome to MXXN's documentation!
     :caption: Contents:
 
     routes
+    settings
     api/api
 
 Indices and tables

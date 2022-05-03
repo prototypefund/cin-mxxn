@@ -21,5 +21,5 @@ help:
 
 	$(dir="source/api/backend/python" && [ -d $dir ] && rm -r $dir)
 
-	sphinx-apidoc -T -M -a -e -o source/api/backend/python ../mxxn
+	sphinx-apidoc -T -M -a -e -o source/api/python ../mxxn
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

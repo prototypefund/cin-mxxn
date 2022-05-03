@@ -12,4 +12,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   mxxn.resources.strings
    mxxn.resources.themes

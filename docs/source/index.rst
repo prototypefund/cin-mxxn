@@ -3,8 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to MXXN's documentation!
-================================
+The MXXN Framework!
+===================
+
+MXXN is an easy to use framework for rapid web application
+development.
+
 
 .. toctree::
     :maxdepth: 2

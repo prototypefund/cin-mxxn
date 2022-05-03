@@ -5,11 +5,11 @@ The routes to the resources of the Mxxn package are defined
 in the routes module. In addition, routes related middleware
 is also defined here.
 """
-from typing import TypedDict
+from typing import TypedDict, Any
 from typing_extensions import NotRequired
 from jsonschema import validate, ValidationError
 from pathlib import Path
-from falcon import Request, Response, HTTPBadRequest
+from falcon import Request, Response, Resource, HTTPBadRequest
 from mxxn.resources import Root, App
 from mxxn.resources.themes import Themes
 from mxxn.resources.strings import Strings
@@ -144,7 +144,9 @@ class QueryStringValidationMiddleware:
     is for a URL without parameters.
     """
 
-    async def process_resource(self, req, resp, resource, params):
+    async def process_resource(
+        self, req: Request, resp: Response,
+            resource: Resource, params: Any) -> None:
         """
         Validate the query string of the URL.
 

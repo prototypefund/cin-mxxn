@@ -6,39 +6,7 @@ from mxxn.utils.packages import caller_package_name
 
 def logger(context: Optional[str] = None) -> Logger:
     """
-    Get a logger for the application.
-
-    The logger name is in format *mxxn.<package>.<context>*.
-    In mxxn each log entry should be assigned to a context.
-    The respective context should be one of the following:
-
-    +--------------+----------------------------------------+
-    | Context      | Description                            |
-    +==============+========================================+
-    | settings     | Settings specific logging              |
-    +--------------+----------------------------------------+
-    | filesystem   | Context for filesystem interactions    |
-    +--------------+----------------------------------------+
-    | database     | Database specific logging              |
-    +--------------+----------------------------------------+
-    | registration | Context of component registration like |
-    |              | resource or static files               |
-    +--------------+----------------------------------------+
-    | request      | Context for requests                   |
-    +--------------+----------------------------------------+
-    | template     | Constext for template rendering        |
-    +--------------+----------------------------------------+
-
-    If none of these contexts meets your needs, then you can choose your own.
-
-    Usage:
-
-    .. code-block:: python
-
-        from mxxn.logging import logger
-
-        log = logger('some_context')
-        log.error('test error')
+    Get a context based application logger.
 
     Args:
         context: The name of the logging context.
@@ -49,6 +17,6 @@ def logger(context: Optional[str] = None) -> Logger:
     caller_package = caller_package_name()
 
     if context:
-        return getLogger('mxxn.{}.{}'.format(caller_package, context))
+        return getLogger(f'mxxn.{caller_package}.{context}')
 
-    return getLogger('mxxn.{}'.format(caller_package))
+    return getLogger(f'mxxn.{caller_package}')

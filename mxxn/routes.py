@@ -102,7 +102,47 @@ class StaticRoutesMiddleware:
 
 
 class QueryStringValidationMiddleware:
-    """The middleware for query string validation."""
+    """
+    A middleware for query string validation.
+
+    This middleware validates the URL query strings. To validate
+    the query strings, the respective resource must contain a
+    *QUERY_STRING_DEFINITION* property. The value of this property
+    must be a valid JSON Schema.
+
+    .. code:: python
+
+        class Resource():
+            QUERY_STRING_DEFINITION = {
+                'GET': {
+                    'none': {
+                        'type': 'object',
+                        'properties': {
+                            'fields': {
+                                ...
+                            },
+                        'additionalProperties': False,
+                        }
+                    },
+                    'id': {
+                        'type': 'object',
+                        'properties': {
+                            'fields': {
+                                ...
+                            },
+                        'additionalProperties': False,
+                        }
+                    },
+                'POST': {
+                    ...
+                    }
+                }
+
+    The first level of the dictionary must contain the respective HTTP method
+    for which the definition is. The second level contains the URL parameter
+    for which the definition is. If none is written here, then the definition
+    is for a URL without parameters.
+    """
 
     async def process_resource(self, req, resp, resource, params):
         """

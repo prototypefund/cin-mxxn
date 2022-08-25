@@ -1,9 +1,0 @@
-[flake8]
-exclude =
-	.git
-	__pycache__
-	build
-	dist
-	.undodir
-	mxxn/alembic
-	mxxn/models/versions

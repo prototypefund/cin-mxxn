@@ -29,6 +29,7 @@ develop = [
 	'mypy',
 	'flake8',
 	'flake8-docstrings',
+	'Flake8-pyproject',
 	'sphinx',
 	'sphinx-rtd-theme',
 	'sphinxcontrib-httpdomain',
@@ -46,6 +47,17 @@ find = {}
 omit = [
 	'mxxn/alembic/*',
 	'mxxn/cli.py'
+]
+
+[tool.flake8]
+exclude = [
+	'.git',
+	'__pycache__',
+	'build',
+	'dist',
+	'.undodir',
+	'mxxn/alembic',
+	'mxxn/models/versions'
 ]
 
 [tool.mypy]

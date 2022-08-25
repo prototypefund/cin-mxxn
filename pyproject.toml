@@ -47,3 +47,13 @@ omit = [
 	'mxxn/alembic/*',
 	'mxxn/cli.py'
 ]
+
+[tool.mypy]
+files = 'mxxn'
+disallow_untyped_defs = true
+plugins = 'sqlalchemy.ext.mypy.plugin'
+exclude = 'mxxn/models/versions/*|mxxn/alembic/*'
+
+[[tool.mypy.overrides]]
+module = 'falcon.*'
+ignore_missing_imports = true

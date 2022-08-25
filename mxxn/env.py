@@ -57,7 +57,7 @@ def is_develop() -> bool:
         return False
 
     requirenments_develop = [
-        x.split(';')[0] for x in requirenments if "extra == 'develop'" in x]
+        x.split(';')[0] for x in requirenments if 'develop' in x]
 
     if not requirenments_develop:
         return False

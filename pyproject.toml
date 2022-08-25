@@ -23,6 +23,7 @@ mxxr = 'mxxn.cli:main'
 
 [project.optional-dependencies]
 develop = [
+	'coverage[toml]',
 	'pytest',
 	'pytest-cov',
 	'mypy',
@@ -40,3 +41,9 @@ develop = [
 
 [tool.setuptools.packages]
 find = {}
+
+[tool.coverage]
+omit = [
+	'mxxn/alembic/*',
+	'mxxn/cli.py'
+]

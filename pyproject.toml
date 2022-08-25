@@ -1,0 +1,42 @@
+[build-system]
+requires = ['setuptools']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'mxxn'
+description = 'The MXXN web application framework'
+version = '0.1.0'
+license = {text = 'AGPLv3'}
+
+dependencies = [
+	'python_version>"3.10"',
+	'falcon',
+	'uvicorn[standard]',
+	'jsonschema',
+	'jinja2',
+	'alembic',
+	'aiosqlite'
+]
+
+[project.scripts]
+mxxr = 'mxxn.cli:main'
+
+[project.optional-dependencies]
+develop = [
+	'pytest',
+	'pytest-cov',
+	'mypy',
+	'flake8',
+	'flake8-docstrings',
+	'sphinx',
+	'sphinx-rtd-theme',
+	'sphinxcontrib-httpdomain',
+	'types-jsonschema',
+	'types-setuptools',
+	'nodeenv',
+	'sqlalchemy[mypy]',
+	'copier==6.0.0a9',
+]
+
+[tool.setuptools.packages]
+find = {}

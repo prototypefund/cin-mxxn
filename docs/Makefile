@@ -19,7 +19,7 @@ help:
 %: Makefile
 	../mxxn/frontend/node_modules/.bin/typedoc --tsconfig ../mxxn/frontend/tsconfig.json
 
-	$(dir="source/api/backend/python" && [ -d $dir ] && rm -r $dir)
+	$(dir="source/api/python" && [ -d $dir ] && rm -r $dir)
 
 	sphinx-apidoc -T -M -a -e -o source/api/python ../mxxn
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

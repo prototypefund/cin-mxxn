@@ -37,7 +37,7 @@ develop = [
 	'types-setuptools',
 	'nodeenv',
 	'sqlalchemy[mypy]',
-	'copier==6.0.0a9',
+	'copier',
 ]
 
 [tool.setuptools.packages]

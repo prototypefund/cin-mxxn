@@ -1,9 +1,8 @@
 """The theme module."""
-from falcon import Request, Response, HTTP_200, HTTPBadRequest, HTTP_NO_CONTENT
+from falcon import Request, Response, HTTP_200, HTTP_NO_CONTENT
 from mxxn import env
 from mxxn import config
 from typing import Optional, List
-from mxxn.exceptions import config as config_ex
 
 
 class Themes():

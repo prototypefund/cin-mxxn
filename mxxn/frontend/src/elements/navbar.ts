@@ -9,8 +9,6 @@ export class Navbar extends LitElement {
     `;
 
   render() {
-    return html`
-      navbar
-    `;
+    return html``;
   }
 }

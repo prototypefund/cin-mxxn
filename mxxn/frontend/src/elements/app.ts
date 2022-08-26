@@ -61,19 +61,8 @@ export class App extends LitElement {
       box-shadow: 0px -3px 6px var(--mxxn-toolbar-shadow-color);
     }
 
-    mxxn-mainbar.small{
-      background-color: #ff0000;
-    }
-
-    mxxn-mainbar.medium{
-      background-color: #00ff00;
-    }
-
-    mxxn-mainbar.large{
-      background-color: #0000ff;
-    }
-
     mxxn-navbar{
+      min-width: 200px;
       background-color: var(--mxxn-navbar-background-color);
       box-shadow: -3px 0px 6px var(--mxxn-navbar-shadow-color);
     }
@@ -90,11 +79,6 @@ export class App extends LitElement {
 
             ${this.media.size} <br>
 
-            ${// @ts-ignore
-              this.strings.state.mxxn.login}
-
-            ${// @ts-ignore
-              this.theme.state['--mxxn-icon-color']}
             <div>
               mxns
             </div>
